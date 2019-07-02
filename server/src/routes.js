@@ -4,13 +4,15 @@ const FAILURE_PASSPORT = '/failurePassport';
 const LOGIN = '/logIn';
 const REGISTER = '/register';
 
-const TO_DO_LIST = '/toDoList';
-const TO_DO = '/todo';
-const READ = '/read';
+const PROJECT = '/project';
+const TO_DO = '/toDo';
+const READ_ALL = '/readAll';
+const READ_ONE = '/readOne/:id';
 const ADD = '/add';
-const DELETE = '/delete';
-const PATCH = '/patch';
-const COMPLETED = '/completed';
+const DELETE = '/delete/:id';
+const DELETE_MANY = '/deleteMany';
+const PATCH = '/patch/:id';
+const COMPLETED = '/completed/:id';
 
 export default {
   auth: AUTH,
@@ -18,11 +20,13 @@ export default {
   failurePassport: FAILURE_PASSPORT,
   logIn: LOGIN,
   register: REGISTER,
-  toDoList: TO_DO_LIST,
+  project: PROJECT,
   toDo: TO_DO,
-  read: READ,
+  readAll: READ_ALL,
+  readOne: READ_ONE,
   add: ADD,
   delete: DELETE,
+  deleteMany: DELETE_MANY,
   patch: PATCH,
   completed: COMPLETED,
 };

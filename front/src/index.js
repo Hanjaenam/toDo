@@ -2,13 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ThemeProvider } from 'styled-components';
 import theme from 'styles/theme';
+import UserContextProvider from 'store/User';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <ThemeProvider theme={theme}>
-    <App />
-  </ThemeProvider>,
+  <UserContextProvider>
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
+  </UserContextProvider>,
   document.getElementById('root'),
 );
 

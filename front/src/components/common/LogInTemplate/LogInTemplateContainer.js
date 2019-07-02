@@ -1,64 +1,76 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useFns } from 'store/User';
-import { useAxios } from 'lib/hooks';
+import { useFns, useError } from 'store/User';
+import axios from 'axios';
 import LogInTemplate from './LogInTemplate';
 
-const LogInTemplateContainer = ({ type }) => {
+const LogInTemplateContainer = ({ type, handleFetch, history }) => {
+  const [existUser, setUser] = useState();
+  const error = useError();
+  const { logIn, setError } = useFns();
+  useEffect(() => {
+    axios({
+      url: '/auth/getUser',
+      method: 'get',
+    }).then(res => {
+      if (res.status === 200) {
+        logIn(res.data);
+        history.replace('/project');
+      } else if (res.status === 204) {
+        setUser(false);
+      }
+    });
+  }, []);
   const email = useRef();
   const password = useRef();
   const confirmPassword = useRef();
-  const fn = useFns();
-  const { state, fetch, setState } = useAxios(fn.logIn);
-  const handleFetch = () => {
-    const eValue = email.current.value;
-    const pValue = password.current.value;
+  const isValid = ({ eValue, pValue, cpValue }) => {
     if (!eValue) {
-      setState(s => ({ ...s, failure: '이메일을 입력해주세요.' }));
-      return;
+      setError('이메일을 입력해주세요.');
+      return false;
     }
     if (!pValue) {
-      setState(s => ({ ...s, failure: '비밀번호를 입력해주세요.' }));
-      return;
+      setError('비밀번호를 입력해주세요.');
+      return false;
     }
-    if (type === 'register' && !confirmPassword.current.value) {
-      setState(s => ({ ...s, failure: '확인 비밀번호까지 입력해주세요.' }));
-      return;
+    if (type === 'register' && !cpValue) {
+      setError('확인 비밀번호까지 입력해주세요.');
+      return false;
     }
-    fetch({
-      url: type === 'register' ? '/auth/register' : '/auth/logIn',
-      method: 'post',
-      data: {
-        email: email.current.value,
-        password: password.current.value,
-        confirmPassword:
-          type === 'register' ? confirmPassword.current.value : '',
-      },
-    });
+    return true;
   };
-  const handleKeyUp =
-    type === 'register'
-      ? null
-      : e => {
-          if (e.keyCode === 13) {
-            handleFetch();
-          }
-        };
-  return (
+
+  const handleConfirm = () => {
+    const eValue = email.current.value;
+    const pValue = password.current.value;
+    const cpValue = type === 'register' ? confirmPassword.current.value : null;
+    if (!isValid({ eValue, pValue, cpValue })) return;
+    if (type === 'register') {
+      handleFetch({ eValue, pValue, cpValue });
+    } else {
+      handleFetch({ eValue, pValue });
+    }
+  };
+  const handleKeyUp = e => {
+    if (e.keyCode === 13) {
+      handleConfirm();
+    }
+  };
+  return existUser === false ? (
     <LogInTemplate
       type={type}
-      message={state.failure || (type === 'register' ? '회원가입' : '로그인')}
       email={email}
       password={password}
       confirmPassword={confirmPassword}
-      fetch={handleFetch}
+      handleConfirm={handleConfirm}
       handleKeyUp={handleKeyUp}
-      failure={state.failure}
+      error={error}
     />
-  );
+  ) : null;
 };
 
 LogInTemplateContainer.propTypes = {
   type: PropTypes.string.isRequired,
+  handleFetch: PropTypes.func.isRequired,
 };
 export default LogInTemplateContainer;

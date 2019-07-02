@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 const Container = styled.div`
-  &.failure {
+  &.error {
     background-color: ${props => props.theme.DANGER};
   }
   &.success {
     background-color: ${props => props.theme.SUCCESS};
   }
-  &.failure,
+  &.error,
   &.success {
     span {
       color: white;

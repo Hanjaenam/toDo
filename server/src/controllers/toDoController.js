@@ -1,15 +1,45 @@
 import ToDo from 'models/ToDo';
+import ToDoList from 'models/toDoList';
 
 // onlyPrivate
-// onlyListCreator
+export const readAll = async (req, res) => {
+  try {
+    const toDoList = await ToDoList.find({ creator: req.user._id })
+      .populate('toDo')
+      .sort({
+        createdAt: -1,
+      })
+      .limit(10);
+    res.json(toDoList);
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
+};
+
+// onlyPrivate
+// onlyProjectCreator
 export const add = async (req, res) => {
-  const { title, content } = req;
   const {
-    locals: { toDoList },
+    body: { title, content, createdAt },
+  } = req;
+  const {
+    locals: { project },
   } = res;
   try {
-    const toDo = await ToDo.create({ title, content, creator: req.user._id });
-    toDoList.toDos.push(toDo.id);
+    let toDoList = await ToDoList.findOne({ createdAt });
+    const toDo = await ToDo.create({
+      title,
+      content,
+      creator: req.user._id,
+    });
+    if (toDoList) {
+      toDoList.toDo.push(toDo.id);
+    } else {
+      toDoList = await ToDoList.create({ createdAt });
+      toDoList.toDo.push(toDo);
+    }
+    project.toDoList.push(toDo.id);
     res.json(toDo);
   } catch (err) {
     console.log(err);
@@ -19,12 +49,12 @@ export const add = async (req, res) => {
 
 // onlyPrivate
 // onlyCreator
-export const remove = async (req, res) => {
+export const deleteOne = async (req, res) => {
   const {
     locals: { toDo },
   } = res;
   try {
-    await toDo.remove();
+    await toDo.delete();
     res.status(204).end();
   } catch (err) {
     console.log(err);
@@ -33,7 +63,7 @@ export const remove = async (req, res) => {
 };
 
 // onlyPrivate
-// onlyCreator
+// onlyToDoCreator
 // onlyNotCompleted
 export const patch = async (req, res) => {
   const {
@@ -53,6 +83,9 @@ export const patch = async (req, res) => {
   }
 };
 
+// onlyPrivate
+// onlyToDoCreator
+// onlyNotCompleted
 export const completed = async (req, res) => {
   const {
     locals: { toDo },

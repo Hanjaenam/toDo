@@ -1,41 +1,19 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { withRouter } from 'react-router-dom';
-import axios from 'axios';
+import React, { createContext, useState, useContext } from 'react';
 
 export const UserContext = createContext();
-const UserContextProvider = ({ children, history, location }) => {
-  const [mount, setMount] = useState(false);
-  const [logged, setLogged] = useState(false);
-  const [user, setUser] = useState();
-  const logIn = () => {
-    setLogged(true);
+const UserContextProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState();
+  const logIn = data => {
+    setUser(data);
   };
-  useEffect(() => {
-    axios
-      .get('/auth/getUser')
-      .then(res => {
-        if (res.status === 200) {
-          setUser(res.data);
-          setLogged(true);
-        } else if (res.status === 204) {
-          history.replace('/logIn');
-        }
-      })
-      .finally(() => setMount(true));
-  }, []);
-  useEffect(() => {
-    if (!mount) return;
-    const { pathname } = location;
-    if (pathname.includes('logIn') || pathname.includes('register')) {
-      if (logged) {
-        history.replace('/');
-      }
-    } else if (!logged) {
-      history.replace('/logIn');
-    }
-  }, [location.pathname, logged]);
+  const logOut = () => {
+    setUser(null);
+  };
   return (
-    <UserContext.Provider value={{ user, fn: { logIn } }}>
+    <UserContext.Provider
+      value={{ user, error, fns: { logIn, setError, logOut } }}
+    >
       {children}
     </UserContext.Provider>
   );
@@ -45,9 +23,12 @@ export const useUser = () => {
   const { user } = useContext(UserContext);
   return user;
 };
-
-export const useFns = () => {
-  const { fn } = useContext(UserContext);
-  return fn;
+export const useError = () => {
+  const { error } = useContext(UserContext);
+  return error;
 };
-export default withRouter(UserContextProvider);
+export const useFns = () => {
+  const { fns } = useContext(UserContext);
+  return fns;
+};
+export default UserContextProvider;

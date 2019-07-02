@@ -1,23 +1,20 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-export const useAxios = (...cbList) => {
+export const useAxios = () => {
   const [state, setState] = useState({
     loading: false,
     failure: null,
-    data: null,
   });
   const fetch = opts => {
     if (!opts.url) return;
     setState({ ...state, loading: true });
-    axios(opts)
+    return axios(opts)
       .then(res => {
         setState({
           ...state,
           loading: false,
-          data: res.data,
         });
-        cbList.forEach(cb => cb());
       })
       .catch(err => {
         setState({
@@ -28,4 +25,20 @@ export const useAxios = (...cbList) => {
       });
   };
   return { state, fetch, setState };
+};
+
+export const useReplacePage = (user, history, type = 'private') => {
+  if (type === 'private') {
+    if (!user) {
+      history.replace('/');
+    } else {
+      return true;
+    }
+  } else if (type === 'public') {
+    if (user) {
+      history.replace('/toDoList');
+    } else {
+      return true;
+    }
+  }
 };

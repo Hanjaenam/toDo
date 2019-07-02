@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import Message from 'components/common/Message';
+import {} from 'styles/mixins';
 
 const LayOut = styled.div`
   display: flex;
@@ -21,6 +22,7 @@ const Container = styled.div`
   width: 500px;
   @media screen and (max-width: ${props => props.theme.breakpoints.small}) {
     width: 100%;
+    border-radius: 0;
   }
   border-radius: ${props => props.theme.RADIUS};
   text-align: center;
@@ -33,18 +35,6 @@ const MessageContianer = styled.div`
     padding: 1.5rem;
   }
   border-bottom: 2px solid ${props => props.theme.BACKGROUND[0]};
-  &.failure {
-    background-color: ${props => props.theme.DANGER};
-  }
-  &.success {
-    background-color: ${props => props.theme.SUCCESS};
-  }
-  &.failure,
-  &.success {
-    span {
-      color: white;
-    }
-  }
 `;
 const MainContainer = styled.div`
   padding: 2rem;
@@ -68,7 +58,7 @@ const Input = styled.input`
   text-align: left;
   text-transform: initial;
   &:focus {
-    border-color: ${props => props.theme.PRIMARY};
+    border-color: ${props => props.theme.PRIMARY()};
   }
 `;
 const InputContainer = styled.div`
@@ -88,6 +78,7 @@ const Button = styled.button`
         color: #3b5998;
         &:hover {
           color: white;
+          -webkit-text-fill-color: white;
           background-color: #3b5998;
         }
       `;
@@ -98,6 +89,7 @@ const Button = styled.button`
         color: #db4437;
         &:hover {
           color: white;
+          -webkit-text-fill-color: white;
           background-color: #db4437;
         }
       `;
@@ -108,16 +100,16 @@ const Button = styled.button`
         color: #1ec800;
         &:hover {
           color: white;
+          -webkit-text-fill-color: white;
           background-color: #1ec800;
         }
       `;
     }
     return css`
-      border: 2px solid ${props => props.theme.PRIMARY};
-      color: ${props => props.theme.PRIMARY};
+      border: 2px solid black;
       &:hover {
+        background-color: black;
         color: white;
-        background-color: ${props => props.theme.PRIMARY};
       }
     `;
   }};
@@ -140,17 +132,18 @@ const SocialBtnContainer = styled.div`
 const LogInTemplate = ({
   type,
   email,
-  message,
   password,
   confirmPassword,
-  fetch,
+  handleConfirm,
   handleKeyUp,
-  failure,
+  error,
 }) => (
   <LayOut>
     <Container>
       <MessageContianer>
-        <Message className={failure ? 'failure' : ''}>{message}</Message>
+        <Message className={error ? 'error' : ''}>
+          {error || (type === 'register' ? '회원가입' : '로그인')}
+        </Message>
       </MessageContianer>
       <MainContainer>
         <Main>
@@ -177,10 +170,10 @@ const LogInTemplate = ({
             ) : null}
           </InputContainer>
           <BtnContainer>
-            <Button onClick={fetch}>
+            <Button onClick={handleConfirm}>
               {type === 'register' ? '확인' : '로그인'}
             </Button>
-            <Button as={Link} to={type === 'register' ? '/login' : '/register'}>
+            <Button as={Link} to={type === 'register' ? '/' : '/register'}>
               {type === 'register' ? '취소' : '회원가입'}
             </Button>
           </BtnContainer>
@@ -199,15 +192,14 @@ const LogInTemplate = ({
 
 LogInTemplate.propTypes = {
   type: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
-  fetch: PropTypes.func.isRequired,
-  failure: PropTypes.string,
+  handleConfirm: PropTypes.func.isRequired,
+  error: PropTypes.string,
   email: PropTypes.shape({}).isRequired,
   password: PropTypes.shape({}).isRequired,
   confirmPassword: PropTypes.shape({}).isRequired,
   handleKeyUp: PropTypes.func.isRequired,
 };
 LogInTemplate.defaultProps = {
-  failure: null,
+  error: null,
 };
 export default LogInTemplate;
