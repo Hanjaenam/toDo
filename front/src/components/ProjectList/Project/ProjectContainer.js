@@ -1,27 +1,34 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useFns, useSelectedIdList } from 'store/ProjectList/ProjectList';
+import { useProjectFns, useProjectValue } from 'store/Project';
+// import { useFns as useDetailProjectFns } from 'store/Project/DetailProject';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
-import { useValue } from 'store/ProjectList/AddProject';
+import { useAddProjectValue } from 'store/ProjectList/AddProject';
 import Project from './Project';
 
 const ProjectContainer = ({ id, title, createdAt, history }) => {
   const [changeTitle, setChangeTitleMode] = useState(false);
-  const selectedIdList = useSelectedIdList();
-  const { deleteOneData, patchData, setSelectedId } = useFns();
-  const { isEditMode, isMultiMode } = useValue();
+  const { toDeleteIds } = useProjectValue();
+  const {
+    deleteOneData,
+    patchData,
+    toggleToDeleteId,
+    selectProject,
+  } = useProjectFns();
+  // const { loadData } = useDetailProjectFns();
+  const { isEditMode, isMultiMode } = useAddProjectValue();
   const handleDelete = id => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
       axios({
         url: `/project/delete/${id}`,
         method: 'delete',
       }).then(() => {
-        deleteOneData(id);
+        deleteOneData({ id, type: 'project' });
       });
     }
   };
-  const handlePatch = titleRef => {
+  const patchProject = titleRef => {
     if (!titleRef.current) return;
     const newTitle = titleRef.current.value;
     if (title === newTitle) return;
@@ -33,7 +40,7 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
       },
     })
       .then(res => {
-        patchData(id, res.data);
+        patchData({ id, newData: res.data, type: 'project' });
       })
       .finally(() => {
         setChangeTitleMode(false);
@@ -41,9 +48,15 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
   };
   const handleClick = e => {
     if (!isEditMode) {
+      selectProject(id);
       history.push(`/project/${title}`);
     } else if (isMultiMode) {
-      setSelectedId(id);
+      toggleToDeleteId(id);
+    }
+  };
+  const handlePatchKeyUp = (e, titleRef) => {
+    if (e.keyCode === 13) {
+      patchProject(titleRef);
     }
   };
   return (
@@ -54,12 +67,12 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
       handleDelete={handleDelete}
       changeTitle={changeTitle}
       setChangeTitleMode={setChangeTitleMode}
-      handlePatch={handlePatch}
+      patchProject={patchProject}
       isEditMode={isEditMode}
       isMultiMode={isMultiMode}
-      setSelectedId={setSelectedId}
       handleClick={handleClick}
-      isSelected={selectedIdList.some(selectedId => selectedId === id)}
+      isSelected={toDeleteIds.some(selectedId => selectedId === id)}
+      handlePatchKeyUp={handlePatchKeyUp}
     />
   );
 };

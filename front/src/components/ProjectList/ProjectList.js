@@ -3,12 +3,15 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   box-sizing: border-box;
-  padding: 1rem;
-  width: 1200px;
+  padding-top: 0;
+  width: ${props => props.theme.breakpoints.wide};
   margin: 0 auto;
   display: grid;
-  grid-gap: 1rem;
+  grid-gap: 0.5rem;
   @media screen and (max-width: ${props => props.theme.breakpoints.wide}) {
+    width: ${props => props.theme.breakpoints.large};
+  }
+  @media screen and (max-width: ${props => props.theme.breakpoints.large}) {
     width: 100%;
   }
 `;

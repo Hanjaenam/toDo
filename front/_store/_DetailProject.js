@@ -1,10 +1,17 @@
 import React, { createContext, useState, useContext } from 'react';
-import ToDoList from 'components/Project/ToDoList';
+import ToDoList from 'components/DetailProject/ToDoList';
 
 export const ProjectContext = createContext();
 
 const ProjectProvider = ({ children }) => {
   const [dataList, setData] = useState([]);
+  const [status, setStatus] = useState({ loading: false, error: null });
+  const loadData = data => {
+    if (!Array.isArray(data)) {
+      throw Error(`${data} 는 배열이 아닙니다.`);
+    }
+    setData(data);
+  };
   const addData = data => {
     setData(s => [data, ...s]);
   };
@@ -28,12 +35,6 @@ const ProjectProvider = ({ children }) => {
   const clearData = () => {
     setData([]);
   };
-  const loadData = data => {
-    if (!Array.isArray(data)) {
-      throw Error(`${data} 는 배열이 아닙니다.`);
-    }
-    setData(data);
-  };
   const mapToComponent = () => {
     dataList.map(data => <ToDoList data={data} createdAt={data.createdAt} />);
   };
@@ -42,12 +43,12 @@ const ProjectProvider = ({ children }) => {
       value={{
         dataList,
         fns: {
+          loadData,
           addData,
           deleteOneData,
           deleteManyData,
           patchData,
           clearData,
-          loadData,
           mapToComponent,
         },
       }}

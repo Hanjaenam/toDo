@@ -1,18 +1,26 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import LogInTemplate from 'components/common/LogInTemplate';
 import axios from 'axios';
 import { useFns } from 'store/User';
 
 const LogIn = ({ history }) => {
-  console.log('todo');
   const { logIn, setError } = useFns();
   useEffect(() => {
-    setError();
+    axios({
+      url: '/user/getInfo',
+      method: 'get',
+    }).then(res => {
+      if (res.status === 200) {
+        logIn(res.data);
+        history.replace('/project');
+      }
+    });
   }, []);
   const handleFetch = ({ eValue, pValue }) => {
     axios({
-      url: '/auth/logIn',
+      url: '/user/logIn',
       method: 'post',
       data: {
         email: eValue,
@@ -32,8 +40,11 @@ const LogIn = ({ history }) => {
       <Helmet>
         <title>로그인</title>
       </Helmet>
-      <LogInTemplate type="logIn" handleFetch={handleFetch} history={history} />
+      <LogInTemplate type="logIn" handleFetch={handleFetch} />
     </>
   );
+};
+LogIn.propTypes = {
+  history: PropTypes.shape({}).isRequired,
 };
 export default LogIn;

@@ -1,5 +1,5 @@
 import ToDo from 'models/ToDo';
-import ToDoList from 'models/toDoList';
+import ToDoList from 'models/ToDoList';
 
 // onlyPrivate
 export const readAll = async (req, res) => {

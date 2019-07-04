@@ -1,12 +1,29 @@
 import Project from 'models/Project';
 
-export const onlyCreator = async (req, res, next) => {
+export const onlyProjectCreator = async (req, res, next) => {
   const {
     params: { id },
+    baseUrl,
+    url,
   } = req;
+  console.log(id, baseUrl, url);
   try {
-    const project = await Project.findById(id);
-    if (`${project.creator}` !== `${req.user._id}`) {
+    let project;
+    switch (baseUrl) {
+      case '/project':
+        project = await Project.findById(id);
+        break;
+      case '/toDoList':
+        if (url.includes('/read')) {
+          project = await Project.findById(id);
+        } else {
+          project = await Project.findOne({ toDoList: id });
+        }
+        break;
+      default:
+        return res.status(400).end;
+    }
+    if (String(project.creator) !== String(req.user._id)) {
       return res.status(403).end();
     }
     res.locals.project = project;

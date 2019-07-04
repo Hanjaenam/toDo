@@ -2,16 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCheck,
+  faTrashAlt,
+  faPen,
+  faTimes,
+} from '@fortawesome/free-solid-svg-icons';
+import { hover1 } from 'styles/mixins';
 
 const Container = styled.div`
+  display: flex;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   border-radius: ${props => props.theme.RADIUS};
-  & + & {
-    margin-top: 0.3rem;
-  }
   ${props => {
     if (props.completed) {
       return css`
@@ -42,6 +46,13 @@ const CheckIcon = styled(FontAwesomeIcon)`
   color: white;
 `;
 
+const Icon = styled(FontAwesomeIcon)`
+  ${hover1}
+  &+& {
+    padding-left: 0.5rem;
+  }
+`;
+
 const CheckContainer = styled.div`
   border: 2px solid ${props => props.theme.PRIMARY()};
   border-radius: 50%;
@@ -53,16 +64,20 @@ const CheckContainer = styled.div`
 `;
 
 const Title = styled.span`
+  flex: 1;
   font-size: 1rem;
   text-indent: 0.5rem;
   user-select: none;
 `;
-const ToDo = ({ completed }) => (
+const ToDo = ({ title, completed }) => (
   <Container completed={completed}>
     <CheckContainer>
       <CheckIcon icon={faCheck} />
     </CheckContainer>
-    <Title>test</Title>
+    <Title>{title}</Title>
+    {/* <Icon icon={faTimes} /> */}
+    <Icon icon={faPen} />
+    <Icon icon={faTrashAlt} />
   </Container>
 );
 ToDo.propTypes = {

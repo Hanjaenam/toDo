@@ -1,6 +1,6 @@
 import ToDo from 'models/ToDo';
 
-export const onlyCreator = async (req, res, next) => {
+export const onlyToDoCreator = async (req, res, next) => {
   const {
     params: { id },
   } = req;

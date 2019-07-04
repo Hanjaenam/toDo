@@ -1,40 +1,37 @@
 import React, { useRef } from 'react';
 // import PropTypes from 'prop-types';
 import axios from 'axios';
+import { useProjectFns, useProjectValue } from 'store/Project';
 import {
-  useFns as useToDoCardListFns,
-  useSelectedIdList,
-} from 'store/ProjectList/ProjectList';
-import {
-  useValue,
+  useAddProjectValue,
   useFns as useAddProjectFns,
 } from 'store/ProjectList/AddProject';
 import AddProject from './AddProject';
 
 const AddProjectContainer = () => {
-  const { addData, clearSelectedList, deleteManyData } = useToDoCardListFns();
-  const selectedIdList = useSelectedIdList();
-  const { isEditMode, isMultiMode } = useValue();
+  const { toDeleteIds } = useProjectValue();
+  const { unshiftData, clearSelectedList, deleteManyData } = useProjectFns();
+  const { isEditMode, isMultiMode } = useAddProjectValue();
   const { toggleEditMode, toggleMultiMode, initMode } = useAddProjectFns();
   const titleRef = useRef();
   const addToDo = () => {
     if (!titleRef.current) return;
     if (!titleRef.current.value) return;
     axios({
-      url: '/project/add',
+      url: '/project/create',
       method: 'post',
       data: {
         title: titleRef.current.value,
       },
     })
       .then(res => {
-        addData(res.data);
+        unshiftData({ data: res.data, type: 'project' });
       })
       .finally(() => {
         titleRef.current.value = '';
       });
   };
-  const handleEnter = event => {
+  const handleAddKeyUp = event => {
     if (event.keyCode === 13) {
       addToDo();
     }
@@ -44,14 +41,14 @@ const AddProjectContainer = () => {
     clearSelectedList();
   };
   const handleDeleteMany = () => {
-    if (selectedIdList.length === 0) return;
+    if (toDeleteIds.length === 0) return;
     if (window.confirm('정말 삭제하시겠습니까?')) {
       axios({
         url: '/project/deleteMany',
         method: 'DELETE',
-        data: selectedIdList,
+        data: toDeleteIds,
       }).then(() => {
-        deleteManyData(selectedIdList);
+        deleteManyData({ idList: toDeleteIds, type: 'project' });
       });
     }
   };
@@ -59,7 +56,7 @@ const AddProjectContainer = () => {
     <AddProject
       titleRef={titleRef}
       addToDo={addToDo}
-      handleEnter={handleEnter}
+      handleAddKeyUp={handleAddKeyUp}
       isEditMode={isEditMode}
       toggleEditMode={toggleEditMode}
       isMultiMode={isMultiMode}

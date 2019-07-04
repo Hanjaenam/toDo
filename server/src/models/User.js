@@ -18,6 +18,12 @@ const UserSchema = mongoose.Schema({
     },
     default: Date.now,
   },
+  project: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Project',
+    },
+  ],
 });
 
 UserSchema.virtual('password')

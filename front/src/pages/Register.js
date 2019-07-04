@@ -1,18 +1,26 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import LogInTemplate from 'components/common/LogInTemplate';
 import axios from 'axios';
 import { useFns } from 'store/User';
 
 const Register = ({ history }) => {
-  console.log('register');
   const { logIn, setError } = useFns();
   useEffect(() => {
-    setError();
+    axios({
+      url: '/user/getInfo',
+      method: 'get',
+    }).then(res => {
+      if (res.status === 200) {
+        logIn(res.data);
+        history.replace('/project');
+      }
+    });
   }, []);
   const handleFetch = ({ eValue, pValue, cpValue }) => {
     axios({
-      url: '/auth/register',
+      url: '/user/register',
       method: 'post',
       data: {
         email: eValue,
@@ -33,12 +41,11 @@ const Register = ({ history }) => {
       <Helmet>
         <title>회원가입</title>
       </Helmet>
-      <LogInTemplate
-        type="register"
-        handleFetch={handleFetch}
-        history={history}
-      />
+      <LogInTemplate type="register" handleFetch={handleFetch} />
     </>
   );
+};
+Register.propTypes = {
+  history: PropTypes.shape({}).isRequired,
 };
 export default Register;

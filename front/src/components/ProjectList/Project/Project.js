@@ -111,7 +111,6 @@ const ConfirmIcon = styled(Icon)`
   border-bottom-right-radius: ${props => props.theme.RADIUS};
 `;
 const EditContainer = styled.div`
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   background: white;
   margin-left: 0.5rem;
   display: flex;
@@ -119,6 +118,7 @@ const EditContainer = styled.div`
   justify-content: center;
   border-radius: ${props => props.theme.RADIUS};
   overflow: hidden;
+  border: 1px solid ${props => props.theme.PRIMARY()};
 `;
 
 const ToDoCard = ({
@@ -128,11 +128,12 @@ const ToDoCard = ({
   handleDelete,
   changeTitle,
   setChangeTitleMode,
+  patchProject,
   isEditMode,
   isMultiMode,
-  handlePatch,
   handleClick,
   isSelected,
+  handlePatchKeyUp,
 }) => {
   const titleRef = useRef();
   return (
@@ -149,8 +150,16 @@ const ToDoCard = ({
         ) : null}
         {changeTitle ? (
           <InputContainer>
-            <Input defaultValue={title} autoFocus ref={titleRef} />
-            <ConfirmIcon icon={faCheck} onClick={() => handlePatch(titleRef)} />
+            <Input
+              defaultValue={title}
+              autoFocus
+              ref={titleRef}
+              onKeyUp={e => handlePatchKeyUp(e, titleRef)}
+            />
+            <ConfirmIcon
+              icon={faCheck}
+              onClick={() => patchProject(titleRef)}
+            />
           </InputContainer>
         ) : (
           <Title>{title}</Title>
@@ -182,9 +191,10 @@ ToDoCard.propTypes = {
   changeTitle: PropTypes.bool.isRequired,
   setChangeTitleMode: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
-  handlePatch: PropTypes.func.isRequired,
+  patchProject: PropTypes.func.isRequired,
   isMultiMode: PropTypes.bool.isRequired,
   handleClick: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
+  handlePatchKeyUp: PropTypes.func.isRequired,
 };
 export default ToDoCard;

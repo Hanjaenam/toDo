@@ -1,29 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useFns, useError } from 'store/User';
-import axios from 'axios';
 import LogInTemplate from './LogInTemplate';
 
-const LogInTemplateContainer = ({ type, handleFetch, history }) => {
-  const [existUser, setUser] = useState();
-  const error = useError();
-  const { logIn, setError } = useFns();
-  useEffect(() => {
-    axios({
-      url: '/auth/getUser',
-      method: 'get',
-    }).then(res => {
-      if (res.status === 200) {
-        logIn(res.data);
-        history.replace('/project');
-      } else if (res.status === 204) {
-        setUser(false);
-      }
-    });
-  }, []);
+const LogInTemplateContainer = ({ type, handleFetch }) => {
   const email = useRef();
   const password = useRef();
   const confirmPassword = useRef();
+  const { setError } = useFns();
+  const error = useError();
   const isValid = ({ eValue, pValue, cpValue }) => {
     if (!eValue) {
       setError('이메일을 입력해주세요.');
@@ -56,7 +41,7 @@ const LogInTemplateContainer = ({ type, handleFetch, history }) => {
       handleConfirm();
     }
   };
-  return existUser === false ? (
+  return (
     <LogInTemplate
       type={type}
       email={email}
@@ -66,7 +51,7 @@ const LogInTemplateContainer = ({ type, handleFetch, history }) => {
       handleKeyUp={handleKeyUp}
       error={error}
     />
-  ) : null;
+  );
 };
 
 LogInTemplateContainer.propTypes = {

@@ -1,11 +1,8 @@
 import express from 'express';
 import routes from 'routes';
-import { onlyPrivate } from 'middlewares/auth';
-import {
-  onlyCreator as onlyToDoCreator,
-  onlyNotCompleted,
-} from 'middlewares/toDo';
-import { onlyCreator as onlyProjectCreator } from 'middlewares/project';
+import { onlyPrivate } from 'middlewares/user';
+import { onlyToDoCreator, onlyNotCompleted } from 'middlewares/toDo';
+import { onlyProjectCreator } from 'middlewares/project';
 import {
   readAll,
   add,
@@ -17,8 +14,8 @@ import {
 const toDoRouter = express.Router();
 
 toDoRouter.get(routes.readAll, onlyPrivate, readAll);
-toDoRouter.post(routes.add, onlyPrivate, onlyProjectCreator, add);
-toDoRouter.delete(routes.delete, onlyPrivate, onlyToDoCreator, deleteOne);
+toDoRouter.post(routes.create, onlyPrivate, onlyProjectCreator, add);
+toDoRouter.delete(routes.deleteOne, onlyPrivate, onlyToDoCreator, deleteOne);
 toDoRouter.patch(routes.patch, onlyToDoCreator, onlyNotCompleted, patch);
 toDoRouter.patch(
   routes.completed,

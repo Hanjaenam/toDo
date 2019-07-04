@@ -14,7 +14,8 @@ const AddProjectProvider = ({ children }) => {
   return (
     <AddProjectContext.Provider
       value={{
-        value: { isEditMode, isMultiMode },
+        isEditMode,
+        isMultiMode,
         fns: { toggleEditMode, toggleMultiMode, initMode },
       }}
     >
@@ -23,9 +24,9 @@ const AddProjectProvider = ({ children }) => {
   );
 };
 
-export const useValue = () => {
-  const { value } = useContext(AddProjectContext);
-  return value;
+export const useAddProjectValue = () => {
+  const { isEditMode, isMultiMode } = useContext(AddProjectContext);
+  return { isEditMode, isMultiMode };
 };
 
 export const useFns = () => {

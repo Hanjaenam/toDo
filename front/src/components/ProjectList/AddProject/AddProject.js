@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -14,11 +14,13 @@ import { hover1, inputCss } from 'styles/mixins';
 const Container = styled.div`
   background: white;
   box-sizing: border-box;
-  border-radius: ${props => props.theme.RADIUS};
   padding: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); */
+  /* border-radius: ${props => props.theme.RADIUS}; */
+  border-bottom:2px solid ${props => props.theme.PRIMARY()};
 `;
 
 const IconContainer = styled.span`
@@ -46,13 +48,13 @@ const Input = styled.input`
   padding: 0.5rem 0.5rem;
   font-size: 1rem;
   flex: 1;
-  ${inputCss}
+  /* ${inputCss} */
 `;
 
 const AddCard = ({
   titleRef,
   addToDo,
-  handleEnter,
+  handleAddKeyUp,
   isEditMode,
   toggleEditMode,
   isMultiMode,
@@ -66,7 +68,7 @@ const AddCard = ({
         placeholder="ToDoName"
         id="addTitle"
         ref={titleRef}
-        onKeyUp={handleEnter}
+        onKeyUp={handleAddKeyUp}
         maxLength="100"
       />
       <IconContainer>
@@ -102,7 +104,7 @@ const AddCard = ({
 AddCard.propTypes = {
   titleRef: PropTypes.shape({}).isRequired,
   addToDo: PropTypes.func.isRequired,
-  handleEnter: PropTypes.func.isRequired,
+  handleAddKeyUp: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   toggleEditMode: PropTypes.func.isRequired,
   isMultiMode: PropTypes.bool.isRequired,

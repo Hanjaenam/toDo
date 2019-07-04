@@ -3,12 +3,13 @@ import routes from 'routes';
 import {
   register,
   logIn,
-  getUser,
+  getInfo,
   failurePassport,
-} from 'controllers/authController';
+} from 'controllers/userController';
 
 const userRouter = express.Router();
-userRouter.get(routes.getUser, getUser);
+// authentication
+userRouter.get(routes.getInfo, getInfo);
 userRouter.get(routes.failurePassport, failurePassport);
 userRouter.post(routes.logIn, logIn);
 userRouter.post(routes.register, register);

@@ -13,11 +13,10 @@ const HomeAnimation = keyframes`
 `;
 
 const Container = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.PRIMARY()};
   box-sizing: border-box;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-
   @media screen and (max-width: ${props => props.theme.breakpoints.header}) {
     padding-left: 1rem;
     padding-right: 1rem;

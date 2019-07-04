@@ -38,6 +38,10 @@ const projectSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  // auth: {
+  // type: mongoose.Schema.Types.ObjectId,
+  // ref: 'Autho',
+  // },
 });
 
 export default mongoose.model('Project', projectSchema);

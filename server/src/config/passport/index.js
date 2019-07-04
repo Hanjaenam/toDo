@@ -6,7 +6,7 @@ export default () => {
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
-  passport.deserializeUser((id, done) => {
+  passport.deserializeUser(async (id, done) => {
     User.findById(id, (err, user) => {
       done(err, user);
     });

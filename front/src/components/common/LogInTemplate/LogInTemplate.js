@@ -6,6 +6,7 @@ import Message from 'components/common/Message';
 import {} from 'styles/mixins';
 
 const LayOut = styled.div`
+  background-color: ${props => props.theme.BACKGROUND[0]};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,6 +30,7 @@ const Container = styled.div`
   overflow: hidden;
   text-transform: capitalize;
   background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 `;
 const MessageContianer = styled.div`
   div {
@@ -110,6 +112,7 @@ const Button = styled.button`
       &:hover {
         background-color: black;
         color: white;
+        -webkit-text-fill-color: white;
       }
     `;
   }};

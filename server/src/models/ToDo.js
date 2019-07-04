@@ -19,10 +19,10 @@ const ToDoSchema = mongoose.Schema({
     },
     default: '',
   },
-  creator: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
+  // auth: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'Autho',
+  // },
 });
 
 export default mongoose.model('ToDoList', ToDoSchema);

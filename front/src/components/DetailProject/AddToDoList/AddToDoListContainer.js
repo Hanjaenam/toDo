@@ -1,42 +1,40 @@
 import React, { useState, useRef } from 'react';
 import moment from 'moment';
-import axios from 'axios';
-import { useFns } from 'store/Project/Project';
-import ToDo from './AddToDo';
+import { useAddToDoListFns } from 'store/DetailProject/AddToDoList';
+import AddToDoList from './AddToDoList';
 
-const ToDoContainer = ({ id }) => {
-  const [selectedDay, setSelectedDay] = useState(moment().add(1, 'day')._d);
+const AddToDoContainer = () => {
+  const [selectedDay, setSelectedDay] = useState(moment()._d);
   const titleRef = useRef();
-  const { addData } = useFns();
+  const { mapToComponent, unshiftData } = useAddToDoListFns();
   const handleDayChange = day => {
     setSelectedDay(day);
   };
-  const handleAddToDo = () => {
+  const AddToDo = () => {
     if (!titleRef.current) return;
     if (!titleRef.current.value) return;
-    axios({
-      url: '/toDo/add',
-      method: 'post',
-      title: titleRef.current.value,
-    }).then(res => addData(res.data));
+    unshiftData({ title: titleRef.current.value });
+    titleRef.current.value = '';
   };
   const handleAddClick = () => {
-    handleAddToDo();
+    AddToDo();
   };
   const handleAddKeyUp = e => {
     if (e.keyCode === 13) {
-      handleAddToDo();
+      AddToDo();
     }
   };
   return (
-    <ToDo
+    <AddToDoList
       handleDayChange={handleDayChange}
       selectedDay={selectedDay}
       titleRef={titleRef}
       handleAddClick={handleAddClick}
       handleAddKeyUp={handleAddKeyUp}
-    />
+    >
+      {mapToComponent()}
+    </AddToDoList>
   );
 };
 
-export default ToDoContainer;
+export default AddToDoContainer;
