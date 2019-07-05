@@ -1,23 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useProjectFns, useProjectValue } from 'store/Project';
-// import { useFns as useDetailProjectFns } from 'store/Project/DetailProject';
+import { useProjectFns } from 'store/Project';
+import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
-import { useAddProjectValue } from 'store/ProjectList/AddProject';
 import Project from './Project';
 
 const ProjectContainer = ({ id, title, createdAt, history }) => {
-  const [changeTitle, setChangeTitleMode] = useState(false);
-  const { toDeleteIds } = useProjectValue();
-  const {
-    deleteOneData,
-    patchData,
-    toggleToDeleteId,
-    selectProject,
-  } = useProjectFns();
-  // const { loadData } = useDetailProjectFns();
-  const { isEditMode, isMultiMode } = useAddProjectValue();
+  const [isChangeTitleMode, setChangeTitleMode] = useState(false);
+  const { idsToDelete, isEditMode, isMultiMode } = useEditMenuValues();
+  const { toggleIdsToDelete } = useEditMenuFns();
+  const { deleteOneData, patchData, selectProject } = useProjectFns();
+  useEffect(() => {
+    if (!isEditMode && isChangeTitleMode) {
+      setChangeTitleMode(false);
+    }
+  }, [isEditMode]);
   const handleDelete = id => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
       axios({
@@ -51,7 +49,7 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
       selectProject(id);
       history.push(`/project/${title}`);
     } else if (isMultiMode) {
-      toggleToDeleteId(id);
+      toggleIdsToDelete(id);
     }
   };
   const handlePatchKeyUp = (e, titleRef) => {
@@ -65,13 +63,13 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
       title={title}
       createdAt={createdAt}
       handleDelete={handleDelete}
-      changeTitle={changeTitle}
-      setChangeTitleMode={setChangeTitleMode}
-      patchProject={patchProject}
       isEditMode={isEditMode}
       isMultiMode={isMultiMode}
+      isSelected={idsToDelete.some(selectedId => selectedId === id)}
+      isChangeTitleMode={isChangeTitleMode}
+      setChangeTitleMode={setChangeTitleMode}
+      patchProject={patchProject}
       handleClick={handleClick}
-      isSelected={toDeleteIds.some(selectedId => selectedId === id)}
       handlePatchKeyUp={handlePatchKeyUp}
     />
   );

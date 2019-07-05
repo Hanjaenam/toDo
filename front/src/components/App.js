@@ -13,8 +13,8 @@ function App() {
           <Route exact path="/" component={LogIn} />
           <Route exact path="/register" component={Register} />
           <ProjectProvider>
-            {/* <Route exact path="/project" component={ProjectList} /> */}
-            <Route exact path="/project" component={DetailProject} />
+            <Route exact path="/project" component={ProjectList} />
+            <Route exact path="/project/:title" component={DetailProject} />
           </ProjectProvider>
         </Switch>
       </Router>

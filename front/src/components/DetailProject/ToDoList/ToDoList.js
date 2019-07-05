@@ -5,14 +5,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { inputCss, hover1 } from 'styles/mixins';
 import 'react-day-picker/lib/style.css';
-import ToDo from 'components/DetailProject/ToDo';
 
 const Container = styled.div`
   box-sizing: border-box;
   width: 450px;
   border-radius: ${props => props.theme.RADIUS};
   position: relative;
-  @media screen and (max-width: ${props => props.theme.breakpoints.small}) {
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
     /*
     height 일부러 안잡아준 것.
     */
@@ -61,7 +60,7 @@ const Icon = styled(FontAwesomeIcon)`
 `;
 
 const ToDoList = ({
-  data,
+  children,
   createdAt,
   titleRef,
   handleAddClick,
@@ -83,14 +82,7 @@ const ToDoList = ({
         <Icon icon={faPlus} onClick={handleAddClick} />
       </AddContainer>
     </EditContainer>
-    {data.map(todo => (
-      <ToDo
-        title={todo.title}
-        content={todo.content}
-        completed={todo.isCompltedAt}
-        completedAt={todo.completedAt}
-      />
-    ))}
+    {children}
   </Container>
 );
 

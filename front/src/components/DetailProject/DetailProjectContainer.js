@@ -1,19 +1,18 @@
 import React from 'react';
 import { useProjectFns } from 'store/Project';
-import AddToDoList from 'components/DetailProject/AddToDoList';
-import AddToDoListProvider from 'store/DetailProject/AddToDoList';
-import Project from './DetailProject';
+import EditToDoList from 'components/DetailProject/EditToDoList';
+import EditMenuProvider from 'store/Common/EditMenu';
+import DetailProject from './DetailProject';
 
 const DetailProjectContainer = () => {
   const { mapToComponent } = useProjectFns();
   return (
-    <Project>
-      {/* {mapToComponent({ type: 'toDoList' })} */}
-      {/* <AddToDoList /> */}
-      <AddToDoListProvider>
-        <AddToDoList />
-      </AddToDoListProvider>
-    </Project>
+    <DetailProject>
+      <EditMenuProvider>
+        {mapToComponent({ type: 'toDoList' })}
+        <EditToDoList />
+      </EditMenuProvider>
+    </DetailProject>
   );
 };
 export default DetailProjectContainer;

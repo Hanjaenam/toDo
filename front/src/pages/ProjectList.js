@@ -5,10 +5,10 @@ import { faSearch, faStar, faClock } from '@fortawesome/free-solid-svg-icons';
 import { hover1, inputCss } from 'styles/mixins';
 import styled from 'styled-components';
 import ProjectList from 'components/ProjectList';
-import Header from 'components/common/Header';
-import { useProjectFns, useProjectDatas } from 'store/Project';
-import axios from 'axios';
+import Header from 'components/Common/Header';
+import { useProjectFns, useProjectValues } from 'store/Project';
 import { useStatus } from 'lib/hooks';
+import axios from 'axios';
 
 const InputContainer = styled.div`
   display: flex;
@@ -18,20 +18,19 @@ const InputContainer = styled.div`
   max-width: 300px;
 `;
 
-const Input = styled.input`
+const SearchInput = styled.input`
   font-size: 1rem;
   flex: 1;
   padding: 0.3rem;
   padding-right: 25px;
-  border-radius:${props => props.theme.RADIUS};
-  outline:none;
-  border:none;
-  transition:.5s;
-  background-color:rgb(210,210,210);
-  &:focus{
-    background:white;
+  border-radius: ${props => props.theme.RADIUS};
+  outline: none;
+  border: none;
+  transition: ${props => props.theme.TRANSITION};
+  background-color: rgb(210, 210, 210);
+  &:focus {
+    background: white;
   }
-  /* ${inputCss} */
 `;
 
 const Icon = styled(FontAwesomeIcon)`
@@ -69,8 +68,11 @@ const SortView = styled.div`
 
 const ProjectListPage = () => {
   const { loadData } = useProjectFns();
-  const projectDatas = useProjectDatas();
-  const { loading, failure, end } = useStatus();
+  const { projectDatas } = useProjectValues();
+  const {
+    error,
+    fns: { failure },
+  } = useStatus();
   useEffect(() => {
     if (projectDatas === undefined) {
       axios({
@@ -80,8 +82,7 @@ const ProjectListPage = () => {
         .then(res => {
           loadData({ data: res.data, type: 'project' });
         })
-        .catch(error => failure(error))
-        .finally(() => end());
+        .catch(err => failure(err));
     }
   }, []);
   return (
@@ -91,7 +92,7 @@ const ProjectListPage = () => {
       </Helmet>
       <Header>
         <InputContainer>
-          <Input placeholder="project name" />
+          <SearchInput placeholder="project name" />
           <SearchIcon icon={faSearch} />
         </InputContainer>
         <Pagination>
@@ -102,7 +103,7 @@ const ProjectListPage = () => {
           <Icon icon={faClock} />
         </SortView>
       </Header>
-      {loading ? null : <ProjectList />}
+      {projectDatas === undefined || error ? null : <ProjectList />}
     </>
   );
 };

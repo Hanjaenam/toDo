@@ -3,17 +3,24 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   box-sizing: border-box;
-  padding-top: 0;
-  width: ${props => props.theme.breakpoints.wide};
+  /* padding-top: 0; */
+  width: ${props => props.theme.BREAKPOINTS.WIDE};
   margin: 0 auto;
-  display: grid;
-  grid-gap: 0.5rem;
-  @media screen and (max-width: ${props => props.theme.breakpoints.wide}) {
-    width: ${props => props.theme.breakpoints.large};
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.WIDE}) {
+    width: ${props => props.theme.BREAKPOINTS.LARGE};
   }
-  @media screen and (max-width: ${props => props.theme.breakpoints.large}) {
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.LARGE}) {
     width: 100%;
   }
 `;
-const ProjectList = ({ children }) => <Container>{children}</Container>;
+const Grid = styled.div`
+  display: grid;
+  grid-gap: 0.3rem;
+`;
+const ProjectList = ({ children, EditProject }) => (
+  <Container>
+    {EditProject}
+    <Grid>{children}</Grid>
+  </Container>
+);
 export default ProjectList;

@@ -1,4 +1,5 @@
 import Project from 'models/Project';
+import ToDoList from 'models/ToDoList';
 
 export const onlyProjectCreator = async (req, res, next) => {
   const {
@@ -6,27 +7,42 @@ export const onlyProjectCreator = async (req, res, next) => {
     baseUrl,
     url,
   } = req;
-  console.log(id, baseUrl, url);
   try {
-    let project;
     switch (baseUrl) {
       case '/project':
-        project = await Project.findById(id);
+        {
+          const project = await Project.findById(id);
+          if (String(project.creator) !== String(req.user._id)) {
+            return res.status(403).end();
+          }
+          res.locals.project = project;
+        }
         break;
       case '/toDoList':
+        {
+          const project = url.includes('/read')
+            ? await Project.findById(id)
+            : await Project.findOne({ toDoList: id });
+          if (String(project.creator) !== String(req.user._id)) {
+            return res.status(403).end();
+          }
+          res.locals.project = project;
+        }
+        break;
+      case '/toDo':
         if (url.includes('/read')) {
-          project = await Project.findById(id);
-        } else {
-          project = await Project.findOne({ toDoList: id });
+          const project = await Project.findOne({ toDoList: id }).populate(
+            'toDoList',
+          );
+          if (String(project.creator) !== String(req.user._id)) {
+            return res.status(403).end();
+          }
+          res.locals.toDoList = project.toDoList;
         }
         break;
       default:
         return res.status(400).end;
     }
-    if (String(project.creator) !== String(req.user._id)) {
-      return res.status(403).end();
-    }
-    res.locals.project = project;
     return next();
   } catch (err) {
     console.log(err);

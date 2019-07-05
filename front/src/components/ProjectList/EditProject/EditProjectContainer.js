@@ -1,18 +1,14 @@
 import React, { useRef } from 'react';
 // import PropTypes from 'prop-types';
 import axios from 'axios';
-import { useProjectFns, useProjectValue } from 'store/Project';
-import {
-  useAddProjectValue,
-  useFns as useAddProjectFns,
-} from 'store/ProjectList/AddProject';
-import AddProject from './AddProject';
+import { useProjectFns } from 'store/Project';
+import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
+import AddProject from './EditProject';
 
 const AddProjectContainer = () => {
-  const { toDeleteIds } = useProjectValue();
-  const { unshiftData, clearSelectedList, deleteManyData } = useProjectFns();
-  const { isEditMode, isMultiMode } = useAddProjectValue();
-  const { toggleEditMode, toggleMultiMode, initMode } = useAddProjectFns();
+  const { idsToDelete, isEditMode, isMultiMode } = useEditMenuValues();
+  const { setEditMode, toggleMultiMode, initMode } = useEditMenuFns();
+  const { unshiftData, deleteManyData } = useProjectFns();
   const titleRef = useRef();
   const addToDo = () => {
     if (!titleRef.current) return;
@@ -36,19 +32,15 @@ const AddProjectContainer = () => {
       addToDo();
     }
   };
-  const initialize = () => {
-    initMode();
-    clearSelectedList();
-  };
   const handleDeleteMany = () => {
-    if (toDeleteIds.length === 0) return;
+    if (idsToDelete.length === 0) return;
     if (window.confirm('정말 삭제하시겠습니까?')) {
       axios({
         url: '/project/deleteMany',
         method: 'DELETE',
-        data: toDeleteIds,
+        data: idsToDelete,
       }).then(() => {
-        deleteManyData({ idList: toDeleteIds, type: 'project' });
+        deleteManyData({ idList: idsToDelete, type: 'project' });
       });
     }
   };
@@ -58,10 +50,10 @@ const AddProjectContainer = () => {
       addToDo={addToDo}
       handleAddKeyUp={handleAddKeyUp}
       isEditMode={isEditMode}
-      toggleEditMode={toggleEditMode}
+      setEditMode={setEditMode}
       isMultiMode={isMultiMode}
       toggleMultiMode={toggleMultiMode}
-      initialize={initialize}
+      initMode={initMode}
       handleDeleteMany={handleDeleteMany}
     />
   );

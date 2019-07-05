@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
-import LogInTemplate from 'components/common/LogInTemplate';
+import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
 import { useFns } from 'store/User';
 

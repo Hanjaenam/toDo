@@ -10,7 +10,7 @@ import {
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
-import { inputCss, hover1 } from 'styles/mixins';
+import { inputCss, hover1, hover2 } from 'styles/mixins';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import { MONTHS, WEEKDAYS_LONG, WEEKDAYS_SHORT } from './DayPickerCustom';
@@ -19,7 +19,7 @@ const Container = styled.div`
   box-sizing: border-box;
   width: 450px;
   border-radius: ${props => props.theme.RADIUS};
-  @media screen and (max-width: ${props => props.theme.breakpoints.small}) {
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
     /*
     height 일부러 안잡아준 것.
     */
@@ -32,12 +32,18 @@ const Container = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 `;
 
-const DateContainer = styled.div`
+const Test = styled.div`
+  display: flex;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+`;
+
+const CalendarContainer = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   position: relative;
   .DayPickerInput {
     display: block !important;
@@ -51,6 +57,7 @@ const DateContainer = styled.div`
       border-radius: 5px;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
       font-size: 1em;
       text-align: center;
       font-weight: 400;
@@ -58,7 +65,7 @@ const DateContainer = styled.div`
       width: 100%;
       padding: 1rem;
       border: none;
-      transition: 0.5s;
+      transition: ${props => props.theme.TRANSITION};
       &:focus {
         background-color: ${props => props.theme.PRIMARY()};
         color: white;
@@ -79,16 +86,16 @@ const CalendarIcon = styled(FontAwesomeIcon)`
   font-size: 1.2rem;
   position: absolute;
   left: 1rem;
-`;
-const AddIcon = styled(FontAwesomeIcon)`
-  font-size: 1.2rem;
-  position: absolute;
-  right: 1rem;
+  pointer-events: none;
 `;
 const Icon = styled(FontAwesomeIcon)`
   font-size: 1.2rem;
   padding-left: 0.5rem;
   ${hover1}
+`;
+const AddIcon = styled(Icon)`
+  font-size: 2.1rem;
+  padding: 0.5rem;
 `;
 const AddContainer = styled.div`
   flex: 1;
@@ -102,10 +109,7 @@ const Input = styled.input`
   padding: 0.5rem;
   ${inputCss}
 `;
-const ToDoContainer = styled.div`
-  margin: 0.5rem;
-  margin-top: 0;
-`;
+const ToDoContainer = styled.div``;
 
 const AddToDoList = ({
   children,
@@ -114,36 +118,48 @@ const AddToDoList = ({
   titleRef,
   handleAddClick,
   handleAddKeyUp,
+  isEditMode,
+  setEditMode,
+  isMultiMode,
+  toggleMultiMode,
+  initMode,
 }) => (
   <Container>
-    <DateContainer>
-      <CalendarIcon icon={faCalendarAlt} />
-      <DayPickerInput
-        onDayChange={handleDayChange}
-        value={selectedDay}
-        dayPickerProps={{
-          todayButton: 'Today',
-          months: MONTHS,
-          weekdaysLong: WEEKDAYS_LONG,
-          weekdaysShort: WEEKDAYS_SHORT,
-        }}
-        inputProps={{ readOnly: true }}
-      />
+    <Test>
+      <CalendarContainer>
+        <CalendarIcon icon={faCalendarAlt} />
+        <DayPickerInput
+          onDayChange={handleDayChange}
+          value={selectedDay}
+          dayPickerProps={{
+            todayButton: 'Today',
+            months: MONTHS,
+            weekdaysLong: WEEKDAYS_LONG,
+            weekdaysShort: WEEKDAYS_SHORT,
+          }}
+          inputProps={{ readOnly: true }}
+        />
+      </CalendarContainer>
       <AddIcon icon={faPlus} />
-    </DateContainer>
+    </Test>
     <AddContainer>
       <Input
         type="text"
         maxLength="50"
-        placeholder="to do name"
+        placeholder="to do title"
         ref={titleRef}
         onKeyUp={handleAddKeyUp}
       />
       <Icon icon={faPlus} onClick={handleAddClick} />
-      <Icon icon={faEdit} />
-      {/* <Icon icon={faTrashAlt} />
-      <Icon icon={faTasks} />
-      <Icon icon={faTimes} /> */}
+      {isEditMode ? (
+        <>
+          {isMultiMode ? <Icon icon={faTrashAlt} /> : null}
+          <Icon icon={faTasks} onClick={() => toggleMultiMode()} />
+          <Icon icon={faTimes} onClick={() => initMode()} />
+        </>
+      ) : (
+        <Icon icon={faEdit} onClick={() => setEditMode(true)} />
+      )}
     </AddContainer>
     <ToDoContainer>{children}</ToDoContainer>
   </Container>
@@ -155,6 +171,11 @@ AddToDoList.propTypes = {
   titleRef: PropTypes.shape({}).isRequired,
   handleAddClick: PropTypes.func.isRequired,
   handleAddKeyUp: PropTypes.func.isRequired,
+  isEditMode: PropTypes.bool.isRequired,
+  setEditMode: PropTypes.func.isRequired,
+  isMultiMode: PropTypes.bool.isRequired,
+  toggleMultiMode: PropTypes.func.isRequired,
+  initMode: PropTypes.func.isRequired,
 };
 
 export default AddToDoList;

@@ -4,11 +4,12 @@ export default {
   DANGER: '#e74e3c',
   RADIUS: '5px',
   BACKGROUND: ['rgba(200,200,200, 0.2)'],
-  breakpoints: {
-    small: '576px',
-    medium: '768px',
-    large: '992px',
-    wide: '1200px',
-    header: '1300px',
+  TRANSITION: '0.3s',
+  BREAKPOINTS: {
+    SMALL: '576px',
+    MEDIUM: '768px',
+    LARGE: '992px',
+    WIDTH: '1200px',
+    HEADER: '1300px',
   },
 };

@@ -1,18 +1,17 @@
 import React from 'react';
-import AddProject from 'components/ProjectList/AddProject';
-import AddCardProvider from 'store/ProjectList/AddProject';
+import EditProject from 'components/ProjectList/EditProject';
 import { useProjectFns } from 'store/Project';
+import EditMenuProvider from 'store/Common/EditMenu';
 import ProjectList from './ProjectList';
 
 const ProjectListContainer = () => {
   const { mapToComponent } = useProjectFns();
   return (
-    <ProjectList>
-      <AddCardProvider>
-        <AddProject />
+    <EditMenuProvider>
+      <ProjectList EditProject={<EditProject />}>
         {mapToComponent({ type: 'project' })}
-      </AddCardProvider>
-    </ProjectList>
+      </ProjectList>
+    </EditMenuProvider>
   );
 };
 export default ProjectListContainer;

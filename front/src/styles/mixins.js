@@ -3,7 +3,7 @@ import { css } from 'styled-components';
 export const hover1 = css`
   cursor: pointer;
   color: rgba(0, 0, 0, 0.4);
-  transition: color 0.5s;
+  transition: color ${props => props.theme.TRANSITION};
   &:hover {
     color: ${props => props.theme.PRIMARY()};
   }
@@ -12,11 +12,31 @@ export const hover1 = css`
   }
 `;
 
+export const hover2 = css`
+  cursor: pointer;
+  transition: background-color ${props => props.theme.TRANSITION};
+  span {
+    user-select: none;
+    display: inline-block;
+  }
+  &:hover {
+    background-color: ${props => props.theme.PRIMARY()};
+    span {
+      color: white;
+    }
+  }
+  &:active {
+    span {
+      transform: scale(0.9);
+    }
+  }
+`;
+
 export const inputCss = css`
   outline: none;
   border-radius: ${props => props.theme.RADIUS};
   border: 2px solid rgba(0, 0, 0, 0.2);
-  transition: 0.5s;
+  transition: ${props => props.theme.TRANSITION};
   &:focus {
     border-color: ${props => props.theme.PRIMARY()};
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),

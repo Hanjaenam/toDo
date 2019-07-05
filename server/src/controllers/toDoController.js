@@ -2,15 +2,14 @@ import ToDo from 'models/ToDo';
 import ToDoList from 'models/ToDoList';
 
 // onlyPrivate
-export const readAll = async (req, res) => {
+// onlyProjectCreator
+export const readFromToDoListPopulate = async (req, res) => {
+  const {
+    locals: { toDoList },
+  } = res;
   try {
-    const toDoList = await ToDoList.find({ creator: req.user._id })
-      .populate('toDo')
-      .sort({
-        createdAt: -1,
-      })
-      .limit(10);
-    res.json(toDoList);
+    const { toDo } = await toDoList.populate('toDo').execPopulate();
+    res.json(toDo.reverse());
   } catch (err) {
     console.log(err);
     res.status(500).end();

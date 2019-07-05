@@ -1,12 +1,17 @@
 import React, { useEffect } from 'react';
+import { useStatus } from 'lib/hooks';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
-import LogInTemplate from 'components/common/LogInTemplate';
+import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
 import { useFns } from 'store/User';
 
 const LogIn = ({ history }) => {
   const { logIn, setError } = useFns();
+  const {
+    loading,
+    fns: { end },
+  } = useStatus();
   useEffect(() => {
     axios({
       url: '/user/getInfo',
@@ -15,6 +20,8 @@ const LogIn = ({ history }) => {
       if (res.status === 200) {
         logIn(res.data);
         history.replace('/project');
+      } else if (res.status === 204) {
+        end();
       }
     });
   }, []);
@@ -40,7 +47,9 @@ const LogIn = ({ history }) => {
       <Helmet>
         <title>로그인</title>
       </Helmet>
-      <LogInTemplate type="logIn" handleFetch={handleFetch} />
+      {loading ? null : (
+        <LogInTemplate type="logIn" handleFetch={handleFetch} />
+      )}
     </>
   );
 };

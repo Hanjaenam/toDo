@@ -18,9 +18,10 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  margin-bottom:.5rem;
   /* border-radius: ${props => props.theme.RADIUS}; */
-  border-bottom:2px solid ${props => props.theme.PRIMARY()};
+  /* border-bottom:2px solid ${props => props.theme.PRIMARY()}; */
 `;
 
 const IconContainer = styled.span`
@@ -45,10 +46,10 @@ const AddContainer = styled.div`
 `;
 
 const Input = styled.input`
-  padding: 0.5rem 0.5rem;
-  font-size: 1rem;
   flex: 1;
-  /* ${inputCss} */
+  padding: 0.5rem;
+  font-size: 1rem;
+  ${inputCss}
 `;
 
 const AddCard = ({
@@ -56,10 +57,10 @@ const AddCard = ({
   addToDo,
   handleAddKeyUp,
   isEditMode,
-  toggleEditMode,
+  setEditMode,
   isMultiMode,
   toggleMultiMode,
-  initialize,
+  initMode,
   handleDeleteMany,
 }) => (
   <Container>
@@ -90,12 +91,12 @@ const AddCard = ({
           />
         </IconContainer>
         <IconContainer>
-          <Icon icon={faTimes} onClick={() => initialize()} />
+          <Icon icon={faTimes} onClick={initMode} />
         </IconContainer>
       </div>
     ) : (
       <IconContainer>
-        <Icon icon={faEdit} onClick={() => toggleEditMode(true)} />
+        <Icon icon={faEdit} onClick={() => setEditMode(true)} />
       </IconContainer>
     )}
   </Container>
@@ -106,10 +107,10 @@ AddCard.propTypes = {
   addToDo: PropTypes.func.isRequired,
   handleAddKeyUp: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
-  toggleEditMode: PropTypes.func.isRequired,
+  setEditMode: PropTypes.func.isRequired,
   isMultiMode: PropTypes.bool.isRequired,
   toggleMultiMode: PropTypes.func.isRequired,
-  initialize: PropTypes.func.isRequired,
+  initMode: PropTypes.func.isRequired,
   handleDeleteMany: PropTypes.func.isRequired,
 };
 

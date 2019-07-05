@@ -1,51 +1,35 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faTrashAlt,
-  faPen,
-  faTimes,
-  faCheck,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import EditMenu from 'components/Common/EditMenu';
+import Title from 'components/Common/Title';
 
 const Container = styled.div`
   background: transparent;
   display: flex;
   position: relative;
 `;
-
-const Icon = styled(FontAwesomeIcon)`
-  height: 100%;
-  width: 1rem !important;
-  padding: 0 0.5rem;
-  cursor: pointer;
-  transition: 0.5s;
-  &:hover {
-    color: white;
-    background: ${props => props.theme.PRIMARY()};
-  }
-`;
 const SelectIcon = styled(FontAwesomeIcon)`
   position: absolute;
   top: 0;
   left: 0;
-  transform: translate(-30%, -40%);
+  transform: translate(10%, -50%);
 `;
 
 const DataContainer = styled.div`
+  display: flex;
   flex: 1;
   box-sizing: border-box;
   padding: 0.5rem;
   background: white;
-  box-sizing: border-box;
   border-radius: ${props => props.theme.RADIUS};
-  display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: box-shadow 0.2s;
+  transition: box-shadow ${props => props.theme.TRANSITION};
   border: 1px solid ${props => props.theme.PRIMARY()};
-  transition: 0.5s;
+  transition: ${props => props.theme.TRANSITION};
   ${props => {
     if (props.isSelected) {
       return css`
@@ -64,19 +48,9 @@ const DataContainer = styled.div`
             color: white;
           }
         }
-        &:active {
-          border-color: ${props => props.theme.PRIMARY()};
-        }
       `;
     }
   }}
-`;
-const Title = styled.p`
-  box-sizing: border-box;
-  border: 2px solid transparent;
-  padding: 0.5rem;
-  padding-left: 0;
-  color: ${props => props.theme.PRIMARY()};
 `;
 const Date = styled.p`
   font-style: italic;
@@ -85,48 +59,12 @@ const Date = styled.p`
   color: ${props => props.theme.PRIMARY()};
 `;
 
-const InputContainer = styled.div`
-  position: relative;
-  flex: 1;
-`;
-const Input = styled.input`
-  all: unset;
-  box-sizing: border-box;
-  padding: 0.5rem;
-  padding-left: 0.5rem;
-  cursor: auto;
-  font-size: 1rem;
-  width: 100%;
-  border-radius: ${props => props.theme.RADIUS};
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  &:focus {
-    border-color: rgba(0, 0, 0, 0.5);
-  }
-`;
-const ConfirmIcon = styled(Icon)`
-  position: absolute;
-  right: 0;
-  top: 0%;
-  border-top-right-radius: ${props => props.theme.RADIUS};
-  border-bottom-right-radius: ${props => props.theme.RADIUS};
-`;
-const EditContainer = styled.div`
-  background: white;
-  margin-left: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: ${props => props.theme.RADIUS};
-  overflow: hidden;
-  border: 1px solid ${props => props.theme.PRIMARY()};
-`;
-
-const ToDoCard = ({
+const Project = ({
   id,
   title,
   createdAt,
   handleDelete,
-  changeTitle,
+  isChangeTitleMode,
   setChangeTitleMode,
   patchProject,
   isEditMode,
@@ -134,61 +72,43 @@ const ToDoCard = ({
   handleClick,
   isSelected,
   handlePatchKeyUp,
-}) => {
-  const titleRef = useRef();
-  return (
-    <Container>
-      <DataContainer
-        changeTitle={changeTitle}
-        onClick={handleClick}
-        isSelected={isSelected}
-        isEditMode={isEditMode}
-        isMultiMode={isMultiMode}
-      >
-        {isMultiMode && isSelected ? (
-          <SelectIcon icon={faCheck} size="2x" />
-        ) : null}
-        {changeTitle ? (
-          <InputContainer>
-            <Input
-              defaultValue={title}
-              autoFocus
-              ref={titleRef}
-              onKeyUp={e => handlePatchKeyUp(e, titleRef)}
-            />
-            <ConfirmIcon
-              icon={faCheck}
-              onClick={() => patchProject(titleRef)}
-            />
-          </InputContainer>
-        ) : (
-          <Title>{title}</Title>
-        )}
-        <Date>{createdAt}</Date>
-      </DataContainer>
-      {isEditMode && !isMultiMode ? (
-        <EditContainer>
-          <Icon
-            icon={changeTitle ? faTimes : faPen}
-            onClick={
-              changeTitle
-                ? () => setChangeTitleMode(false)
-                : () => setChangeTitleMode(true)
-            }
-          />
-          <Icon icon={faTrashAlt} onClick={() => handleDelete(id)} />
-        </EditContainer>
+}) => (
+  <Container>
+    <DataContainer
+      isChangeTitleMode={isChangeTitleMode}
+      onClick={handleClick}
+      isSelected={isSelected}
+      isEditMode={isEditMode}
+      isMultiMode={isMultiMode}
+    >
+      {isMultiMode && isSelected ? (
+        <SelectIcon icon={faCheck} size="2x" />
       ) : null}
-    </Container>
-  );
-};
+      <Title
+        title={title}
+        isChangeTitleMode={isChangeTitleMode}
+        handlePatchKeyUp={handlePatchKeyUp}
+        patchProject={patchProject}
+      />
+      <Date>{createdAt}</Date>
+    </DataContainer>
+    <EditMenu
+      id={id}
+      isEditMode={isEditMode}
+      isMultiMode={isMultiMode}
+      isChangeTitleMode={isChangeTitleMode}
+      setChangeTitleMode={setChangeTitleMode}
+      handleDelete={handleDelete}
+    />
+  </Container>
+);
 
-ToDoCard.propTypes = {
+Project.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   createdAt: PropTypes.string.isRequired,
   handleDelete: PropTypes.func.isRequired,
-  changeTitle: PropTypes.bool.isRequired,
+  isChangeTitleMode: PropTypes.bool.isRequired,
   setChangeTitleMode: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   patchProject: PropTypes.func.isRequired,
@@ -197,4 +117,4 @@ ToDoCard.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   handlePatchKeyUp: PropTypes.func.isRequired,
 };
-export default ToDoCard;
+export default Project;

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import styled from 'styled-components';
 import DetailProject from 'components/DetailProject';
-import Header from 'components/common/Header';
+import Header from 'components/Common/Header';
 import axios from 'axios';
-import { useProjectFns, useProjectValue } from 'store/Project';
+import { useProjectFns, useProjectValues } from 'store/Project';
 import { useStatus } from 'lib/hooks';
 
 const Container = styled.div`
@@ -28,19 +28,23 @@ const DetailProjectPage = ({
   },
 }) => {
   const { loadData } = useProjectFns();
-  const { selectedProjectId } = useProjectValue();
-  const { loading, failure, end } = useStatus();
+  const { selectedProjectId } = useProjectValues();
+  const { toDoListDatas } = useProjectValues();
+  const {
+    error,
+    fns: { failure },
+  } = useStatus();
   useEffect(() => {
-    end();
-    // axios({
-    //   url: `/toDoList/read/${selectedProjectId}`,
-    //   method: 'get',
-    // })
-    //   .then(res => {
-    //     loadData({ data: res.data, type: 'toDoList' });
-    //   })
-    //   .catch(error => failure(error))
-    //   .finally(() => end());
+    if (toDoListDatas === undefined) {
+      axios({
+        url: `/toDoList/read/${selectedProjectId}`,
+        method: 'get',
+      })
+        .then(res => {
+          loadData({ data: res.data, type: 'toDoList' });
+        })
+        .catch(err => failure(err));
+    }
   }, []);
   return (
     <>
@@ -51,7 +55,8 @@ const DetailProjectPage = ({
         <Header>
           <Title>{title}</Title>
         </Header>
-        {loading ? null : <DetailProject />}
+        {/* <DetailProject /> */}
+        {toDoListDatas === undefined || error ? null : <DetailProject />}
       </Container>
     </>
   );

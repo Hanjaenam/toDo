@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
-import Message from 'components/common/Message';
+import Message from 'components/Common/Message';
 import {} from 'styles/mixins';
 
 const LayOut = styled.div`
@@ -10,7 +10,7 @@ const LayOut = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  @media screen and (max-width: ${props => props.theme.breakpoints.small}) {
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
     align-items: flex-start;
     height: auto;
   }
@@ -21,7 +21,7 @@ const LayOut = styled.div`
 
 const Container = styled.div`
   width: 500px;
-  @media screen and (max-width: ${props => props.theme.breakpoints.small}) {
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
     width: 100%;
     border-radius: 0;
   }
@@ -72,7 +72,7 @@ const InputContainer = styled.div`
 `;
 
 const Button = styled.button`
-  transition: 0.5s;
+  transition: ${props => props.theme.TRANSITION};
   ${props => {
     if (props.facebook) {
       return css`
