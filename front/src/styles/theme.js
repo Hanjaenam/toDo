@@ -9,7 +9,7 @@ export default {
     SMALL: '576px',
     MEDIUM: '768px',
     LARGE: '992px',
-    WIDTH: '1200px',
+    WIDE: '1200px',
     HEADER: '1300px',
   },
 };

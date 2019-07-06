@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 
 const UserSchema = mongoose.Schema({
+  name: { type: String, unique: true },
   email: { type: String, required: true },
   hash: {
     type: String,
@@ -72,4 +73,5 @@ UserSchema.static('findAll', function(cb) {
 UserSchema.static('findByEmail', function(email, cb) {
   return this.findOne({ email }, cb);
 });
-export default mongoose.model('User', UserSchema);
+export default UserSchema;
+// export default mongoose.model('User', UserSchema);

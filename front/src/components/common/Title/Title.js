@@ -49,7 +49,7 @@ const Title = ({
   title,
   isChangeTitleMode,
   handlePatchKeyUp,
-  patchProject,
+  processPatch,
 }) => {
   const titleRef = useRef();
   return (
@@ -62,7 +62,7 @@ const Title = ({
             ref={titleRef}
             onKeyUp={e => handlePatchKeyUp(e, titleRef)}
           />
-          <ConfirmIcon icon={faCheck} onClick={() => patchProject(titleRef)} />
+          <ConfirmIcon icon={faCheck} onClick={() => processPatch(titleRef)} />
         </>
       ) : (
         <TitleText>{title}</TitleText>
@@ -73,7 +73,13 @@ const Title = ({
 Title.propTypes = {
   title: PropTypes.string.isRequired,
   isChangeTitleMode: PropTypes.bool.isRequired,
-  handlePatchKeyUp: PropTypes.func.isRequired,
-  patchProject: PropTypes.func.isRequired,
+  handlePatchKeyUp: PropTypes.func,
+  processPatch: PropTypes.func,
+};
+Title.defaultProps = {
+  //------
+  handlePatchKeyUp: undefined,
+  patchProject: undefined,
+  //------
 };
 export default Title;

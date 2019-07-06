@@ -4,8 +4,8 @@ import Helmet from 'react-helmet';
 import styled from 'styled-components';
 import DetailProject from 'components/DetailProject';
 import Header from 'components/Common/Header';
+import { useProjectValues } from 'store/Project';
 import axios from 'axios';
-import { useProjectFns, useProjectValues } from 'store/Project';
 import { useStatus } from 'lib/hooks';
 
 const Container = styled.div`
@@ -27,7 +27,6 @@ const DetailProjectPage = ({
     params: { title },
   },
 }) => {
-  const { loadData } = useProjectFns();
   const { selectedProjectId } = useProjectValues();
   const { toDoListDatas } = useProjectValues();
   const {
@@ -37,11 +36,11 @@ const DetailProjectPage = ({
   useEffect(() => {
     if (toDoListDatas === undefined) {
       axios({
-        url: `/toDoList/read/${selectedProjectId}`,
+        url: `/toDoList/readFromProject/${selectedProjectId}`,
         method: 'get',
       })
         .then(res => {
-          loadData({ data: res.data, type: 'toDoList' });
+          // loadData({ data: res.data, type: 'toDoList' });
         })
         .catch(err => failure(err));
     }
@@ -55,7 +54,6 @@ const DetailProjectPage = ({
         <Header>
           <Title>{title}</Title>
         </Header>
-        {/* <DetailProject /> */}
         {toDoListDatas === undefined || error ? null : <DetailProject />}
       </Container>
     </>

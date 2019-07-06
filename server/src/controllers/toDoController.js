@@ -1,44 +1,11 @@
 import ToDo from 'models/ToDo';
-import ToDoList from 'models/ToDoList';
+import Project from 'models/Project';
 
-// onlyPrivate
-// onlyProjectCreator
-export const readFromToDoListPopulate = async (req, res) => {
-  const {
-    locals: { toDoList },
-  } = res;
+export const readAll = async (req, res) => {
   try {
-    const { toDo } = await toDoList.populate('toDo').execPopulate();
-    res.json(toDo.reverse());
-  } catch (err) {
-    console.log(err);
-    res.status(500).end();
-  }
-};
-
-// onlyPrivate
-// onlyProjectCreator
-export const add = async (req, res) => {
-  const {
-    body: { title, content, createdAt },
-  } = req;
-  const {
-    locals: { project },
-  } = res;
-  try {
-    let toDoList = await ToDoList.findOne({ createdAt });
-    const toDo = await ToDo.create({
-      title,
-      content,
-      creator: req.user._id,
-    });
-    if (toDoList) {
-      toDoList.toDo.push(toDo.id);
-    } else {
-      toDoList = await ToDoList.create({ createdAt });
-      toDoList.toDo.push(toDo);
-    }
-    project.toDoList.push(toDo.id);
+    const toDo = await ToDo.find({ creator: req.user._id })
+      .sort({ createdAt: -1 })
+      .exec();
     res.json(toDo);
   } catch (err) {
     console.log(err);
@@ -46,14 +13,67 @@ export const add = async (req, res) => {
   }
 };
 
-// onlyPrivate
-// onlyCreator
+export const readOne = async (req, res) => {
+  const {
+    prams: { id },
+  } = req;
+  try {
+    const toDo = await ToDo.findOne({ _id: id, creator: req.user._id }).exec();
+    // 최신순으로 정렬할 것.
+    console.log(typeof toDo);
+    res.json(toDo);
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
+};
+
+export const readFromProject = async (req, res) => {
+  const {
+    params: { id: projectId },
+  } = req;
+  try {
+    const { toDo } = await Project.findById(projectId)
+      .populate('toDo')
+      .exec();
+    res.json(toDo);
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
+};
+
+export const create = async (req, res) => {
+  const {
+    body: { toDoData, projectId },
+  } = req;
+  try {
+    const toDo = await ToDo.create({ creator: req.user._id, ...toDoData });
+    await Project.findByIdAndUpdate(projectId, {
+      $push: { toDos: toDo },
+    }).exec();
+    res.json(toDo);
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
+};
+
 export const deleteOne = async (req, res) => {
   const {
-    locals: { toDo },
-  } = res;
+    params: { id },
+    body: projectId,
+  } = req;
   try {
-    await toDo.delete();
+    const { ok } = await ToDo.deleteOne({
+      _id: id,
+      creator: req.user._id,
+    }).exec();
+    if (ok) {
+      await Project.findByIdAndUpdate(projectId, {
+        $pull: { toDos: { $in: id } },
+      }).exec();
+    }
     res.status(204).end();
   } catch (err) {
     console.log(err);
@@ -61,38 +81,38 @@ export const deleteOne = async (req, res) => {
   }
 };
 
-// onlyPrivate
-// onlyToDoCreator
-// onlyNotCompleted
-export const patch = async (req, res) => {
+export const deleteMany = async (req, res) => {
   const {
-    body: { title, content },
+    body: { idList, projectId },
   } = req;
-  const {
-    locals: { toDo },
-  } = res;
   try {
-    res.title = title;
-    res.content = content;
-    await res.save();
-    res.json(toDo);
+    const { ok } = await ToDo.deleteMany({
+      _id: { $in: idList },
+      creator: req.user._id,
+    }).exec();
+    if (ok) {
+      await Project.findByIdAndUpdate(projectId, {
+        $pullAll: { toDos: idList },
+      }).exec();
+    }
+    res.status(204).end();
   } catch (err) {
     console.log(err);
     res.status(500).end();
   }
 };
 
-// onlyPrivate
-// onlyToDoCreator
-// onlyNotCompleted
-export const completed = async (req, res) => {
+export const patch = async (req, res) => {
   const {
-    locals: { toDo },
-  } = res;
+    params: { id },
+    body,
+  } = req;
   try {
-    toDo.isCompleted = true;
-    toDo.completedAr = Date.now();
-    await toDo.save();
+    const toDo = await ToDo.findByIdAndUpdate(
+      id,
+      { ...body },
+      { new: true },
+    ).exec();
     res.json(toDo);
   } catch (err) {
     console.log(err);

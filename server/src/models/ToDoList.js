@@ -1,30 +1,29 @@
 import mongoose from 'mongoose';
+// import ToDo from './ToDo';
 
-const ToDoListSchema = mongoose.Schema({
+export default mongoose.Schema({
   createdAt: {
     type: Date,
     index: {
       unique: false,
     },
-    default: Date.now(),
+    default: new Date().toDateString(),
   },
-  toDo: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'ToDo',
-    },
+  toDo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ToDo' }],
+  project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
+  readable: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
   ],
-  // auth: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'Autho',
-  // },
+  writable: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
+  ],
 });
 
-ToDoListSchema.pre('save', next => {
-  if (Date(this.createdAt).split(' ')[0] === Date(Date.now()).split(' ')[0]) {
-    throw Error('오늘의 할 일 묵록은 이미 생성되어있습니다.');
-  }
-  return next();
-});
+// ToDoListSchema.post('remove', function(doc) {
+//   ToDo.find({ toDoList: doc._id }).remove();
+//   Project.findByIdAndUpdate(doc.project, {
+//     $pull: { $in: { toDoList: doc._id } },
+//   });
+// });
 
-export default mongoose.model('toDoList', ToDoListSchema);
+// export default mongoose.model('ToDoList', ToDoListSchema);

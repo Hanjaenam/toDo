@@ -66,7 +66,7 @@ const Project = ({
   handleDelete,
   isChangeTitleMode,
   setChangeTitleMode,
-  patchProject,
+  processPatch,
   isEditMode,
   isMultiMode,
   handleClick,
@@ -88,7 +88,7 @@ const Project = ({
         title={title}
         isChangeTitleMode={isChangeTitleMode}
         handlePatchKeyUp={handlePatchKeyUp}
-        patchProject={patchProject}
+        processPatch={processPatch}
       />
       <Date>{createdAt}</Date>
     </DataContainer>
@@ -111,7 +111,7 @@ Project.propTypes = {
   isChangeTitleMode: PropTypes.bool.isRequired,
   setChangeTitleMode: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
-  patchProject: PropTypes.func.isRequired,
+  processPatch: PropTypes.func.isRequired,
   isMultiMode: PropTypes.bool.isRequired,
   handleClick: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,

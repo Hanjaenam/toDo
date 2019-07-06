@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { inputCss, hover1 } from 'styles/mixins';
 import 'react-day-picker/lib/style.css';
 
@@ -19,14 +19,10 @@ const Container = styled.div`
     margin-bottom: 0.5rem;
   }
   flex-shrink: 0;
-  margin-right: 1rem;
+  margin: 1rem;
+  margin-right: 0;
   background: white;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-`;
-
-const Date = styled.span`
-  padding: 1rem;
-  user-select: none;
 `;
 
 const DateContainer = styled.div`
@@ -34,6 +30,13 @@ const DateContainer = styled.div`
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+`;
+
+const Date = styled.span`
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  user-select: none;
 `;
 
 const EditContainer = styled.div`
@@ -44,7 +47,6 @@ const AddContainer = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  padding-right: 0.5rem;
 `;
 const Input = styled.input`
   flex: 1;
@@ -59,16 +61,23 @@ const Icon = styled(FontAwesomeIcon)`
   ${hover1}
 `;
 
+const ToDoListTrashIcon = styled(Icon)`
+  font-size: 2.1rem;
+  padding-right: 0.5rem;
+`;
+
 const ToDoList = ({
   children,
   createdAt,
   titleRef,
   handleAddClick,
   handleAddKeyUp,
+  deleteToDoList,
 }) => (
   <Container>
     <DateContainer>
       <Date>{createdAt}</Date>
+      <ToDoListTrashIcon icon={faTrashAlt} onClick={deleteToDoList} />
     </DateContainer>
     <EditContainer>
       <AddContainer>

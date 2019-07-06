@@ -1,41 +1,14 @@
-import React, { useEffect } from 'react';
-import { useStatus } from 'lib/hooks';
+import React from 'react';
 import axios from 'axios';
-import ToDoListProvider, {
-  useToDoListFns,
-  useToDoListDatas,
-} from 'store/DetailProject/ToDoList';
-import EditMenuProvider from 'store/Common/EditMenu';
 import ToDoList from './ToDoList';
 
-const ToDoListContainer = ({ id }) => {
-  const { loadData, mapToComponent } = useToDoListFns();
-  const toDoListDatas = useToDoListDatas();
-  const {
-    error,
-    fns: { failure },
-  } = useStatus();
-  useEffect(() => {
-    if (toDoListDatas === undefined) {
-      axios({
-        url: `/toDo/read/${id}`,
-        method: 'get',
-      })
-        .then(res => loadData(res.data))
-        .catch(err => failure(err));
-    }
-  }, []);
-
-  return (
-    <ToDoList>
-      {toDoListDatas === undefined || error ? null : mapToComponent()}
-    </ToDoList>
-  );
+const ToDoListContainer = ({ id, createdAt }) => {
+  const deleteToDoList = () => {
+    if (!window.confirm(`${createdAt} 정말로 삭제하시겠습니까?`)) return;
+    axios({ url: `/toDoList/delete/${id}`, method: 'DELETE' }).then(() => {
+      deleteOneData({ id, type: 'toDoList' });
+    });
+  };
+  return <ToDoList createdAt={createdAt} deleteToDoList={deleteToDoList} />;
 };
-export default ({ id }) => (
-  <ToDoListProvider>
-    <EditMenuProvider>
-      <ToDoListContainer id={id} />
-    </EditMenuProvider>
-  </ToDoListProvider>
-);
+export default ToDoListContainer;

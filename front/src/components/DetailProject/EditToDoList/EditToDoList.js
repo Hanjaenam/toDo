@@ -10,7 +10,7 @@ import {
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
-import { inputCss, hover1, hover2 } from 'styles/mixins';
+import { inputCss, hover1 } from 'styles/mixins';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import { MONTHS, WEEKDAYS_LONG, WEEKDAYS_SHORT } from './DayPickerCustom';
@@ -20,9 +20,7 @@ const Container = styled.div`
   width: 450px;
   border-radius: ${props => props.theme.RADIUS};
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
-    /*
-    height 일부러 안잡아준 것.
-    */
+    /* height 일부러 안잡아준 것. */
     width: 100%;
     margin-bottom: 0.5rem;
   }
@@ -111,13 +109,14 @@ const Input = styled.input`
 `;
 const ToDoContainer = styled.div``;
 
-const AddToDoList = ({
+const EditToDoList = ({
   children,
   selectedDay,
-  handleDayChange,
+  setSelectedDay,
   titleRef,
-  handleAddClick,
-  handleAddKeyUp,
+  createToDoListWithToDo,
+  createToDo,
+  handleCreateToDoKeyUp,
   isEditMode,
   setEditMode,
   isMultiMode,
@@ -129,7 +128,7 @@ const AddToDoList = ({
       <CalendarContainer>
         <CalendarIcon icon={faCalendarAlt} />
         <DayPickerInput
-          onDayChange={handleDayChange}
+          onDayChange={day => setSelectedDay(day)}
           value={selectedDay}
           dayPickerProps={{
             todayButton: 'Today',
@@ -140,7 +139,7 @@ const AddToDoList = ({
           inputProps={{ readOnly: true }}
         />
       </CalendarContainer>
-      <AddIcon icon={faPlus} />
+      <AddIcon icon={faPlus} onClick={createToDoListWithToDo} />
     </Test>
     <AddContainer>
       <Input
@@ -148,9 +147,9 @@ const AddToDoList = ({
         maxLength="50"
         placeholder="to do title"
         ref={titleRef}
-        onKeyUp={handleAddKeyUp}
+        onKeyUp={handleCreateToDoKeyUp}
       />
-      <Icon icon={faPlus} onClick={handleAddClick} />
+      <Icon icon={faPlus} onClick={createToDo} />
       {isEditMode ? (
         <>
           {isMultiMode ? <Icon icon={faTrashAlt} /> : null}
@@ -165,12 +164,13 @@ const AddToDoList = ({
   </Container>
 );
 
-AddToDoList.propTypes = {
+EditToDoList.propTypes = {
   selectedDay: PropTypes.instanceOf(Date).isRequired,
-  handleDayChange: PropTypes.func.isRequired,
+  setSelectedDay: PropTypes.func.isRequired,
   titleRef: PropTypes.shape({}).isRequired,
-  handleAddClick: PropTypes.func.isRequired,
-  handleAddKeyUp: PropTypes.func.isRequired,
+  createToDoListWithToDo: PropTypes.func.isRequired,
+  createToDo: PropTypes.func.isRequired,
+  handleCreateToDoKeyUp: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   setEditMode: PropTypes.func.isRequired,
   isMultiMode: PropTypes.bool.isRequired,
@@ -178,4 +178,4 @@ AddToDoList.propTypes = {
   initMode: PropTypes.func.isRequired,
 };
 
-export default AddToDoList;
+export default EditToDoList;

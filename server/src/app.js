@@ -9,7 +9,7 @@ import session from 'express-session';
 import flash from 'connect-flash';
 import initPassport from 'config/passport';
 import routes from 'routes';
-import { userRouter, projectRouter, toDoListRouter } from 'routers';
+import { userRouter, projectRouter, toDoRouter } from 'routers';
 
 const app = express();
 app.use(helmet());
@@ -30,7 +30,7 @@ app.use(flash());
 initPassport();
 app.use(routes.user, userRouter);
 app.use(routes.project, projectRouter);
-app.use(routes.toDoList, toDoListRouter);
+app.use(routes.toDo, toDoRouter);
 
 console.log('complete setting app');
 

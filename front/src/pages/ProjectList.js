@@ -2,11 +2,14 @@ import React, { useEffect } from 'react';
 import Helmet from 'react-helmet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faStar, faClock } from '@fortawesome/free-solid-svg-icons';
-import { hover1, inputCss } from 'styles/mixins';
+import { hover1 } from 'styles/mixins';
 import styled from 'styled-components';
 import ProjectList from 'components/ProjectList';
 import Header from 'components/Common/Header';
-import { useProjectFns, useProjectValues } from 'store/Project';
+import ProjectProvider, {
+  useProjectFns,
+  useProjectValues,
+} from 'store/Project';
 import { useStatus } from 'lib/hooks';
 import axios from 'axios';
 
@@ -67,7 +70,7 @@ const SortView = styled.div`
 `;
 
 const ProjectListPage = () => {
-  const { loadData } = useProjectFns();
+  const { loadProject } = useProjectFns();
   const { projectDatas } = useProjectValues();
   const {
     error,
@@ -76,11 +79,11 @@ const ProjectListPage = () => {
   useEffect(() => {
     if (projectDatas === undefined) {
       axios({
-        url: '/project/read',
+        url: '/project/readAll',
         method: 'get',
       })
         .then(res => {
-          loadData({ data: res.data, type: 'project' });
+          loadProject(res.data);
         })
         .catch(err => failure(err));
     }
@@ -107,4 +110,8 @@ const ProjectListPage = () => {
     </>
   );
 };
-export default ProjectListPage;
+export default () => (
+  <ProjectProvider>
+    <ProjectListPage />
+  </ProjectProvider>
+);

@@ -9,7 +9,7 @@ const ProjectListContainer = () => {
   return (
     <EditMenuProvider>
       <ProjectList EditProject={<EditProject />}>
-        {mapToComponent({ type: 'project' })}
+        {mapToComponent()}
       </ProjectList>
     </EditMenuProvider>
   );

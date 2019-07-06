@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
+// import User from './User';
+// import ToDoList from './ToDoList';
 
-const projectSchema = mongoose.Schema({
+export default mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -35,14 +37,14 @@ const projectSchema = mongoose.Schema({
       ref: 'ToDoList',
     },
   ],
-  creator: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  // auth: {
-  // type: mongoose.Schema.Types.ObjectId,
-  // ref: 'Autho',
-  // },
+  creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
 });
 
-export default mongoose.model('Project', projectSchema);
+// ProjectSchema.post('remove', function(doc) {
+//   // ToDoList.deleteMany()
+//   // 다중 삭제되는 지 확인할 것.
+//   ToDoList.find({ project: doc._id }).remove();
+//   User.findByIdAndUpdate(doc.creator, { $pull: { $in: { project: doc._id } } });
+// });
+
+// export default mongoose.model('Project', ProjectSchema);

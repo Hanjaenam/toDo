@@ -10,7 +10,7 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
   const [isChangeTitleMode, setChangeTitleMode] = useState(false);
   const { idsToDelete, isEditMode, isMultiMode } = useEditMenuValues();
   const { toggleIdsToDelete } = useEditMenuFns();
-  const { deleteOneData, patchData, selectProject } = useProjectFns();
+  const { deleteOneProject, patchProject, selectProject } = useProjectFns();
   useEffect(() => {
     if (!isEditMode && isChangeTitleMode) {
       setChangeTitleMode(false);
@@ -22,11 +22,11 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
         url: `/project/delete/${id}`,
         method: 'delete',
       }).then(() => {
-        deleteOneData({ id, type: 'project' });
+        deleteOneProject(id);
       });
     }
   };
-  const patchProject = titleRef => {
+  const processPatch = titleRef => {
     if (!titleRef.current) return;
     const newTitle = titleRef.current.value;
     if (title === newTitle) return;
@@ -38,7 +38,7 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
       },
     })
       .then(res => {
-        patchData({ id, newData: res.data, type: 'project' });
+        patchProject({ id, newData: res.data });
       })
       .finally(() => {
         setChangeTitleMode(false);
@@ -68,7 +68,7 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
       isSelected={idsToDelete.some(selectedId => selectedId === id)}
       isChangeTitleMode={isChangeTitleMode}
       setChangeTitleMode={setChangeTitleMode}
-      patchProject={patchProject}
+      processPatch={processPatch}
       handleClick={handleClick}
       handlePatchKeyUp={handlePatchKeyUp}
     />

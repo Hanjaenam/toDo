@@ -12,16 +12,12 @@ import {
 import { hover1, inputCss } from 'styles/mixins';
 
 const Container = styled.div`
-  background: white;
   box-sizing: border-box;
   padding: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  margin-bottom:.5rem;
-  /* border-radius: ${props => props.theme.RADIUS}; */
-  /* border-bottom:2px solid ${props => props.theme.PRIMARY()}; */
+  margin-bottom: 0.5rem;
 `;
 
 const IconContainer = styled.span`
@@ -52,10 +48,10 @@ const Input = styled.input`
   ${inputCss}
 `;
 
-const AddCard = ({
+const EditProject = ({
   titleRef,
-  addToDo,
-  handleAddKeyUp,
+  createProject,
+  handleCreateKeyUp,
   isEditMode,
   setEditMode,
   isMultiMode,
@@ -69,11 +65,11 @@ const AddCard = ({
         placeholder="ToDoName"
         id="addTitle"
         ref={titleRef}
-        onKeyUp={handleAddKeyUp}
+        onKeyUp={handleCreateKeyUp}
         maxLength="100"
       />
       <IconContainer>
-        <Icon icon={faPlus} onClick={addToDo} />
+        <Icon icon={faPlus} onClick={createProject} />
       </IconContainer>
     </AddContainer>
     {isEditMode ? (
@@ -102,10 +98,10 @@ const AddCard = ({
   </Container>
 );
 
-AddCard.propTypes = {
+EditProject.propTypes = {
   titleRef: PropTypes.shape({}).isRequired,
-  addToDo: PropTypes.func.isRequired,
-  handleAddKeyUp: PropTypes.func.isRequired,
+  createProject: PropTypes.func.isRequired,
+  handleCreateKeyUp: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   setEditMode: PropTypes.func.isRequired,
   isMultiMode: PropTypes.bool.isRequired,
@@ -114,4 +110,4 @@ AddCard.propTypes = {
   handleDeleteMany: PropTypes.func.isRequired,
 };
 
-export default AddCard;
+export default EditProject;

@@ -47,11 +47,17 @@ const EditMenu = ({
     </EditContainer>
   ) : null;
 EditMenu.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
   isMultiMode: PropTypes.bool.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   isChangeTitleMode: PropTypes.bool.isRequired,
   setChangeTitleMode: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func,
+};
+EditMenu.defaultProps = {
+  //------
+  id: undefined,
+  handleDelete: undefined,
+  //------
 };
 export default EditMenu;
