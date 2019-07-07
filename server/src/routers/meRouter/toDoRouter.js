@@ -1,16 +1,19 @@
 import express from 'express';
 import {
+  readFromProject,
   createNPush,
   deleteOne,
   deleteMany,
+  patch,
 } from 'controllers/meController/toDoController';
-import { onlyPrivate } from 'middlewares/user';
 import routes from 'routes';
 
 const Router = express.Router();
 
-Router.post(routes.createNPush, onlyPrivate, createNPush);
-Router.delete(routes.deleteOne, onlyPrivate, deleteOne);
-Router.delete(routes.deleteMany, onlyPrivate, deleteMany);
+Router.get(routes.home + routes.paramsId, readFromProject);
+Router.post(routes.create + routes.paramsId, createNPush);
+Router.delete(routes.delete + routes.paramsId, deleteOne);
+Router.delete(routes.delete, deleteMany);
+Router.patch(routes.patch + routes.paramsId, patch);
 
 export default Router;

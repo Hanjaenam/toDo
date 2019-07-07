@@ -1,33 +1,16 @@
-import React, { useEffect } from 'react';
-import { useStatus } from 'lib/hooks';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
 import { useFns } from 'store/User';
+import OnlyPublic from 'components/OnlyPublic';
 
 const LogIn = ({ history }) => {
   const { logIn, setError } = useFns();
-  const {
-    loading,
-    fns: { end },
-  } = useStatus();
-  useEffect(() => {
-    axios({
-      url: '/user/getInfo',
-      method: 'get',
-    }).then(res => {
-      if (res.status === 200) {
-        logIn(res.data);
-        history.replace('/project');
-      } else if (res.status === 204) {
-        end();
-      }
-    });
-  }, []);
   const handleFetch = ({ eValue, pValue }) => {
     axios({
-      url: '/user/logIn',
+      url: '/auth/logIn',
       method: 'post',
       data: {
         email: eValue,
@@ -36,7 +19,7 @@ const LogIn = ({ history }) => {
     })
       .then(res => {
         logIn(res.data);
-        history.replace('/project');
+        history.replace('/me/project');
       })
       .catch(err => {
         setError(err.response.data.message[0]);
@@ -47,13 +30,15 @@ const LogIn = ({ history }) => {
       <Helmet>
         <title>로그인</title>
       </Helmet>
-      {loading ? null : (
-        <LogInTemplate type="logIn" handleFetch={handleFetch} />
-      )}
+      <LogInTemplate type="logIn" handleFetch={handleFetch} />
     </>
   );
 };
 LogIn.propTypes = {
   history: PropTypes.shape({}).isRequired,
 };
-export default LogIn;
+export default ({ history }) => (
+  <OnlyPublic history={history}>
+    <LogIn history={history} />
+  </OnlyPublic>
+);

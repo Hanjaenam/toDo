@@ -4,23 +4,29 @@ import Helmet from 'react-helmet';
 import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
 import { useFns } from 'store/User';
+import { useStatus } from 'lib/hooks';
+import OnlyPublic from 'components/OnlyPublic';
 
 const Register = ({ history }) => {
   const { logIn, setError } = useFns();
+  const {
+    loading,
+    fns: { end },
+  } = useStatus();
   useEffect(() => {
     axios({
-      url: '/user/getInfo',
+      url: '/me',
       method: 'get',
-    }).then(res => {
-      if (res.status === 200) {
+    })
+      .then(res => {
         logIn(res.data);
-        history.replace('/project');
-      }
-    });
+        history.replace('/me/project');
+      })
+      .catch(() => end());
   }, []);
   const handleFetch = ({ eValue, pValue, cpValue }) => {
     axios({
-      url: '/user/register',
+      url: '/auth/register',
       method: 'post',
       data: {
         email: eValue,
@@ -30,7 +36,7 @@ const Register = ({ history }) => {
     })
       .then(res => {
         logIn(res.data);
-        history.replace('/project');
+        history.replace('/me/project');
       })
       .catch(err => {
         setError(err.response.data.message[0]);
@@ -41,11 +47,17 @@ const Register = ({ history }) => {
       <Helmet>
         <title>회원가입</title>
       </Helmet>
-      <LogInTemplate type="register" handleFetch={handleFetch} />
+      {loading ? null : (
+        <LogInTemplate type="register" handleFetch={handleFetch} />
+      )}
     </>
   );
 };
 Register.propTypes = {
   history: PropTypes.shape({}).isRequired,
 };
-export default Register;
+export default ({ history }) => (
+  <OnlyPublic history={history}>
+    <Register history={history} />
+  </OnlyPublic>
+);

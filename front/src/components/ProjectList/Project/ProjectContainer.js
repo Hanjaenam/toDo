@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useProjectFns } from 'store/Project';
 import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
+import { useProjectListFns } from 'store/ProjectList';
 import Project from './Project';
 
 const ProjectContainer = ({ id, title, createdAt, history }) => {
   const [isChangeTitleMode, setChangeTitleMode] = useState(false);
   const { idsToDelete, isEditMode, isMultiMode } = useEditMenuValues();
   const { toggleIdsToDelete } = useEditMenuFns();
-  const { deleteOneProject, patchProject, selectProject } = useProjectFns();
+  const { deleteOneProject, patchProject } = useProjectListFns();
   useEffect(() => {
     if (!isEditMode && isChangeTitleMode) {
       setChangeTitleMode(false);
@@ -19,7 +19,7 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
   const handleDelete = id => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
       axios({
-        url: `/project/delete/${id}`,
+        url: `/me/project/delete/${id}`,
         method: 'delete',
       }).then(() => {
         deleteOneProject(id);
@@ -31,14 +31,14 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
     const newTitle = titleRef.current.value;
     if (title === newTitle) return;
     axios({
-      url: `/project/patch/${id}`,
+      url: `/me/project/patch/${id}`,
       method: 'patch',
       data: {
         title: newTitle,
       },
     })
       .then(res => {
-        patchProject({ id, newData: res.data });
+        patchProject({ id, patchedData: res.data });
       })
       .finally(() => {
         setChangeTitleMode(false);
@@ -46,15 +46,14 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
   };
   const handleClick = e => {
     if (!isEditMode) {
-      selectProject(id);
-      history.push(`/project/${title}`);
+      history.push(`/me/project/${id}`);
     } else if (isMultiMode) {
       toggleIdsToDelete(id);
     }
   };
   const handlePatchKeyUp = (e, titleRef) => {
     if (e.keyCode === 13) {
-      patchProject(titleRef);
+      processPatch(titleRef);
     }
   };
   return (

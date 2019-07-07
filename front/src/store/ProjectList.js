@@ -1,8 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import Project from 'components/ProjectList/Project';
 import moment from 'moment';
-import { useUser } from 'store/User';
-import { withRouter } from 'react-router-dom';
 import {
   unshift,
   deleteOne,
@@ -12,16 +10,10 @@ import {
   checkObject,
 } from 'lib/manuArrData';
 
-export const ProjectContext = createContext();
+export const ProjectListContext = createContext();
 
-const ProjectProvider = ({ children, history }) => {
+const ProjectListProvider = ({ children }) => {
   const [projectDatas, setProjectDatas] = useState();
-  const user = useUser();
-  useEffect(() => {
-    if (!user) {
-      history.replace('/');
-    }
-  }, [user]);
 
   const isExist = data => {
     const existedTitleIdx = projectDatas.findIndex(
@@ -52,8 +44,8 @@ const ProjectProvider = ({ children, history }) => {
     checkArray(idList);
     setProjectDatas(deleteMany(idList));
   };
-  const patchProject = ({ id, newProject }) => {
-    setProjectDatas(patch({ id, newProject }));
+  const patchProject = ({ id, patchedData }) => {
+    setProjectDatas(patch({ id, patchedData }));
   };
   const mapToComponent = () =>
     projectDatas.map(data => (
@@ -64,8 +56,8 @@ const ProjectProvider = ({ children, history }) => {
         createdAt={moment(data.createdAt).format('YYYY-MM-DD')}
       />
     ));
-  return user ? (
-    <ProjectContext.Provider
+  return (
+    <ProjectListContext.Provider
       value={{
         projectDatas,
         fns: {
@@ -79,18 +71,18 @@ const ProjectProvider = ({ children, history }) => {
       }}
     >
       {children}
-    </ProjectContext.Provider>
-  ) : null;
+    </ProjectListContext.Provider>
+  );
 };
 
-export const useProjectValues = () => {
-  const { fns, ...values } = useContext(ProjectContext);
+export const useProjectListValues = () => {
+  const { fns, ...values } = useContext(ProjectListContext);
   return values;
 };
 
-export const useProjectFns = () => {
-  const { fns } = useContext(ProjectContext);
+export const useProjectListFns = () => {
+  const { fns } = useContext(ProjectListContext);
   return fns;
 };
 
-export default withRouter(ProjectProvider);
+export default ProjectListProvider;

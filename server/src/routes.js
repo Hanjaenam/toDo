@@ -1,49 +1,63 @@
-const USER = '/user';
-const GET_INFO = '/getInfo';
-const FAILURE_PASSPORT = '/failurePassport';
+/**
+-- v1
+[x] /auth/logIn
+[x] /auth/register
+
+[x] /me
+[x] /me/project
+[x] /me/toDoList
+[x] /me/toDo
+
+-- v2
+/user
+/user/:id
+/user/:id/project
+/user/:id/toDoList
+/uesr/:id/toDo
+
+/project
+/toDoList
+/toDo
+ */
+const HOME = '/';
+
+const AUTH = '/auth';
+const FAILURE = '/failure';
 const LOGIN = '/logIn';
 const REGISTER = '/register';
 
 const ME = '/me';
+const USER = '/user';
 const PROJECT = '/project';
-
 const TO_DO_LIST = '/toDoList';
-const READ_FROM_PROJECT = '/readFromProject/:projectId';
-
 const TO_DO = '/toDo';
 
-const READ_ALL = '/read';
+const READ = '/read';
 const CREATE = '/create';
-const CREATE_N_PUSH = '/create/:id';
-const DELETE_ONE = '/delete/:id';
-const DELETE_MANY = '/delete';
-const PATCH = '/patch/:id';
-// ----
-const READ_ONE = '/read/:id';
-const COMPLETED = '/completed/:id';
+const DELETE = '/delete';
+const PATCH = '/patch';
+const PARAMS_ID = '/:id';
 
 export default {
-  // user
-  user: USER,
-  getInfo: GET_INFO,
-  failurePassport: FAILURE_PASSPORT,
+  home: HOME,
+  // auth
+  auth: AUTH,
+  failure: FAILURE,
   logIn: LOGIN,
   register: REGISTER,
+  // user
   me: ME,
+  user: USER,
   // db
   project: PROJECT,
   toDo: TO_DO,
   toDoList: TO_DO_LIST,
-  readFromProject: READ_FROM_PROJECT,
   // db-common
-  readAll: READ_ALL,
-  readOne: READ_ONE,
+  read: READ,
   create: CREATE,
-  createNPush: CREATE_N_PUSH,
-  deleteOne: DELETE_ONE,
-  deleteMany: DELETE_MANY,
+  delete: DELETE,
   patch: PATCH,
-  completed: COMPLETED,
+  paramsId: PARAMS_ID,
 };
 // const DB = '/db';
 // const AUTHO = '/autho';

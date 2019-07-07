@@ -12,6 +12,7 @@ import ToDo from 'components/DetailProject/ToDo';
 export const DetailProjectContext = createContext();
 
 const DetailProjectProvider = ({ children }) => {
+  const [projectId, setProjectId] = useState();
   const [toDoListDatas, setToDoListDatas] = useState();
   const loadData = data => {
     checkArray(data);
@@ -93,31 +94,24 @@ const DetailProjectProvider = ({ children }) => {
       }
     });
   };
-  const mapToComponent = type => {
-    if (type === 'toDoList') {
-      return toDoListDatas.map(data => (
-        <ToDoList key={data._id} id={data._id} createdAt={data.createdAt} />
-      ));
-    }
-    if (type === 'toDo') {
-      const toDoDatas = toDoListDatas.toDo;
-      return toDoDatas.map(data => (
-        <ToDo
-          key={data._id}
-          id={data._id}
-          title={data.title}
-          content={data.content}
-          isCompleted={data.isCompleted}
-          completedAt={data.completedAt}
-        />
-      ));
-    }
-  };
+  const mapToComponent = () =>
+    toDoListDatas.map(toDoListData => (
+      <ToDoList
+        key={toDoListData._id}
+        id={toDoListData._id}
+        createdAt={toDoListData.createdAt}
+      >
+        {toDoListData.toDo.map(toDoData => (
+          <ToDo key={toDoData._id} id={toDoData._id} data={toDoData} />
+        ))}
+      </ToDoList>
+    ));
 
   return (
     <DetailProjectContext.Provider
       value={{
         toDoListDatas,
+        projectId,
         fns: {
           loadData,
           pushToDoList,
@@ -128,6 +122,7 @@ const DetailProjectProvider = ({ children }) => {
           deleteManyToDo,
           patchToDo,
           mapToComponent,
+          setProjectId,
         },
       }}
     >
@@ -135,11 +130,11 @@ const DetailProjectProvider = ({ children }) => {
     </DetailProjectContext.Provider>
   );
 };
-export const useEditProjectValues = () => {
-  const { toDoDatas } = useContext(DetailProjectContext);
-  return toDoDatas;
+export const useDetailProjectValues = () => {
+  const { fns, ...values } = useContext(DetailProjectContext);
+  return values;
 };
-export const useEditProjectFns = () => {
+export const useDetailProjectFns = () => {
   const { fns } = useContext(DetailProjectContext);
   return fns;
 };

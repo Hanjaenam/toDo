@@ -1,9 +1,28 @@
-import { Project } from 'models';
+import Project from 'models/Project';
 
 // /read
+// check
 export const readAll = async (req, res) => {
   try {
-    const project = await Project.find({ creator: req.user._id }).exec();
+    const project = await Project.find({ creator: req.user._id }).sort({
+      createdAt: -1,
+    });
+    return res.json(project);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).end();
+  }
+};
+
+export const readOne = async (req, res) => {
+  const {
+    params: { id: projectId },
+  } = req;
+  try {
+    const project = await Project.findOne({
+      _id: projectId,
+      creator: req.user._id,
+    });
     return res.json(project);
   } catch (err) {
     console.log(err);
@@ -12,6 +31,7 @@ export const readAll = async (req, res) => {
 };
 
 // /create
+// check
 export const create = async (req, res) => {
   const {
     body: { title },
@@ -19,10 +39,8 @@ export const create = async (req, res) => {
   try {
     const project = await Project.create({
       title,
-      $push: { creator: req.user._id },
+      creator: req.user._id,
     });
-    req.user.project.push(project);
-    await req.user.save();
     return res.json(project);
   } catch (err) {
     console.log(err);
@@ -31,18 +49,16 @@ export const create = async (req, res) => {
 };
 
 // /delete/:id
+// check
 export const deleteOne = async (req, res) => {
   const {
     params: { id: projectId },
   } = req;
   try {
-    const project = await Project.findById(projectId);
-    if (String(project.creator) !== String(req.user._id)) {
-      return res.status(403).end();
-    }
-    await project.remove();
-    req.user.project.pull(projectId);
-    await req.user.save();
+    await Project.findOneAndDelete({
+      _id: projectId,
+      creator: req.user._id,
+    });
     return res.status(204).end();
   } catch (err) {
     console.log(err);
@@ -50,51 +66,68 @@ export const deleteOne = async (req, res) => {
   }
 };
 
-// /delete
-export const deleteMany = async (req, res) => {
+// check
+export const deleteMany = (req, res) => {
   const { body: projectIds } = req;
-  try {
-    // _id: projectIds 로도 삭제가 가능했었음.
-    await Project.deleteMany({
-      _id: { $in: projectIds },
-      // $or: [{ creator: req.user._id }, {writable:req.user._id}],
-      creator: req.user._id,
-    }).exec();
-    // if (ok) {
-    //   await User.updateMany(
-    //     { _id: req.user._id },
-    //     { $pullAll: { project: projectIds } },
-    //   ).exec();
-    // }
-    // 삭제된 갯수 리턴해줄 것.
-    res.status(204).end();
-  } catch (err) {
-    console.log(err);
-    return res.status(500).end();
-  }
+  projectIds.forEach(async projectId => {
+    // { '$in': [ 5d21994f24c62420f29df3d3 ] } --> 자동으로 배열로 변해지는 듯.
+    try {
+      await Project.findOneAndDelete({
+        _id: projectId,
+        creator: req.user._id,
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  });
+  res.status(204).end();
 };
 
 // /patch
+// check -> isCompleted = true 아직 확인 안 함
 export const patch = async (req, res) => {
   const {
     params: { id: projectId },
     body,
   } = req;
   try {
-    const project = await Project.findById(projectId);
-    if (String(project.creator) !== String(req.user._id)) {
-      return res.status(403).end();
-    }
-    if (project.isCompleted) {
-      return res.json({
-        message: '이미 완료된 project이므로, 수정이 불가능합니다.',
-      });
-    }
-    // 수정된 데이터가 반환되는 지 확인할 것.
-    const patchedProject = await project.update(body);
-    return res.json(patchedProject);
+    const project = await Project.findOneAndUpdate(
+      {
+        _id: projectId,
+        creator: req.user._id,
+      },
+      body,
+      { new: true },
+    );
+    return res.json(project);
   } catch (err) {
     console.log(err);
     return res.status(500).end();
   }
 };
+
+// /delete
+// export const deleteMany = async (req, res) => {
+//   const { body: projectIds } = req;
+//   try {
+//     // { n: 2, ok: 1, deletedCount: 2 }
+//     // { n: 0, ok: 1, deletedCount: 0 } -> 실패
+//     // _id: projectIds 로도 삭제가 가능했었음.
+//     await Project.deleteMany({
+//       _id: { $in: projectIds },
+//       // $or: [{ creator: req.user._id }, {writable:req.user._id}],
+//       creator: req.user._id,
+//     }).exec();
+//     // if (ok) {
+//     //   await User.updateMany(
+//     //     { _id: req.user._id },
+//     //     { $pullAll: { project: projectIds } },
+//     //   ).exec();
+//     // }
+//     // 삭제된 갯수 리턴해줄 것.
+//     res.status(204).end();
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(500).end();
+//   }
+// };

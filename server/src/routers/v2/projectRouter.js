@@ -1,6 +1,5 @@
 import express from 'express';
 import routes from 'routes';
-import { onlyPrivate } from 'middlewares/user';
 import {
   readAll,
   readOne,
@@ -8,14 +7,13 @@ import {
   deleteOne,
   deleteMany,
   patch,
-  readFromProject,
-} from 'controllers/toDoController';
+} from 'controllers/v2/projectController';
+import { onlyPrivate } from 'middlewares/auth';
 
 const Router = express.Router();
 
 Router.get(routes.readAll, onlyPrivate, readAll);
 Router.get(routes.readOne, onlyPrivate, readOne);
-Router.get(routes.readFromProject, onlyPrivate, readFromProject);
 Router.post(routes.create, onlyPrivate, create);
 Router.delete(routes.deleteOne, onlyPrivate, deleteOne);
 Router.delete(routes.deleteMany, onlyPrivate, deleteMany);

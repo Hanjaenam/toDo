@@ -1,4 +1,4 @@
-import { User } from 'models';
+import User from 'models/User';
 import passport from 'passport';
 import { logIn as localLogIn, register as localRegister } from './local';
 

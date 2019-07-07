@@ -73,5 +73,4 @@ UserSchema.static('findAll', function(cb) {
 UserSchema.static('findByEmail', function(email, cb) {
   return this.findOne({ email }, cb);
 });
-export default UserSchema;
-// export default mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema);

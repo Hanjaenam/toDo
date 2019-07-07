@@ -2,6 +2,7 @@ import React from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { LogIn, Register, ProjectList, DetailProject } from 'pages';
 import GlobalStyles from 'styles/global';
+import OnlyPrivate from './OnlyPrivate';
 
 function App() {
   return (
@@ -11,8 +12,10 @@ function App() {
         <Switch>
           <Route exact path="/" component={LogIn} />
           <Route exact path="/register" component={Register} />
-          <Route exact path="/project" component={ProjectList} />
-          {/* <Route exact path="/project/:title" component={DetailProject} /> */}
+          <OnlyPrivate>
+            <Route exact path="/me/project" component={ProjectList} />
+            <Route exact path="/me/project/:id" component={DetailProject} />
+          </OnlyPrivate>
         </Switch>
       </Router>
     </>

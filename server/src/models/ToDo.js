@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import Project from 'models/Project';
 
-export default mongoose.Schema({
+export const ToDoSchema = mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -18,18 +19,46 @@ export default mongoose.Schema({
     index: {
       unique: false,
     },
-    default: '',
   },
-  toDoList: { type: mongoose.Schema.Types.ObjectId, ref: 'ToDoList' },
-  creator: [
-    { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
-  ],
-  readable: [
-    { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
-  ],
-  writable: [
-    { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
-  ],
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+  project: { type: mongoose.Schema.Types.ObjectId, ref: 'project' },
+  creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  readable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  writable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
-// export default mongoose.model('ToDo', ToDoSchema);
+ToDoSchema.post('save', async function(doc, next) {
+  const { projectId, _id } = doc;
+  try {
+    await Project.findByIdAndUpdate(projectId, {
+      $push: { toDo: _id },
+    });
+    return next();
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+ToDoSchema.post(/Delete$/, async function(doc, next) {
+  const { project, _id } = doc;
+  try {
+    await Project.findByIdAndUpdate(project._id, {
+      $pull: { toDo: _id },
+    });
+    return next();
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+ToDoSchema.pre(/Update$/, function(next) {
+  if (this.isCompleted) {
+    throw new Error('이미 완료된 to do 입니다.');
+  }
+  return next();
+});
+
+export default mongoose.model('ToDo', ToDoSchema);

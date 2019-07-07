@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { inputCss, hover1 } from 'styles/mixins';
 import 'react-day-picker/lib/style.css';
+import moment from 'moment';
 
 const Container = styled.div`
   box-sizing: border-box;
@@ -65,42 +66,35 @@ const ToDoListTrashIcon = styled(Icon)`
   font-size: 2.1rem;
   padding-right: 0.5rem;
 `;
-
-const ToDoList = ({
-  children,
-  createdAt,
-  titleRef,
-  handleAddClick,
-  handleAddKeyUp,
-  deleteToDoList,
-}) => (
-  <Container>
-    <DateContainer>
-      <Date>{createdAt}</Date>
-      <ToDoListTrashIcon icon={faTrashAlt} onClick={deleteToDoList} />
-    </DateContainer>
-    <EditContainer>
-      <AddContainer>
-        <Input
-          type="text"
-          maxLength="50"
-          placeholder="to do name"
-          ref={titleRef}
-          onKeyUp={handleAddKeyUp}
-        />
-        <Icon icon={faPlus} onClick={handleAddClick} />
-      </AddContainer>
-    </EditContainer>
-    {children}
-  </Container>
-);
+const ToDoList = ({ children, createdAt, deleteToDoList }) => {
+  const titleRef = useRef();
+  return (
+    <Container>
+      <DateContainer>
+        <Date>{moment(createdAt).format('YYYY-MM-DD')}</Date>
+        <ToDoListTrashIcon icon={faTrashAlt} onClick={deleteToDoList} />
+      </DateContainer>
+      <EditContainer>
+        <AddContainer>
+          <Input
+            type="text"
+            maxLength="50"
+            placeholder="to do name"
+            ref={titleRef}
+            // onKeyUp={handleAddKeyUp}
+          />
+          {/* <Icon icon={faPlus} onClick={handleAddClick} /> */}
+          <Icon icon={faPlus} />
+        </AddContainer>
+      </EditContainer>
+      {children}
+    </Container>
+  );
+};
 
 ToDoList.propTypes = {
-  data: PropTypes.shape({}).isRequired,
-  createdAt: PropTypes.instanceOf(Date).isRequired,
-  titleRef: PropTypes.shape({}).isRequired,
-  handleAddClick: PropTypes.func.isRequired,
-  handleAddKeyUp: PropTypes.func.isRequired,
+  createdAt: PropTypes.string.isRequired,
+  deleteToDoList: PropTypes.func.isRequired,
 };
 
 export default ToDoList;

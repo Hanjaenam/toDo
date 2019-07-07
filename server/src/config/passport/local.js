@@ -1,4 +1,4 @@
-import { User } from 'models';
+import User from 'models/User';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 const strategyLogInCB = async (req, email, password, done) => {

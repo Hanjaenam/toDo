@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import styled from 'styled-components';
 import DetailProject from 'components/DetailProject';
 import Header from 'components/Common/Header';
-import { useProjectValues } from 'store/Project';
 import axios from 'axios';
 import { useStatus } from 'lib/hooks';
+import DetailProjectProvider, {
+  useDetailProjectValues,
+  useDetailProjectFns,
+} from 'store/DetailProject';
 
 const Container = styled.div`
   box-sizing: border-box;
@@ -22,25 +25,25 @@ const Title = styled.span`
   color: white;
 `;
 
-const DetailProjectPage = ({
-  match: {
-    params: { title },
-  },
-}) => {
-  const { selectedProjectId } = useProjectValues();
-  const { toDoListDatas } = useProjectValues();
+const DetailProjectPage = ({ id }) => {
+  const { toDoListDatas } = useDetailProjectValues();
+  const { loadData, setProjectId } = useDetailProjectFns();
+  const [title, setTitle] = useState();
   const {
     error,
     fns: { failure },
   } = useStatus();
   useEffect(() => {
+    setProjectId(id);
     if (toDoListDatas === undefined) {
       axios({
-        url: `/toDoList/readFromProject/${selectedProjectId}`,
+        url: `/me/project/${id}`,
         method: 'get',
       })
         .then(res => {
-          // loadData({ data: res.data, type: 'toDoList' });
+          const { data } = res;
+          setTitle(data.title);
+          loadData(data.toDoList);
         })
         .catch(err => failure(err));
     }
@@ -61,11 +64,15 @@ const DetailProjectPage = ({
 };
 
 DetailProjectPage.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      title: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
+  id: PropTypes.string.isRequired,
 };
 
-export default DetailProjectPage;
+export default ({
+  match: {
+    params: { id },
+  },
+}) => (
+  <DetailProjectProvider>
+    <DetailProjectPage id={id} />
+  </DetailProjectProvider>
+);

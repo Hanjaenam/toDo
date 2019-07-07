@@ -1,20 +1,66 @@
-import { ToDo, ToDoList } from 'models';
+import Project from 'models/Project';
+import ToDo from 'models/ToDo';
+import mongoose from 'mongoose';
+
+export const readFromProject = async (req, res) => {
+  const {
+    params: { id: projectId },
+    query: { page },
+  } = req;
+  try {
+    const toDo = await ToDo.aggregate([
+      {
+        $match: {
+          creator: req.user._id,
+          project: mongoose.Types.ObjectId(projectId),
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          data: {
+            $push: {
+              title: '$title',
+              content: '$content',
+              isCompleted: '$isCompleted',
+            },
+          },
+        },
+      },
+      { $skip: (page - 1) * 10 },
+      { $limit: 10 },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ]);
+    res.json(toDo);
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
+};
 
 export const createNPush = async (req, res) => {
   const {
-    params: { id: toDoListId },
-    // title, content,
+    params: { id: projectId },
+    // title, content, createdAt
     body,
   } = req;
   try {
-    const toDoList = await ToDoList.findById(toDoListId).exec();
-    if (!toDoList) {
+    const project = await Project.find({
+      _id: projectId,
+      creator: req.user._id,
+    });
+    // 찾은 project가 없을 시 project === null
+    if (!project) {
       return res.status(204).end();
     }
     const toDo = await ToDo.create({
       ...body,
       creator: req.user._id,
-      toDoList: toDoList._id,
+      project: project._id,
     });
     res.json(toDo);
   } catch (err) {
@@ -28,11 +74,10 @@ export const deleteOne = async (req, res) => {
     params: { id: toDoId },
   } = req;
   try {
-    const toDo = await ToDo.findById(toDoId).exec();
-    if (String(toDo.creator) !== String(req.user._id)) {
-      return res.status(403).end();
-    }
-    await toDo.remove();
+    await ToDo.findOneAndDelete({
+      _id: toDoId,
+      creator: req.user._id,
+    });
     return res.status(204).end();
   } catch (err) {
     console.log(err);
@@ -42,16 +87,17 @@ export const deleteOne = async (req, res) => {
 
 export const deleteMany = async (req, res) => {
   const { body: toDoIds } = req;
-  try {
-    await ToDo.deleteMany({
-      _id: { $in: toDoIds },
-      creator: req.user._id,
-    });
-    return res.status(204).end();
-  } catch (err) {
-    console.log(err);
-    return res.status(500).end();
-  }
+  toDoIds.forEach(async toDoId => {
+    try {
+      await ToDo.findOneAndDelete({
+        _id: toDoId,
+        creator: req.user._id,
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+  });
+  res.status(204).end();
 };
 
 export const patch = async (req, res) => {
@@ -60,23 +106,23 @@ export const patch = async (req, res) => {
     // title, content
     body,
   } = req;
-  if (!body) return res.status(400).end();
-  if (!body.title && !body.content) return res.status(400).end();
+  if (!body || (!body.title && !body.content)) return res.status(400).end();
   try {
-    const toDo = await ToDo.findById(toDoId);
-    if (String(toDo.creator) !== String(req.user._id)) {
-      return res.status(403).end();
-    }
-    if (toDo.isCompleted) {
-      return res.json({
-        message: '이미 완료된 project이므로, 수정이 불가능합니다.',
-      });
-    }
-    // 수정된 데이터가 반환되는 지 확인할 것.
-    const patchedToDo = await toDo.update(body);
-    return res.json(patchedToDo);
+    const toDo = await ToDo.findByIdAndUpdate(toDoId, body, { new: true });
+    return res.json(toDo);
   } catch (err) {
     console.log(err);
     return res.status(500).end();
   }
 };
+
+// try {
+//   await ToDo.deleteMany({
+//     _id: { $in: toDoIds },
+//     creator: req.user._id,
+//   });
+//   return res.status(204).end();
+// } catch (err) {
+//   console.log(err);
+//   return res.status(500).end();
+// }
