@@ -5,7 +5,6 @@ export const ToDoSchema = mongoose.Schema({
   title: {
     type: String,
     required: true,
-    unique: true,
   },
   content: {
     type: String,
@@ -30,10 +29,11 @@ export const ToDoSchema = mongoose.Schema({
   writable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
+// create 다중 추가일 경우 그 개수만큼 호출됨
 ToDoSchema.post('save', async function(doc, next) {
-  const { projectId, _id } = doc;
+  const { project, _id } = doc;
   try {
-    await Project.findByIdAndUpdate(projectId, {
+    await Project.findByIdAndUpdate(project, {
       $push: { toDo: _id },
     });
     return next();

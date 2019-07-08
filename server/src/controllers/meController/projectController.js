@@ -14,22 +14,6 @@ export const readAll = async (req, res) => {
   }
 };
 
-export const readOne = async (req, res) => {
-  const {
-    params: { id: projectId },
-  } = req;
-  try {
-    const project = await Project.findOne({
-      _id: projectId,
-      creator: req.user._id,
-    });
-    return res.json(project);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).end();
-  }
-};
-
 // /create
 // check
 export const create = async (req, res) => {

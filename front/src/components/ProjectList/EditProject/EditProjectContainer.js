@@ -1,14 +1,14 @@
 import React, { useRef } from 'react';
 // import PropTypes from 'prop-types';
 import axios from 'axios';
-import { useProjectListFns } from 'store/ProjectList';
+import { useDataFns } from 'store/Common/Data';
 import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
 import EditProject from './EditProject';
 
 const EditProjectContainer = () => {
   const { idsToDelete, isEditMode, isMultiMode } = useEditMenuValues();
   const { setEditMode, toggleMultiMode, initMode } = useEditMenuFns();
-  const { unshiftProject, deleteManyProject } = useProjectListFns();
+  const { unshiftData, deleteManyData } = useDataFns();
   const titleRef = useRef();
   const createProject = () => {
     if (!titleRef.current) return;
@@ -21,7 +21,7 @@ const EditProjectContainer = () => {
       },
     })
       .then(res => {
-        unshiftProject(res.data);
+        unshiftData({ type: 'projectList', data: res.data });
       })
       .finally(() => {
         titleRef.current.value = '';
@@ -40,7 +40,7 @@ const EditProjectContainer = () => {
       method: 'DELETE',
       data: idsToDelete,
     }).then(() => {
-      deleteManyProject(idsToDelete);
+      deleteManyData({ type: 'projectList', idList: idsToDelete });
     });
   };
   return (

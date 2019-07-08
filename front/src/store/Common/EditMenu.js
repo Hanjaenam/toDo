@@ -27,6 +27,7 @@ const EditMenuProvider = ({ children }) => {
     setMultiMode(false);
     clearIdsToDelete();
   };
+  const isSelected = id => idsToDelete.some(idToDelete => idToDelete === id);
   return (
     <EditMenuContext.Provider
       value={{
@@ -39,6 +40,7 @@ const EditMenuProvider = ({ children }) => {
           clearIdsToDelete,
           initMode,
           setEditMode,
+          isSelected,
         },
       }}
     >

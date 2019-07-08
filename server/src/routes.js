@@ -36,6 +36,8 @@ const READ = '/read';
 const CREATE = '/create';
 const DELETE = '/delete';
 const PATCH = '/patch';
+const COMPLETE = '/complete';
+
 const PARAMS_ID = '/:id';
 
 export default {
@@ -57,6 +59,7 @@ export default {
   create: CREATE,
   delete: DELETE,
   patch: PATCH,
+  complete: COMPLETE,
   paramsId: PARAMS_ID,
 };
 // const DB = '/db';

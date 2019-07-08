@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import EditMenu from 'components/Common/EditMenu';
 import Title from 'components/Common/Title';
+import moment from 'moment';
 
 const Container = styled.div`
   background: transparent;
@@ -61,8 +62,7 @@ const Date = styled.p`
 
 const Project = ({
   id,
-  title,
-  createdAt,
+  data,
   handleDelete,
   isChangeTitleMode,
   setChangeTitleMode,
@@ -71,7 +71,6 @@ const Project = ({
   isMultiMode,
   handleClick,
   isSelected,
-  handlePatchKeyUp,
 }) => (
   <Container>
     <DataContainer
@@ -85,12 +84,11 @@ const Project = ({
         <SelectIcon icon={faCheck} size="2x" />
       ) : null}
       <Title
-        title={title}
+        title={data.title}
         isChangeTitleMode={isChangeTitleMode}
-        handlePatchKeyUp={handlePatchKeyUp}
         processPatch={processPatch}
       />
-      <Date>{createdAt}</Date>
+      <Date>{moment(data.createdAt).format('YYYY-MM-DD')}</Date>
     </DataContainer>
     <EditMenu
       id={id}
@@ -99,14 +97,18 @@ const Project = ({
       isChangeTitleMode={isChangeTitleMode}
       setChangeTitleMode={setChangeTitleMode}
       handleDelete={handleDelete}
+      isCompleted={data.isCompleted}
     />
   </Container>
 );
 
 Project.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  createdAt: PropTypes.string.isRequired,
+  data: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    createdAt: PropTypes.string.isRequired,
+    isCompleted: PropTypes.bool.isRequired,
+  }).isRequired,
   handleDelete: PropTypes.func.isRequired,
   isChangeTitleMode: PropTypes.bool.isRequired,
   setChangeTitleMode: PropTypes.func.isRequired,
@@ -115,6 +117,5 @@ Project.propTypes = {
   isMultiMode: PropTypes.bool.isRequired,
   handleClick: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
-  handlePatchKeyUp: PropTypes.func.isRequired,
 };
 export default Project;

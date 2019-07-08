@@ -8,7 +8,7 @@ export const readFromProject = async (req, res) => {
     query: { page },
   } = req;
   try {
-    const toDo = await ToDo.aggregate([
+    const toDoListByDate = await ToDo.aggregate([
       {
         $match: {
           creator: req.user._id,
@@ -18,24 +18,32 @@ export const readFromProject = async (req, res) => {
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-          data: {
+          toDoList: {
             $push: {
+              _id: '$_id',
               title: '$title',
               content: '$content',
               isCompleted: '$isCompleted',
+              createdAt: '$createdAt',
+              creator: '$creator',
             },
           },
         },
       },
       { $skip: (page - 1) * 10 },
       { $limit: 10 },
+      // {
+      //   $sort: {
+      //     _id: 1,
+      //   },
+      // },
       {
-        $sort: {
-          _id: 1,
+        $project: {
+          toDoList: { $reverseArray: '$toDoList' },
         },
       },
     ]);
-    res.json(toDo);
+    res.json(toDoListByDate);
   } catch (err) {
     console.log(err);
     res.status(500).end();
@@ -49,19 +57,29 @@ export const createNPush = async (req, res) => {
     body,
   } = req;
   try {
-    const project = await Project.find({
+    if (!body || !body.title) return res.status(400).end();
+    const project = await Project.findOne({
       _id: projectId,
       creator: req.user._id,
     });
     // 찾은 project가 없을 시 project === null
     if (!project) {
-      return res.status(204).end();
+      return res.status(400).end();
     }
-    const toDo = await ToDo.create({
-      ...body,
-      creator: req.user._id,
-      project: project._id,
-    });
+    const toDo = await ToDo.create(
+      Array.isArray(body)
+        ? body.map(data => ({
+            ...data,
+            creator: req.user._id,
+            project: projectId,
+          }))
+        : {
+            ...body,
+            creator: req.user._id,
+            project: projectId,
+          },
+    );
+    console.log(toDo);
     res.json(toDo);
   } catch (err) {
     console.log(err);
@@ -87,17 +105,29 @@ export const deleteOne = async (req, res) => {
 
 export const deleteMany = async (req, res) => {
   const { body: toDoIds } = req;
-  toDoIds.forEach(async toDoId => {
-    try {
-      await ToDo.findOneAndDelete({
-        _id: toDoId,
+  try {
+    for (let i = 0; i < toDoIds.length; ++i) {
+      ToDo.findOneAndDelete({
+        _id: toDoIds[i],
         creator: req.user._id,
-      });
-    } catch (err) {
-      throw new Error(err);
+      }).exec();
     }
-  });
-  res.status(204).end();
+    res.status(204).end();
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
+  // toDoIds.forEach(async toDoId => {
+  //   try {
+  //     await ToDo.findOneAndDelete({
+  //       _id: toDoId,
+  //       creator: req.user._id,
+  //     });
+  //   } catch (err) {
+  //     throw new Error(err);
+  //   }
+  // });
+  // res.status(204).end();
 };
 
 export const patch = async (req, res) => {
@@ -106,7 +136,7 @@ export const patch = async (req, res) => {
     // title, content
     body,
   } = req;
-  if (!body || (!body.title && !body.content)) return res.status(400).end();
+  if (!body || !body.title) return res.status(400).end();
   try {
     const toDo = await ToDo.findByIdAndUpdate(toDoId, body, { new: true });
     return res.json(toDo);
@@ -116,6 +146,22 @@ export const patch = async (req, res) => {
   }
 };
 
+export const complete = async (req, res) => {
+  const {
+    params: { id: toDoId },
+    body: isCompleted,
+  } = req;
+  if (!isCompleted) return res.status(400).end();
+  try {
+    const toDo = await ToDo.findByIdAndUpdate(toDoId, isCompleted, {
+      new: true,
+    });
+    return res.json(toDo);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).end();
+  }
+};
 // try {
 //   await ToDo.deleteMany({
 //     _id: { $in: toDoIds },

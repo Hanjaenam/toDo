@@ -11,7 +11,7 @@ import initPassport from 'config/passport';
 import routes from 'routes';
 import { authRouter, meRouter } from 'routers';
 import { onlyPrivate, onlyPublic } from 'middlewares/auth';
-import ToDo from 'models/ToDo';
+// import ToDo from 'models/ToDo';
 
 const app = express();
 app.use(helmet());

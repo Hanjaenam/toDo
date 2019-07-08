@@ -3,14 +3,17 @@ import PropTypes from 'prop-types';
 import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
-import { useProjectListFns } from 'store/ProjectList';
+import { useDataFns } from 'store/Common/Data';
+import { useOnlyPrivatefns } from 'store/Common/OnlyPrivate';
+import moment from 'moment';
 import Project from './Project';
 
-const ProjectContainer = ({ id, title, createdAt, history }) => {
+const ProjectContainer = ({ id, data, history }) => {
   const [isChangeTitleMode, setChangeTitleMode] = useState(false);
-  const { idsToDelete, isEditMode, isMultiMode } = useEditMenuValues();
-  const { toggleIdsToDelete } = useEditMenuFns();
-  const { deleteOneProject, patchProject } = useProjectListFns();
+  const { isEditMode, isMultiMode } = useEditMenuValues();
+  const { toggleIdsToDelete, isSelected } = useEditMenuFns();
+  const { deleteOneData, patchData } = useDataFns();
+  const { setProjectId } = useOnlyPrivatefns();
   useEffect(() => {
     if (!isEditMode && isChangeTitleMode) {
       setChangeTitleMode(false);
@@ -22,14 +25,14 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
         url: `/me/project/delete/${id}`,
         method: 'delete',
       }).then(() => {
-        deleteOneProject(id);
+        deleteOneData({ type: 'projectList', id });
       });
     }
   };
   const processPatch = titleRef => {
     if (!titleRef.current) return;
     const newTitle = titleRef.current.value;
-    if (title === newTitle) return;
+    if (data.title === newTitle) return;
     axios({
       url: `/me/project/patch/${id}`,
       method: 'patch',
@@ -38,7 +41,7 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
       },
     })
       .then(res => {
-        patchProject({ id, patchedData: res.data });
+        patchData({ type: 'projectList', id, patchedData: res.data });
       })
       .finally(() => {
         setChangeTitleMode(false);
@@ -46,37 +49,34 @@ const ProjectContainer = ({ id, title, createdAt, history }) => {
   };
   const handleClick = e => {
     if (!isEditMode) {
-      history.push(`/me/project/${id}`);
+      setProjectId(id);
+      history.push(`/me/project/${data.title}`);
     } else if (isMultiMode) {
       toggleIdsToDelete(id);
-    }
-  };
-  const handlePatchKeyUp = (e, titleRef) => {
-    if (e.keyCode === 13) {
-      processPatch(titleRef);
     }
   };
   return (
     <Project
       id={id}
-      title={title}
-      createdAt={createdAt}
+      data={data}
       handleDelete={handleDelete}
       isEditMode={isEditMode}
       isMultiMode={isMultiMode}
-      isSelected={idsToDelete.some(selectedId => selectedId === id)}
+      isSelected={isSelected(id)}
       isChangeTitleMode={isChangeTitleMode}
       setChangeTitleMode={setChangeTitleMode}
       processPatch={processPatch}
       handleClick={handleClick}
-      handlePatchKeyUp={handlePatchKeyUp}
     />
   );
 };
 
 ProjectContainer.propTypes = {
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  createdAt: PropTypes.string.isRequired,
+  data: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    createdAt: PropTypes.string.isRequired,
+    isCompleted: PropTypes.bool.isRequired,
+  }).isRequired,
 };
 export default withRouter(ProjectContainer);

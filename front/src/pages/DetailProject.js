@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import styled from 'styled-components';
@@ -6,10 +6,8 @@ import DetailProject from 'components/DetailProject';
 import Header from 'components/Common/Header';
 import axios from 'axios';
 import { useStatus } from 'lib/hooks';
-import DetailProjectProvider, {
-  useDetailProjectValues,
-  useDetailProjectFns,
-} from 'store/DetailProject';
+import DataProvider, { useDataValues, useDataFns } from 'store/Common/Data';
+import { useOnlyPrivateValues } from 'store/Common/OnlyPrivate';
 
 const Container = styled.div`
   box-sizing: border-box;
@@ -25,25 +23,23 @@ const Title = styled.span`
   color: white;
 `;
 
-const DetailProjectPage = ({ id }) => {
-  const { toDoListDatas } = useDetailProjectValues();
-  const { loadData, setProjectId } = useDetailProjectFns();
-  const [title, setTitle] = useState();
+const DetailProjectPage = ({ title }) => {
+  const { detailProject } = useDataValues();
+  const { loadData } = useDataFns();
+  const { selectedProjectId } = useOnlyPrivateValues();
   const {
     error,
     fns: { failure },
   } = useStatus();
+  useEffect(() => {}, [detailProject]);
   useEffect(() => {
-    setProjectId(id);
-    if (toDoListDatas === undefined) {
+    if (detailProject === undefined) {
       axios({
-        url: `/me/project/${id}`,
+        url: `/me/toDo/${selectedProjectId}?page=1`,
         method: 'get',
       })
         .then(res => {
-          const { data } = res;
-          setTitle(data.title);
-          loadData(data.toDoList);
+          loadData({ type: 'detailProject', data: res.data });
         })
         .catch(err => failure(err));
     }
@@ -57,22 +53,22 @@ const DetailProjectPage = ({ id }) => {
         <Header>
           <Title>{title}</Title>
         </Header>
-        {toDoListDatas === undefined || error ? null : <DetailProject />}
+        {detailProject === undefined || error ? null : <DetailProject />}
       </Container>
     </>
   );
 };
 
 DetailProjectPage.propTypes = {
-  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 export default ({
   match: {
-    params: { id },
+    params: { title },
   },
 }) => (
-  <DetailProjectProvider>
-    <DetailProjectPage id={id} />
-  </DetailProjectProvider>
+  <DataProvider>
+    <DetailProjectPage title={title} />
+  </DataProvider>
 );

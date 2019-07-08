@@ -1,28 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { faTrashAlt, faPen, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const EditContainer = styled.div`
-  background: white;
-  margin-left: 0.5rem;
+  ${props =>
+    props.cssType === 'toDo'
+      ? css`
+          margin-left: 0.2rem;
+        `
+      : css`
+          margin-left: 0.5rem;
+        `}
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: ${props => props.theme.RADIUS};
   overflow: hidden;
-  border: 1px solid ${props => props.theme.PRIMARY()};
 `;
 const Icon = styled(FontAwesomeIcon)`
+  /* width: 1rem !important; */
   height: 100%;
-  width: 1rem !important;
+  ${props =>
+    props.times
+      ? css`
+          font-size: 1.5rem;
+        `
+      : null};
+  border-radius: ${props => props.theme.RADIUS};
   padding: 0 0.5rem;
   cursor: pointer;
-  transition: ${props => props.theme.TRANSITION};
+  transition: background-color ${props => props.theme.TRANSITION};
   &:hover {
     color: white;
     background: ${props => props.theme.PRIMARY()};
+  }
+  &:active {
+    transform: scale(0.9);
   }
 `;
 const EditMenu = ({
@@ -32,20 +46,39 @@ const EditMenu = ({
   isChangeTitleMode,
   setChangeTitleMode,
   handleDelete,
-}) =>
-  isEditMode && !isMultiMode ? (
-    <EditContainer>
-      <Icon
-        icon={isChangeTitleMode ? faTimes : faPen}
-        onClick={
-          isChangeTitleMode
-            ? () => setChangeTitleMode(false)
-            : () => setChangeTitleMode(true)
-        }
-      />
-      <Icon icon={faTrashAlt} onClick={() => handleDelete(id)} />
-    </EditContainer>
-  ) : null;
+  isCompleted,
+  ...rest
+}) => {
+  if (isCompleted) {
+    return (
+      <EditContainer cssType={rest.cssType}>
+        <Icon icon={faTimes} cssType={rest.cssType} times />
+      </EditContainer>
+    );
+  }
+  if (isEditMode && !isMultiMode) {
+    return (
+      <EditContainer cssType={rest.cssType}>
+        <Icon
+          icon={isChangeTitleMode ? faTimes : faPen}
+          cssType={rest.cssType}
+          times={isChangeTitleMode}
+          onClick={
+            isChangeTitleMode
+              ? () => setChangeTitleMode(false)
+              : () => setChangeTitleMode(true)
+          }
+        />
+        <Icon
+          icon={faTrashAlt}
+          cssType={rest.cssType}
+          onClick={() => handleDelete(id)}
+        />
+      </EditContainer>
+    );
+  }
+  return null;
+};
 EditMenu.propTypes = {
   id: PropTypes.string,
   isMultiMode: PropTypes.bool.isRequired,
@@ -53,6 +86,7 @@ EditMenu.propTypes = {
   isChangeTitleMode: PropTypes.bool.isRequired,
   setChangeTitleMode: PropTypes.func.isRequired,
   handleDelete: PropTypes.func,
+  isCompleted: PropTypes.bool.isRequired,
 };
 EditMenu.defaultProps = {
   //------

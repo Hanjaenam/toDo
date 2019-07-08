@@ -45,12 +45,7 @@ const TitleText = styled.p`
   color: ${props => props.theme.PRIMARY()};
 `;
 
-const Title = ({
-  title,
-  isChangeTitleMode,
-  handlePatchKeyUp,
-  processPatch,
-}) => {
+const Title = ({ title, isChangeTitleMode, processPatch }) => {
   const titleRef = useRef();
   return (
     <Container>
@@ -60,7 +55,11 @@ const Title = ({
             defaultValue={title}
             autoFocus
             ref={titleRef}
-            onKeyUp={e => handlePatchKeyUp(e, titleRef)}
+            onKeyUp={e => {
+              if (e.keyCode === 13) {
+                processPatch(titleRef);
+              }
+            }}
           />
           <ConfirmIcon icon={faCheck} onClick={() => processPatch(titleRef)} />
         </>
@@ -77,9 +76,6 @@ Title.propTypes = {
   processPatch: PropTypes.func,
 };
 Title.defaultProps = {
-  //------
   handlePatchKeyUp: undefined,
-  patchProject: undefined,
-  //------
 };
 export default Title;

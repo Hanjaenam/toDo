@@ -19,9 +19,8 @@ const DataContainer = styled.div`
   flex: 1;
   box-sizing: border-box;
   padding-left: 0.5rem;
-  border-radius: ${props => props.theme.RADIUS};
   align-items: center;
-  transition: ${props => props.theme.TRANSITION};
+  transition: background-color ${props => props.theme.TRANSITION};
   &.selected {
     background-color: ${props => props.theme.PRIMARY()};
     div:first-child {
@@ -34,8 +33,17 @@ const DataContainer = styled.div`
       display: block;
     }
   }
+  &.isCompleted {
+    background: ${props => props.theme.SUCCESS(0.9)};
+    div:first-child {
+      border-color: white;
+      svg {
+        display: block;
+      }
+    }
+  }
   ${props => {
-    if (!props.isEditMode || props.isMultiMode) {
+    if (!props.isCompleted && (props.isMultiMode || !props.isEditMode)) {
       return css`
         cursor: pointer;
         &:hover {
@@ -47,35 +55,8 @@ const DataContainer = styled.div`
             color: white;
           }
         }
-      `;
-    }
-    if (props.isMultiMode && props.isSelected) {
-      return css`
-        background: ${props.theme.PRIMARY()};
-        svg {
-          display: block;
-        }
-      `;
-    }
-    if (props.isCompleted) {
-      return css`
-        opacity: 0.4;
-        background: ${props.theme.SUCCESS(0.4)};
-        div {
-          background: ${props.theme.PRIMARY()};
-          svg {
-            display: block;
-          }
-        }
-      `;
-    }
-    if (props.isCompleted === false) {
-      return css`
-        span {
-          color: #fb8c00;
-        }
-        div {
-          border-color: #fb8c00;
+        &:active {
+          transform: scale(0.99);
         }
       `;
     }
@@ -99,50 +80,69 @@ const CheckIcon = styled(FontAwesomeIcon)`
 `;
 
 const ToDo = ({
-  title,
-  isCompleted,
-  completedAt,
+  data,
   isEditMode,
   isMultiMode,
+  isSelected,
   isChangeTitleMode,
   setChangeTitleMode,
-  isSelected,
   handleClick,
+  handleDelete,
+  processPatch,
 }) => (
   <Container>
     <DataContainer
-      isCompleted={isCompleted}
+      isCompleted={data.isCompleted}
       onClick={handleClick}
       isMultiMode={isMultiMode}
       isEditMode={isEditMode}
-      className={`${isSelected ? 'selected' : ''}`}
+      className={`${isSelected ? 'selected' : ''} ${
+        data.isCompleted ? 'isCompleted' : null
+      }`}
     >
       <CheckContainer>
         <CheckIcon icon={faCheck} />
       </CheckContainer>
-      <Title title={title} isChangeTitleMode={isChangeTitleMode} />
+      <Title
+        title={data.title}
+        isChangeTitleMode={isChangeTitleMode}
+        processPatch={processPatch}
+      />
     </DataContainer>
     <EditMenu
       isMultiMode={isMultiMode}
       isEditMode={isEditMode}
       isChangeTitleMode={isChangeTitleMode}
       setChangeTitleMode={setChangeTitleMode}
+      handleDelete={handleDelete}
+      isCompleted={data.isCompleted}
+      cssType="toDo"
     />
   </Container>
 );
 ToDo.propTypes = {
-  title: PropTypes.string.isRequired,
-  isCompleted: PropTypes.bool,
-  completedAt: PropTypes.instanceOf(Date),
+  data: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    content: PropTypes.string,
+    isCompleted: PropTypes.bool,
+    createdAt: PropTypes.string,
+    completedAt: PropTypes.string,
+  }),
   isEditMode: PropTypes.bool.isRequired,
   isMultiMode: PropTypes.bool.isRequired,
   isChangeTitleMode: PropTypes.bool.isRequired,
   setChangeTitleMode: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
   handleClick: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+  processPatch: PropTypes.func.isRequired,
 };
 ToDo.defaultProps = {
-  isCompleted: undefined,
-  completedAt: undefined,
+  data: PropTypes.shape({
+    content: undefined,
+    isCompleted: undefined,
+    createdAt: undefined,
+    completedAt: undefined,
+  }),
 };
 export default ToDo;

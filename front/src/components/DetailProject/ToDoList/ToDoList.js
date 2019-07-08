@@ -6,6 +6,7 @@ import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { inputCss, hover1 } from 'styles/mixins';
 import 'react-day-picker/lib/style.css';
 import moment from 'moment';
+import ListEditMenu from 'components/Common/ListEditMenu';
 
 const Container = styled.div`
   box-sizing: border-box;
@@ -26,14 +27,14 @@ const Container = styled.div`
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 `;
 
-const DateContainer = styled.div`
+const CalendarContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 `;
 
-const Date = styled.span`
+const Calendar = styled.span`
   flex: 1;
   text-align: center;
   padding: 1rem;
@@ -66,14 +67,24 @@ const ToDoListTrashIcon = styled(Icon)`
   font-size: 2.1rem;
   padding-right: 0.5rem;
 `;
-const ToDoList = ({ children, createdAt, deleteToDoList }) => {
+const ToDoList = ({
+  children,
+  createdAt,
+  deleteToDoList,
+  isEditMode,
+  isMultiMode,
+  setEditMode,
+  toggleMultiMode,
+  initMode,
+  createToDo,
+}) => {
   const titleRef = useRef();
   return (
     <Container>
-      <DateContainer>
-        <Date>{moment(createdAt).format('YYYY-MM-DD')}</Date>
+      <CalendarContainer>
+        <Calendar>{moment(createdAt).format('YYYY-MM-DD')}</Calendar>
         <ToDoListTrashIcon icon={faTrashAlt} onClick={deleteToDoList} />
-      </DateContainer>
+      </CalendarContainer>
       <EditContainer>
         <AddContainer>
           <Input
@@ -81,10 +92,20 @@ const ToDoList = ({ children, createdAt, deleteToDoList }) => {
             maxLength="50"
             placeholder="to do name"
             ref={titleRef}
-            // onKeyUp={handleAddKeyUp}
+            onKeyUp={e => {
+              if (e.keyCode === 13) {
+                createToDo(titleRef);
+              }
+            }}
           />
-          {/* <Icon icon={faPlus} onClick={handleAddClick} /> */}
-          <Icon icon={faPlus} />
+          <Icon icon={faPlus} onClick={() => createToDo(titleRef)} />
+          <ListEditMenu
+            isEditMode={isEditMode}
+            isMultiMode={isMultiMode}
+            setEditMode={setEditMode}
+            toggleMultiMode={toggleMultiMode}
+            initMode={initMode}
+          />
         </AddContainer>
       </EditContainer>
       {children}
@@ -95,6 +116,11 @@ const ToDoList = ({ children, createdAt, deleteToDoList }) => {
 ToDoList.propTypes = {
   createdAt: PropTypes.string.isRequired,
   deleteToDoList: PropTypes.func.isRequired,
+  isEditMode: PropTypes.bool.isRequired,
+  setEditMode: PropTypes.func.isRequired,
+  isMultiMode: PropTypes.bool.isRequired,
+  toggleMultiMode: PropTypes.func.isRequired,
+  initMode: PropTypes.func.isRequired,
 };
 
 export default ToDoList;

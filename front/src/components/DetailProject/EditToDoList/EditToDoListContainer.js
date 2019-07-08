@@ -1,25 +1,36 @@
 import React, { useState, useRef } from 'react';
 import moment from 'moment';
-import {
-  useDetailProjectFns,
-  useDetailProjectValues,
-} from 'store/DetailProject';
 import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
 import axios from 'axios';
-import { push } from 'lib/manuArrData';
+import { useOnlyPrivateValues } from 'store/Common/OnlyPrivate';
+import { unshift, deleteMany } from 'lib/manuArrData';
+import { useDataFns, TYPE } from 'store/Common/Data';
 import ToDo from 'components/DetailProject/ToDo';
 import EditToDoList from './EditToDoList';
 
 const EditToDoContainer = () => {
-  const [toDos, setToDos] = useState([]);
+  const [toDoList, setToDoList] = useState([]);
   const [selectedDay, setSelectedDay] = useState(moment()._d);
-  const titleRef = useRef();
-  const { projectId } = useDetailProjectValues();
-  const { pushToDoList } = useDetailProjectFns();
-  const { isEditMode, isMultiMode } = useEditMenuValues();
+  const { isEditMode, isMultiMode, idsToDelete } = useEditMenuValues();
   const { setEditMode, toggleMultiMode, initMode } = useEditMenuFns();
-  const createToDoListWithToDo = () => {
-    if (toDos.length === 0) return;
+  const { selectedProjectId } = useOnlyPrivateValues();
+  const { pushData } = useDataFns();
+  const titleRef = useRef();
+  const generateId = () =>
+    Math.random()
+      .toString(36)
+      .substr(2, 9);
+  const createToDo = () => {
+    if (!titleRef.current || !titleRef.current.value) return;
+    const data = {
+      title: titleRef.current.value,
+      _id: generateId(),
+    };
+    setToDoList(unshift(data));
+    titleRef.current.value = '';
+  };
+  const createToDoList = () => {
+    if (toDoList.length === 0) return;
     if (
       !window.confirm(
         `${moment(selectedDay).format(
@@ -29,43 +40,54 @@ const EditToDoContainer = () => {
     )
       return;
     axios({
-      url: `/me/toDoList/create/${projectId}`,
+      url: `/me/toDo/create/${selectedProjectId}`,
       method: 'post',
-      data: toDos.map(toDo => ({ ...toDo, createdAt: selectedDay })),
+      data: toDoList.map(toDo => ({
+        title: toDo.title,
+        createdAt: selectedDay,
+      })),
     }).then(res => {
-      console.log(res);
-      // const { toDoList, toDo } = res.data;
-      // unshiftToDoData(toDo);
+      const data = {
+        _id: moment(selectedDay).format('YYYY-MM-DD'),
+        toDoList: res.data,
+      };
+      console.log(data);
+      pushData({ type: TYPE.DETAIL_PROJECT, data });
+      setToDoList([]);
     });
-  };
-  const createToDo = () => {
-    if (!titleRef.current) return;
-    if (!titleRef.current.value) return;
-    const data = { title: titleRef.current.value };
-    setToDos(push(data));
-    titleRef.current.value = '';
   };
   const handleCreateToDoKeyUp = e => {
     if (e.keyCode === 13) {
       createToDo();
     }
   };
+  const handleDeleteMany = () => {
+    if (!window.confirm('정말로 삭제하시겠습니까?')) return;
+    setToDoList(deleteMany(idsToDelete));
+  };
   return (
     <EditToDoList
-      setSelectedDay={setSelectedDay}
       selectedDay={selectedDay}
-      titleRef={titleRef}
-      createToDoListWithToDo={createToDoListWithToDo}
-      createToDo={createToDo}
-      handleCreateToDoKeyUp={handleCreateToDoKeyUp}
+      setSelectedDay={setSelectedDay}
       isEditMode={isEditMode}
-      setEditMode={setEditMode}
       isMultiMode={isMultiMode}
+      setEditMode={setEditMode}
       toggleMultiMode={toggleMultiMode}
       initMode={initMode}
+      titleRef={titleRef}
+      createToDo={createToDo}
+      createToDoList={createToDoList}
+      handleCreateToDoKeyUp={handleCreateToDoKeyUp}
+      handleDeleteMany={handleDeleteMany}
     >
-      {toDos.map(data => (
-        <ToDo data={data} key={data.title} />
+      {toDoList.map(toDo => (
+        <ToDo
+          id={toDo._id}
+          key={toDo._id}
+          data={toDo}
+          setToDoList={setToDoList}
+          edit
+        />
       ))}
     </EditToDoList>
   );

@@ -10,6 +10,7 @@ import {
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { hover1, inputCss } from 'styles/mixins';
+import ListEditMenu from 'components/Common/ListEditMenu';
 
 const Container = styled.div`
   box-sizing: border-box;
@@ -20,13 +21,10 @@ const Container = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-const IconContainer = styled.span`
-  font-size: 1.5rem;
-`;
-
 const Icon = styled(FontAwesomeIcon)`
   ${hover1}
   padding-left: 0.5rem;
+  font-size: 1.5rem;
 `;
 const MultiModeIcon = styled(Icon)`
   &.isMultiMode {
@@ -68,33 +66,31 @@ const EditProject = ({
         onKeyUp={handleCreateKeyUp}
         maxLength="100"
       />
-      <IconContainer>
-        <Icon icon={faPlus} onClick={createProject} />
-      </IconContainer>
+      <Icon icon={faPlus} onClick={createProject} />
     </AddContainer>
-    {isEditMode ? (
-      <div>
-        <IconContainer>
-          {isMultiMode ? (
-            <IconContainer>
-              <Icon icon={faTrashAlt} onClick={handleDeleteMany} />
-            </IconContainer>
-          ) : null}
-          <MultiModeIcon
-            icon={faTasks}
-            className={isMultiMode ? 'isMultiMode' : null}
-            onClick={() => toggleMultiMode()}
-          />
-        </IconContainer>
-        <IconContainer>
-          <Icon icon={faTimes} onClick={initMode} />
-        </IconContainer>
-      </div>
+    {/* {isEditMode ? (
+      <>
+        {isMultiMode ? (
+          <Icon icon={faTrashAlt} onClick={handleDeleteMany} />
+        ) : null}
+        <MultiModeIcon
+          icon={faTasks}
+          className={isMultiMode ? 'isMultiMode' : null}
+          onClick={() => toggleMultiMode()}
+        />
+        <Icon icon={faTimes} onClick={initMode} />
+      </>
     ) : (
-      <IconContainer>
-        <Icon icon={faEdit} onClick={() => setEditMode(true)} />
-      </IconContainer>
-    )}
+      <Icon icon={faEdit} onClick={() => setEditMode(true)} />
+    )} */}
+    <ListEditMenu
+      isEditMode={isEditMode}
+      isMultiMode={isMultiMode}
+      setEditMode={setEditMode}
+      handleDeleteMany={handleDeleteMany}
+      toggleMultiMode={toggleMultiMode}
+      initMode={initMode}
+    />
   </Container>
 );
 

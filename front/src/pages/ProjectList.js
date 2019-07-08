@@ -6,10 +6,7 @@ import { hover1 } from 'styles/mixins';
 import styled from 'styled-components';
 import ProjectList from 'components/ProjectList';
 import Header from 'components/Common/Header';
-import ProjectListProvider, {
-  useProjectListFns,
-  useProjectListValues,
-} from 'store/ProjectList';
+import DataProvider, { useDataFns, useDataValues } from 'store/Common/Data';
 import { useStatus } from 'lib/hooks';
 import axios from 'axios';
 
@@ -70,20 +67,20 @@ const SortView = styled.div`
 `;
 
 const ProjectListPage = () => {
-  const { loadProject } = useProjectListFns();
-  const { projectDatas } = useProjectListValues();
+  const { loadData } = useDataFns();
+  const { projectList } = useDataValues();
   const {
     error,
     fns: { failure },
   } = useStatus();
   useEffect(() => {
-    if (projectDatas === undefined) {
+    if (projectList === undefined) {
       axios({
         url: '/me/project',
         method: 'get',
       })
         .then(res => {
-          loadProject(res.data);
+          loadData({ type: 'projectList', data: res.data });
         })
         .catch(err => failure(err));
     }
@@ -106,12 +103,12 @@ const ProjectListPage = () => {
           <Icon icon={faClock} />
         </SortView>
       </Header>
-      {projectDatas === undefined || error ? null : <ProjectList />}
+      {projectList === undefined || error ? null : <ProjectList />}
     </>
   );
 };
 export default () => (
-  <ProjectListProvider>
+  <DataProvider>
     <ProjectListPage />
-  </ProjectListProvider>
+  </DataProvider>
 );

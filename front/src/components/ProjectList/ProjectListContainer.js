@@ -1,15 +1,15 @@
 import React from 'react';
 import EditProject from 'components/ProjectList/EditProject';
-import { useProjectListFns } from 'store/ProjectList';
+import { useDataFns } from 'store/Common/Data';
 import EditMenuProvider from 'store/Common/EditMenu';
 import ProjectList from './ProjectList';
 
 const ProjectListContainer = () => {
-  const { mapToComponent } = useProjectListFns();
+  const { mapToComponent } = useDataFns();
   return (
     <EditMenuProvider>
       <ProjectList EditProject={<EditProject />}>
-        {mapToComponent()}
+        {mapToComponent({ type: 'projectList' })}
       </ProjectList>
     </EditMenuProvider>
   );
