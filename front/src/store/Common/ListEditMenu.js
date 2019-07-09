@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState } from 'react';
 
-export const EditMenuContext = createContext();
-const EditMenuProvider = ({ children }) => {
+export const ListEditMenuContext = createContext();
+const ListEditMenuProvider = ({ children }) => {
   const [isEditMode, setEditMode] = useState(false);
   const [isMultiMode, setMultiMode] = useState(false);
   const [idsToDelete, setIdsToDelete] = useState([]);
+  const [titleChangeMode, setTitleChangeMode] = useState(false);
   /**
    *
    * @param {String} id
@@ -20,8 +21,11 @@ const EditMenuProvider = ({ children }) => {
       return [...state.slice(0, idx), ...state.slice(idx + 1)];
     });
   };
-  const toggleMultiMode = () => setMultiMode(!isMultiMode);
   const clearIdsToDelete = () => setIdsToDelete([]);
+  const toggleMultiMode = () => {
+    if (isMultiMode) clearIdsToDelete();
+    setMultiMode(!isMultiMode);
+  };
   const initMode = () => {
     setEditMode(false);
     setMultiMode(false);
@@ -29,11 +33,12 @@ const EditMenuProvider = ({ children }) => {
   };
   const isSelected = id => idsToDelete.some(idToDelete => idToDelete === id);
   return (
-    <EditMenuContext.Provider
+    <ListEditMenuContext.Provider
       value={{
         isEditMode,
         isMultiMode,
         idsToDelete,
+        titleChangeMode,
         fns: {
           toggleIdsToDelete,
           toggleMultiMode,
@@ -41,21 +46,22 @@ const EditMenuProvider = ({ children }) => {
           initMode,
           setEditMode,
           isSelected,
+          setTitleChangeMode,
         },
       }}
     >
       {children}
-    </EditMenuContext.Provider>
+    </ListEditMenuContext.Provider>
   );
 };
 
-export const useEditMenuValues = () => {
-  const { fns, ...values } = useContext(EditMenuContext);
+export const useListEditMenuValues = () => {
+  const { fns, ...values } = useContext(ListEditMenuContext);
   return values;
 };
-export const useEditMenuFns = () => {
-  const { fns } = useContext(EditMenuContext);
+export const useListEditMenuFns = () => {
+  const { fns } = useContext(ListEditMenuContext);
   return fns;
 };
 
-export default EditMenuProvider;
+export default ListEditMenuProvider;

@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { faTrashAlt, faPen, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Button from 'components/Common/Button';
+import { HOVER_TYPE } from 'styles/mixins';
 
 const EditContainer = styled.div`
   ${props =>
-    props.cssType === 'toDo'
+    props.csstype === 'toDo'
       ? css`
           margin-left: 0.2rem;
         `
@@ -18,80 +19,50 @@ const EditContainer = styled.div`
   justify-content: center;
   overflow: hidden;
 `;
-const Icon = styled(FontAwesomeIcon)`
-  /* width: 1rem !important; */
-  height: 100%;
-  ${props =>
-    props.times
-      ? css`
-          font-size: 1.5rem;
-        `
-      : null};
-  border-radius: ${props => props.theme.RADIUS};
-  padding: 0 0.5rem;
-  cursor: pointer;
-  transition: background-color ${props => props.theme.TRANSITION};
-  &:hover {
-    color: white;
-    background: ${props => props.theme.PRIMARY()};
-  }
-  &:active {
-    transform: scale(0.9);
-  }
-`;
+
 const EditMenu = ({
-  id,
-  isMultiMode,
-  isEditMode,
-  isChangeTitleMode,
-  setChangeTitleMode,
+  titleChangeMode,
+  setTitleChangeMode,
   handleDelete,
-  isCompleted,
-  ...rest
+  isEditMode,
+  isMultiMode,
+  csstype,
 }) => {
-  if (isCompleted) {
-    return (
-      <EditContainer cssType={rest.cssType}>
-        <Icon icon={faTimes} cssType={rest.cssType} times />
-      </EditContainer>
-    );
-  }
-  if (isEditMode && !isMultiMode) {
-    return (
-      <EditContainer cssType={rest.cssType}>
-        <Icon
-          icon={isChangeTitleMode ? faTimes : faPen}
-          cssType={rest.cssType}
-          times={isChangeTitleMode}
-          onClick={
-            isChangeTitleMode
-              ? () => setChangeTitleMode(false)
-              : () => setChangeTitleMode(true)
-          }
-        />
-        <Icon
-          icon={faTrashAlt}
-          cssType={rest.cssType}
-          onClick={() => handleDelete(id)}
-        />
-      </EditContainer>
-    );
-  }
-  return null;
+  const buttonStyles = {
+    height: '100%',
+    padding: '0 0.5rem',
+  };
+  return isEditMode && !isMultiMode ? (
+    <EditContainer csstype={csstype}>
+      <Button
+        icon={titleChangeMode ? faTimes : faPen}
+        hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+        onClick={
+          titleChangeMode
+            ? () => setTitleChangeMode(false)
+            : () => setTitleChangeMode(true)
+        }
+        styles={buttonStyles}
+      />
+      <Button
+        icon={faTrashAlt}
+        hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+        onClick={handleDelete}
+        styles={buttonStyles}
+      />
+    </EditContainer>
+  ) : null;
 };
 EditMenu.propTypes = {
-  id: PropTypes.string,
-  isMultiMode: PropTypes.bool.isRequired,
-  isEditMode: PropTypes.bool.isRequired,
-  isChangeTitleMode: PropTypes.bool.isRequired,
-  setChangeTitleMode: PropTypes.func.isRequired,
+  titleChangeMode: PropTypes.bool.isRequired,
+  setTitleChangeMode: PropTypes.func.isRequired,
   handleDelete: PropTypes.func,
-  isCompleted: PropTypes.bool.isRequired,
+  isEditMode: PropTypes.bool.isRequired,
+  isMultiMode: PropTypes.bool.isRequired,
+  csstype: PropTypes.string,
 };
 EditMenu.defaultProps = {
-  //------
-  id: undefined,
   handleDelete: undefined,
-  //------
+  csstype: undefined,
 };
 export default EditMenu;

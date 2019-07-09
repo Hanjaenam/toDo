@@ -1,28 +1,28 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
-import { inputCss, hover1 } from 'styles/mixins';
+import { inputCss, HOVER_TYPE } from 'styles/mixins';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import ListEditMenu from 'components/Common/ListEditMenu';
+import Button from 'components/Common/Button';
 import { MONTHS, WEEKDAYS_LONG, WEEKDAYS_SHORT } from './DayPickerCustom';
 
 const Container = styled.div`
   box-sizing: border-box;
-  width: 450px;
+  width: ${props => props.theme.WIDTH.TO_DO_LIST};
   border-radius: ${props => props.theme.RADIUS};
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
-    /* height 일부러 안잡아준 것. */
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
   flex-shrink: 0;
-  margin: 1rem;
   background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  margin-right: 1rem;
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
+    margin: 0 auto;
+    margin-bottom: 1rem;
+  }
 `;
 const Test = styled.div`
   display: flex;
@@ -76,15 +76,6 @@ const CalendarIcon = styled(FontAwesomeIcon)`
   left: 1rem;
   pointer-events: none;
 `;
-const Icon = styled(FontAwesomeIcon)`
-  font-size: 1.2rem;
-  padding-left: 0.5rem;
-  ${hover1}
-`;
-const AddIcon = styled(Icon)`
-  font-size: 2.1rem;
-  padding: 0.5rem;
-`;
 const EditContainer = styled.div`
   flex: 1;
   display: flex;
@@ -97,84 +88,75 @@ const Input = styled.input`
   padding: 0.5rem;
   ${inputCss}
 `;
-const ToDoContainer = styled.div``;
+const DataContainer = styled.div`
+  border-bottom-right-radius: ${props => props.theme.RADIUS};
+  border-bottom-left-radius: ${props => props.theme.RADIUS};
+  overflow: hidden;
+`;
 
 const EditToDoList = ({
   children,
   selectedDay,
   setSelectedDay,
-  isEditMode,
-  isMultiMode,
-  setEditMode,
-  toggleMultiMode,
-  initMode,
-  titleRef,
   createToDo,
   createToDoList,
-  handleCreateToDoKeyUp,
   handleDeleteMany,
-}) => (
-  <Container>
-    <Test>
-      <CalendarContainer>
-        <CalendarIcon icon={faCalendarAlt} />
-        <DayPickerInput
-          onDayChange={day => setSelectedDay(day)}
-          value={selectedDay}
-          dayPickerProps={{
-            todayButton: 'Today',
-            months: MONTHS,
-            weekdaysLong: WEEKDAYS_LONG,
-            weekdaysShort: WEEKDAYS_SHORT,
-          }}
-          inputProps={{ readOnly: true }}
+}) => {
+  const titleRef = useRef();
+  return (
+    <Container>
+      <Test>
+        <CalendarContainer>
+          <CalendarIcon icon={faCalendarAlt} />
+          <DayPickerInput
+            onDayChange={day => setSelectedDay(day)}
+            value={selectedDay}
+            dayPickerProps={{
+              todayButton: 'Today',
+              months: MONTHS,
+              weekdaysLong: WEEKDAYS_LONG,
+              weekdaysShort: WEEKDAYS_SHORT,
+            }}
+            inputProps={{ readOnly: true }}
+          />
+        </CalendarContainer>
+        <Button
+          icon={faPlus}
+          hoverType={HOVER_TYPE.COLOR}
+          onClick={createToDoList}
+          styles={{ fontSize: '2.1rem', padding: '.5rem' }}
         />
-      </CalendarContainer>
-      <AddIcon icon={faPlus} onClick={createToDoList} />
-    </Test>
-    <EditContainer>
-      <Input
-        type="text"
-        maxLength="50"
-        placeholder="to do title"
-        ref={titleRef}
-        onKeyUp={handleCreateToDoKeyUp}
-      />
-      <Icon icon={faPlus} onClick={createToDo} />
-      {/* {isEditMode ? (
-        <>
-          {isMultiMode ? <Icon icon={faTrashAlt} /> : null}
-          <Icon icon={faTasks} onClick={() => toggleMultiMode()} />
-          <Icon icon={faTimes} onClick={() => initMode()} />
-        </>
-      ) : (
-        <Icon icon={faEdit} onClick={() => setEditMode(true)} />
-      )} */}
-      <ListEditMenu
-        isEditMode={isEditMode}
-        isMultiMode={isMultiMode}
-        toggleMultiMode={toggleMultiMode}
-        setEditMode={setEditMode}
-        initMode={initMode}
-        handleDeleteMany={handleDeleteMany}
-      />
-    </EditContainer>
-    <ToDoContainer>{children}</ToDoContainer>
-  </Container>
-);
+      </Test>
+      <EditContainer>
+        <Input
+          type="text"
+          maxLength="100"
+          placeholder="해야 할 일"
+          ref={titleRef}
+          onKeyUp={e => {
+            if (e.keyCode === 13) {
+              createToDo(titleRef);
+            }
+          }}
+        />
+        <Button
+          icon={faPlus}
+          hoverType={HOVER_TYPE.COLOR}
+          onClick={() => createToDo(titleRef)}
+          styles={{ fontSize: '1.4rem', paddingLeft: '.5rem' }}
+        />
+        <ListEditMenu handleDeleteMany={handleDeleteMany} />
+      </EditContainer>
+      <DataContainer>{children}</DataContainer>
+    </Container>
+  );
+};
 
 EditToDoList.propTypes = {
   selectedDay: PropTypes.instanceOf(Date).isRequired,
   setSelectedDay: PropTypes.func.isRequired,
-  titleRef: PropTypes.shape({}).isRequired,
   createToDo: PropTypes.func.isRequired,
   createToDoList: PropTypes.func.isRequired,
-  handleCreateToDoKeyUp: PropTypes.func.isRequired,
-  isEditMode: PropTypes.bool.isRequired,
-  setEditMode: PropTypes.func.isRequired,
-  isMultiMode: PropTypes.bool.isRequired,
-  toggleMultiMode: PropTypes.func.isRequired,
-  initMode: PropTypes.func.isRequired,
   handleDeleteMany: PropTypes.func.isRequired,
 };
 

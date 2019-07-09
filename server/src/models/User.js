@@ -6,7 +6,14 @@ const UserSchema = mongoose.Schema({
   email: { type: String, required: true },
   hash: {
     type: String,
-    required: true,
+    // required: true,
+    // validate: [
+    //   function(password) {
+    //     return password.length >= 8;
+    //   },
+
+    //   'Password should be longer',
+    // ],
   },
   salt: {
     type: String,

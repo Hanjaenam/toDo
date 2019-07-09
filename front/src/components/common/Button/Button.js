@@ -1,43 +1,71 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
+import { hover } from 'styles/mixins';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const Element = styled.div`
-  ${props => (props.init ? null : css``)}
+const Container = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  ${props => hover({ type: props.hoverType, ...props.hoverOpts })};
+  ${props => props.styles};
+  ${props =>
+    props.rest.isMultiMode
+      ? css`
+          color: ${props => props.theme.PRIMARY()};
+        `
+      : null};
 `;
 
-// eslint-disable-next-line no-underscore-dangle
-const _Button = ({
-  init = false,
-  handleClick,
-  to,
+const Icon = styled(FontAwesomeIcon)`
+  ${({ styles }) =>
+    styles
+      ? css`
+          font-size: ${styles.fontSize ? styles.fontSize : '1rem'};
+        `
+      : null}
+  ${props =>
+    props.icon.iconName === 'times'
+      ? css`
+          font-size: 1.5rem;
+        `
+      : null}
+`;
+
+const Button = ({
   children,
-  disabled,
+  icon,
+  hoverType,
+  styles,
+  hoverOpts,
+  onClick,
   ...rest
 }) => {
   return (
-    <Element
-      disabled={disabled}
-      as={to ? Link : 'button'}
-      onClick={disabled ? null : handleClick}
-      to={to}
-      init={init}
-      {...rest}
+    <Container
+      rest={rest}
+      hoverType={hoverType}
+      hoverOpts={hoverOpts}
+      styles={styles}
+      onClick={onClick}
     >
-      {children}
-    </Element>
+      <p>{icon ? <Icon icon={icon} /> : children}</p>
+    </Container>
   );
 };
-_Button.propTypes = {
-  init: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
-  to: PropTypes.string,
-  disabled: PropTypes.bool,
-};
-_Button.defaultProps = {
-  to: undefined,
-  disabled: undefined,
-};
 
-export default _Button;
+Button.propTypes = {
+  icon: PropTypes.shape({}),
+  hoverType: PropTypes.string.isRequired,
+  styles: PropTypes.shape({}),
+  hoverOpts: PropTypes.shape({}),
+  onClick: PropTypes.func,
+};
+Button.defaultProps = {
+  icon: undefined,
+  styles: undefined,
+  hoverOpts: undefined,
+  onClick: () => console.log('not defined onClick'),
+};
+export default Button;

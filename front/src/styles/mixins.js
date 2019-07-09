@@ -1,36 +1,68 @@
 import { css } from 'styled-components';
 
-export const hover1 = css`
-  cursor: pointer;
-  color: rgba(0, 0, 0, 0.4);
-  transition: color ${props => props.theme.TRANSITION};
-  &:hover {
-    color: ${props => props.theme.PRIMARY()};
-  }
-  &:active {
-    transform: scale(0.9);
-  }
-`;
+export const HOVER_TYPE = {
+  TO_DO: 'toDo',
+  BACKGROUND_COLOR: 'backgroundColor',
+  COLOR: 'color',
+};
 
-export const hover2 = css`
-  cursor: pointer;
-  transition: background-color ${props => props.theme.TRANSITION};
-  span {
-    user-select: none;
-    display: inline-block;
+export const hover = ({ type, ...opts }) => {
+  if (type === HOVER_TYPE.BACKGROUND_COLOR) {
+    return css`
+      cursor: pointer;
+      border-radius: ${props => props.theme.RADIUS};
+      transition: background-color ${props => props.theme.TRANSITION}
+        ${opts.timing ? 'linear' : opts.timing};
+      p {
+        user-select: none;
+      }
+      &:hover {
+        background-color: ${props =>
+          props.theme.PRIMARY({ add: opts.add, minus: opts.minus })};
+        p {
+          color: white;
+        }
+      }
+      &:active {
+        p {
+          transform: scale(0.9);
+        }
+      }
+    `;
   }
-  &:hover {
-    background-color: ${props => props.theme.PRIMARY()};
-    span {
-      color: white;
-    }
+  if (type === HOVER_TYPE.COLOR) {
+    return css`
+      cursor: pointer;
+      color: rgba(0, 0, 0, 0.4);
+      transition: color ${props => props.theme.TRANSITION}
+        ${opts.timing ? 'linear' : opts.timing};
+      &:hover {
+        color: ${props => props.theme.PRIMARY()};
+      }
+      &:active {
+        transform: scale(0.9);
+      }
+    `;
   }
-  &:active {
-    span {
-      transform: scale(0.9);
-    }
+  if (type === HOVER_TYPE.TO_DO) {
+    return css`
+      cursor: pointer;
+      transition: background-color ${props => props.theme.TRANSITION};
+      &:hover {
+        background-color: ${props => props.theme.PRIMARY()};
+        div {
+          border-color: white;
+        }
+        p {
+          color: white;
+        }
+      }
+      &:active {
+        transform: scale(0.99);
+      }
+    `;
   }
-`;
+};
 
 export const inputCss = css`
   outline: none;

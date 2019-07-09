@@ -11,6 +11,7 @@ const Container = styled.div`
   background: transparent;
   display: flex;
   position: relative;
+  padding-bottom: 0.3rem;
 `;
 const SelectIcon = styled(FontAwesomeIcon)`
   position: absolute;
@@ -61,11 +62,10 @@ const Date = styled.p`
 `;
 
 const Project = ({
-  id,
   data,
   handleDelete,
-  isChangeTitleMode,
-  setChangeTitleMode,
+  titleChangeMode,
+  setTitleChangeMode,
   processPatch,
   isEditMode,
   isMultiMode,
@@ -74,7 +74,6 @@ const Project = ({
 }) => (
   <Container>
     <DataContainer
-      isChangeTitleMode={isChangeTitleMode}
       onClick={handleClick}
       isSelected={isSelected}
       isEditMode={isEditMode}
@@ -85,33 +84,28 @@ const Project = ({
       ) : null}
       <Title
         title={data.title}
-        isChangeTitleMode={isChangeTitleMode}
+        titleChangeMode={titleChangeMode}
         processPatch={processPatch}
       />
       <Date>{moment(data.createdAt).format('YYYY-MM-DD')}</Date>
     </DataContainer>
     <EditMenu
-      id={id}
-      isEditMode={isEditMode}
-      isMultiMode={isMultiMode}
-      isChangeTitleMode={isChangeTitleMode}
-      setChangeTitleMode={setChangeTitleMode}
+      titleChangeMode={titleChangeMode}
+      setTitleChangeMode={setTitleChangeMode}
       handleDelete={handleDelete}
-      isCompleted={data.isCompleted}
     />
   </Container>
 );
 
 Project.propTypes = {
-  id: PropTypes.string.isRequired,
   data: PropTypes.shape({
     title: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
     isCompleted: PropTypes.bool.isRequired,
   }).isRequired,
   handleDelete: PropTypes.func.isRequired,
-  isChangeTitleMode: PropTypes.bool.isRequired,
-  setChangeTitleMode: PropTypes.func.isRequired,
+  titleChangeMode: PropTypes.bool.isRequired,
+  setTitleChangeMode: PropTypes.func.isRequired,
   isEditMode: PropTypes.bool.isRequired,
   processPatch: PropTypes.func.isRequired,
   isMultiMode: PropTypes.bool.isRequired,

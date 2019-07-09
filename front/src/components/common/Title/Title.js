@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import Button from 'components/Common/Button';
+import { HOVER_TYPE } from 'styles/mixins';
 
 const Container = styled.div`
   position: relative;
@@ -21,22 +22,6 @@ const Input = styled.input`
     border-color: rgba(0, 0, 0, 0.5);
   }
 `;
-const ConfirmIcon = styled(FontAwesomeIcon)`
-  cursor: pointer;
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: 1rem !important;
-  padding: 0 0.5rem;
-  transition: ${props => props.theme.TRANSITION};
-  border-top-right-radius: ${props => props.theme.RADIUS};
-  border-bottom-right-radius: ${props => props.theme.RADIUS};
-  &:hover {
-    color: white;
-    background: ${props => props.theme.PRIMARY()};
-  }
-`;
 const TitleText = styled.p`
   box-sizing: border-box;
   border: 2px solid transparent;
@@ -45,11 +30,20 @@ const TitleText = styled.p`
   color: ${props => props.theme.PRIMARY()};
 `;
 
-const Title = ({ title, isChangeTitleMode, processPatch }) => {
+const Title = ({ title, titleChangeMode, processPatch }) => {
   const titleRef = useRef();
+  const buttonStyles = {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    height: '100%',
+    padding: '0 0.5rem',
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+  };
   return (
     <Container>
-      {isChangeTitleMode ? (
+      {titleChangeMode ? (
         <>
           <Input
             defaultValue={title}
@@ -61,7 +55,12 @@ const Title = ({ title, isChangeTitleMode, processPatch }) => {
               }
             }}
           />
-          <ConfirmIcon icon={faCheck} onClick={() => processPatch(titleRef)} />
+          <Button
+            icon={faCheck}
+            hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+            onClick={() => processPatch(titleRef)}
+            styles={buttonStyles}
+          />
         </>
       ) : (
         <TitleText>{title}</TitleText>
@@ -71,11 +70,10 @@ const Title = ({ title, isChangeTitleMode, processPatch }) => {
 };
 Title.propTypes = {
   title: PropTypes.string.isRequired,
-  isChangeTitleMode: PropTypes.bool.isRequired,
-  handlePatchKeyUp: PropTypes.func,
+  titleChangeMode: PropTypes.bool.isRequired,
   processPatch: PropTypes.func,
 };
 Title.defaultProps = {
-  handlePatchKeyUp: undefined,
+  processPatch: undefined,
 };
 export default Title;

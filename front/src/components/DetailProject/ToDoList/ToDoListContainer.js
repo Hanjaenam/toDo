@@ -1,25 +1,38 @@
 import React, { useState } from 'react';
+import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import axios from 'axios';
-import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
-import { useDataFns, TYPE } from 'store/Common/Data';
-import { unshift, deleteMany } from 'lib/manuArrData';
-import { useOnlyPrivateValues } from 'store/Common/OnlyPrivate';
+import { useDetailProjectFns } from 'pages/DetailProject';
+import { unshift, deleteMany, deleteOne } from 'lib/manuArrData';
 import ToDo from 'components/DetailProject/ToDo';
+import moment from 'moment';
+import { useListEditMenuValues } from 'store/Common/ListEditMenu';
 import ToDoList from './ToDoList';
 
-const ToDoListContainer = ({ createdAt, data }) => {
+const ToDoListContainer = ({
+  createdAt,
+  data,
+  match: {
+    params: { id },
+  },
+}) => {
   const [toDoList, setToDoList] = useState(data);
-  const { deleteOneData } = useDataFns();
-  const { isEditMode, isMultiMode } = useEditMenuValues();
-  const { setEditMode, toggleMultiMode, initMode } = useEditMenuFns();
-  const { selectedProjectId } = useOnlyPrivateValues();
+  const { setDetailProject } = useDetailProjectFns();
+  const { idsToDelete } = useListEditMenuValues();
+  const checkPreviousToDo = () => {
+    const now = Number(moment(Date.now()).format('YYYYMMDD'));
+    return now === Number(createdAt.replace(/-/g, ''))
+      ? false
+      : now >= Number(createdAt.replace(/-/g, ''));
+  };
   const createToDo = titleRef => {
     if (!titleRef.current || !titleRef.current.value) return;
     const _data = {
       title: titleRef.current.value,
+      createdAt,
     };
     axios({
-      url: `/me/toDo/create/${selectedProjectId}`,
+      url: `/me/toDo/create/${id}`,
       method: 'post',
       data: _data,
     }).then(res => {
@@ -28,35 +41,50 @@ const ToDoListContainer = ({ createdAt, data }) => {
     });
   };
   const deleteToDoList = () => {
-    if (!window.confirm(`${createdAt} 정말로 삭제하시겠습니까?`)) return;
+    if (!window.confirm(`${createdAt} 삭제하시겠습니까?`)) return;
     axios({
       url: `/me/toDo/delete`,
       method: 'DELETE',
       data: data.map(_data => _data._id),
     }).then(() => {
-      deleteOneData({ type: TYPE.DETAIL_PROJECT, id: createdAt });
+      setDetailProject(deleteOne(createdAt));
     });
   };
+  const handleDeleteMany = () => {
+    if (idsToDelete.length === 0) return;
+    if (!window.confirm(`총 ${idsToDelete.length} 개를 삭제하시겠습니까?`))
+      return;
+    axios({
+      url: '/me/toDo/delete',
+      data: idsToDelete,
+      method: 'delete',
+    }).then(() => {
+      setToDoList(deleteMany(idsToDelete));
+    });
+  };
+  const mapToComponent = () =>
+    toDoList.map(toDo => (
+      <ToDo
+        id={toDo._id}
+        key={toDo._id}
+        data={toDo}
+        setToDoList={setToDoList}
+      />
+    ));
   return (
     <ToDoList
       createdAt={createdAt}
       deleteToDoList={deleteToDoList}
-      isEditMode={isEditMode}
-      isMultiMode={isMultiMode}
-      setEditMode={setEditMode}
-      toggleMultiMode={toggleMultiMode}
-      initMode={initMode}
       createToDo={createToDo}
+      handleDeleteMany={handleDeleteMany}
+      checkPreviousToDo={checkPreviousToDo}
     >
-      {toDoList.map(toDo => (
-        <ToDo
-          id={toDo._id}
-          key={toDo._id}
-          data={toDo}
-          setToDoList={setToDoList}
-        />
-      ))}
+      {mapToComponent()}
     </ToDoList>
   );
 };
-export default ToDoListContainer;
+ToDoListContainer.propTypes = {
+  createdAt: PropTypes.string.isRequired,
+  data: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+};
+export default withRouter(ToDoListContainer);

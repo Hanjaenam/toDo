@@ -1,26 +1,27 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
+import { withRouter } from 'react-router-dom';
 import moment from 'moment';
-import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
+import { useListEditMenuValues } from 'store/Common/ListEditMenu';
 import axios from 'axios';
-import { useOnlyPrivateValues } from 'store/Common/OnlyPrivate';
-import { unshift, deleteMany } from 'lib/manuArrData';
-import { useDataFns, TYPE } from 'store/Common/Data';
+import { push, unshift, deleteMany } from 'lib/manuArrData';
+import { useDetailProjectFns } from 'pages/DetailProject';
 import ToDo from 'components/DetailProject/ToDo';
 import EditToDoList from './EditToDoList';
 
-const EditToDoContainer = () => {
+const EditToDoContainer = ({
+  match: {
+    params: { title },
+  },
+}) => {
+  const { setDetailProject } = useDetailProjectFns();
   const [toDoList, setToDoList] = useState([]);
   const [selectedDay, setSelectedDay] = useState(moment()._d);
-  const { isEditMode, isMultiMode, idsToDelete } = useEditMenuValues();
-  const { setEditMode, toggleMultiMode, initMode } = useEditMenuFns();
-  const { selectedProjectId } = useOnlyPrivateValues();
-  const { pushData } = useDataFns();
-  const titleRef = useRef();
+  const { idsToDelete } = useListEditMenuValues();
   const generateId = () =>
     Math.random()
       .toString(36)
       .substr(2, 9);
-  const createToDo = () => {
+  const createToDo = titleRef => {
     if (!titleRef.current || !titleRef.current.value) return;
     const data = {
       title: titleRef.current.value,
@@ -40,7 +41,7 @@ const EditToDoContainer = () => {
     )
       return;
     axios({
-      url: `/me/toDo/create/${selectedProjectId}`,
+      url: `/me/toDo/create/${title}`,
       method: 'post',
       data: toDoList.map(toDo => ({
         title: toDo.title,
@@ -51,46 +52,38 @@ const EditToDoContainer = () => {
         _id: moment(selectedDay).format('YYYY-MM-DD'),
         toDoList: res.data,
       };
-      console.log(data);
-      pushData({ type: TYPE.DETAIL_PROJECT, data });
+      setDetailProject(push(data));
       setToDoList([]);
     });
   };
-  const handleCreateToDoKeyUp = e => {
-    if (e.keyCode === 13) {
-      createToDo();
-    }
-  };
   const handleDeleteMany = () => {
-    if (!window.confirm('정말로 삭제하시겠습니까?')) return;
+    if (idsToDelete.length === 0) return;
+    if (!window.confirm(`총 ${idsToDelete.length} 개를 삭제하시겠습니까?`))
+      return;
     setToDoList(deleteMany(idsToDelete));
   };
+  const mapToComponent = () =>
+    toDoList.map(toDo => (
+      <ToDo
+        id={toDo._id}
+        key={toDo._id}
+        data={toDo}
+        setToDoList={setToDoList}
+        edit
+      />
+    ));
   return (
     <EditToDoList
+      data={toDoList.length}
       selectedDay={selectedDay}
       setSelectedDay={setSelectedDay}
-      isEditMode={isEditMode}
-      isMultiMode={isMultiMode}
-      setEditMode={setEditMode}
-      toggleMultiMode={toggleMultiMode}
-      initMode={initMode}
-      titleRef={titleRef}
       createToDo={createToDo}
       createToDoList={createToDoList}
-      handleCreateToDoKeyUp={handleCreateToDoKeyUp}
       handleDeleteMany={handleDeleteMany}
     >
-      {toDoList.map(toDo => (
-        <ToDo
-          id={toDo._id}
-          key={toDo._id}
-          data={toDo}
-          setToDoList={setToDoList}
-          edit
-        />
-      ))}
+      {mapToComponent()}
     </EditToDoList>
   );
 };
 
-export default EditToDoContainer;
+export default withRouter(EditToDoContainer);

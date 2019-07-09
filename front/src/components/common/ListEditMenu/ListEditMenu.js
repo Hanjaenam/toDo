@@ -1,50 +1,59 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTasks,
   faEdit,
   faTimes,
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { hover1 } from 'styles/mixins';
-
-const Icon = styled(FontAwesomeIcon)`
-  ${hover1}
-  padding-left: 0.5rem;
-  font-size: 1.5rem;
-`;
-
-const MultiModeIcon = styled(Icon)`
-  &.isMultiMode {
-    color: ${props => props.theme.PRIMARY()};
-  }
-`;
+import { HOVER_TYPE } from 'styles/mixins';
+import Button from 'components/Common/Button';
 
 const ListEditMenu = ({
   isEditMode,
   isMultiMode,
-  handleDeleteMany,
-  initMode,
-  toggleMultiMode,
   setEditMode,
-}) =>
-  isEditMode ? (
+  toggleMultiMode,
+  initMode,
+  handleDeleteMany,
+}) => {
+  const buttonStyles = {
+    fontSize: '1.5rem',
+    paddingLeft: '.5rem',
+  };
+  return isEditMode ? (
     <>
       {isMultiMode ? (
-        <Icon icon={faTrashAlt} onClick={handleDeleteMany} />
+        <Button
+          icon={faTrashAlt}
+          hoverType={HOVER_TYPE.COLOR}
+          onClick={handleDeleteMany}
+          styles={buttonStyles}
+        />
       ) : null}
-      <MultiModeIcon
+      <Button
         icon={faTasks}
-        className={isMultiMode ? 'isMultiMode' : null}
+        hoverType={HOVER_TYPE.COLOR}
+        styles={buttonStyles}
         onClick={() => toggleMultiMode()}
+        isMultiMode={isMultiMode}
       />
-      <Icon icon={faTimes} onClick={initMode} />
+      <Button
+        icon={faTimes}
+        hoverType={HOVER_TYPE.COLOR}
+        onClick={initMode}
+        styles={buttonStyles}
+      />
     </>
   ) : (
-    <Icon icon={faEdit} onClick={() => setEditMode(true)} />
+    <Button
+      icon={faEdit}
+      hoverType={HOVER_TYPE.COLOR}
+      onClick={() => setEditMode(true)}
+      styles={buttonStyles}
+    />
   );
+};
 
 ListEditMenu.propTypes = {
   isEditMode: PropTypes.bool.isRequired,

@@ -1,14 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import Helmet from 'react-helmet';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faStar, faClock } from '@fortawesome/free-solid-svg-icons';
-import { hover1 } from 'styles/mixins';
+import { HOVER_TYPE } from 'styles/mixins';
 import styled from 'styled-components';
 import ProjectList from 'components/ProjectList';
 import Header from 'components/Common/Header';
-import DataProvider, { useDataFns, useDataValues } from 'store/Common/Data';
 import { useStatus } from 'lib/hooks';
 import axios from 'axios';
+import Button from 'components/Common/Button';
 
 const InputContainer = styled.div`
   display: flex;
@@ -33,31 +32,10 @@ const SearchInput = styled.input`
   }
 `;
 
-const Icon = styled(FontAwesomeIcon)`
-  ${hover1}
-  padding:.3rem;
-  border-radius: ${props => props.theme.RADIUS};
-  color: white;
-`;
-
-const SearchIcon = styled(FontAwesomeIcon)`
-  position: absolute;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  padding: 0 0.5rem;
-  ${hover1}
-`;
-
 const Pagination = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-
-const Number = styled.span`
-  ${hover1}
-  color:white;
 `;
 
 const SortView = styled.div`
@@ -66,9 +44,19 @@ const SortView = styled.div`
   justify-content: flex-end;
 `;
 
+export const ProjectListContext = createContext();
+
+export const useProjectListValues = () => {
+  const { fns, ...values } = useContext(ProjectListContext);
+  return values;
+};
+export const useProjectListFns = () => {
+  const { fns } = useContext(ProjectListContext);
+  return fns;
+};
+
 const ProjectListPage = () => {
-  const { loadData } = useDataFns();
-  const { projectList } = useDataValues();
+  const [projectList, setProjectList] = useState();
   const {
     error,
     fns: { failure },
@@ -80,35 +68,67 @@ const ProjectListPage = () => {
         method: 'get',
       })
         .then(res => {
-          loadData({ type: 'projectList', data: res.data });
+          setProjectList(res.data);
         })
         .catch(err => failure(err));
     }
   }, []);
+  const buttonStyles = {
+    padding: '.3rem',
+    color: 'white',
+  };
+  const searchButtonStyles = {
+    position: 'absolute',
+    right: '0',
+    height: '100%',
+    padding: '0 0.5rem',
+  };
   return (
     <>
       <Helmet>
         <title>할 일 묵록</title>
       </Helmet>
-      <Header>
+      <Header page="projectList">
         <InputContainer>
-          <SearchInput placeholder="project name" />
-          <SearchIcon icon={faSearch} />
+          <SearchInput placeholder="프로젝트 검색" />
+          <Button
+            icon={faSearch}
+            hoverType={HOVER_TYPE.COLOR}
+            styles={searchButtonStyles}
+          />
         </InputContainer>
         <Pagination>
-          <Number>1</Number>
+          <Button
+            hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+            styles={buttonStyles}
+            hoverOpts={{ minus: 30 }}
+          >
+            1
+          </Button>
         </Pagination>
         <SortView>
-          <Icon icon={faStar} />
-          <Icon icon={faClock} />
+          <Button
+            icon={faStar}
+            hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+            styles={buttonStyles}
+            hoverOpts={{ minus: 30 }}
+          />
+          <Button
+            icon={faClock}
+            hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+            styles={buttonStyles}
+            hoverOpts={{ minus: 30 }}
+          />
         </SortView>
       </Header>
-      {projectList === undefined || error ? null : <ProjectList />}
+      {projectList === undefined || error ? null : (
+        <ProjectListContext.Provider
+          value={{ projectList, fns: { setProjectList } }}
+        >
+          <ProjectList />
+        </ProjectListContext.Provider>
+      )}
     </>
   );
 };
-export default () => (
-  <DataProvider>
-    <ProjectListPage />
-  </DataProvider>
-);
+export default ProjectListPage;

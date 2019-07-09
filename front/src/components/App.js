@@ -14,7 +14,7 @@ function App() {
           <Route exact path="/register" component={Register} />
           <OnlyPrivate>
             <Route exact path="/me/project" component={ProjectList} />
-            <Route exact path="/me/project/:title" component={DetailProject} />
+            <Route exact path="/me/project/:id" component={DetailProject} />
           </OnlyPrivate>
         </Switch>
       </Router>

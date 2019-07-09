@@ -1,17 +1,22 @@
 import React from 'react';
 import EditProject from 'components/ProjectList/EditProject';
-import { useDataFns } from 'store/Common/Data';
-import EditMenuProvider from 'store/Common/EditMenu';
+import ListEditMenuProvider from 'store/Common/ListEditMenu';
+import { useProjectListValues } from 'pages/ProjectList';
+import Project from 'components/ProjectList/Project';
 import ProjectList from './ProjectList';
 
 const ProjectListContainer = () => {
-  const { mapToComponent } = useDataFns();
+  const { projectList } = useProjectListValues();
+  const mapToComponent = () =>
+    projectList.map(project => (
+      <Project id={project._id} key={project._id} data={project} />
+    ));
   return (
-    <EditMenuProvider>
+    <ListEditMenuProvider>
       <ProjectList EditProject={<EditProject />}>
-        {mapToComponent({ type: 'projectList' })}
+        {mapToComponent()}
       </ProjectList>
-    </EditMenuProvider>
+    </ListEditMenuProvider>
   );
 };
 export default ProjectListContainer;

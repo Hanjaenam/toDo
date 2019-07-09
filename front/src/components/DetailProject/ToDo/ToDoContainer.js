@@ -1,26 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
+import React from 'react';
+import PropTypes from 'prop-types';
+import {
+  useListEditMenuValues,
+  useListEditMenuFns,
+} from 'store/Common/ListEditMenu';
 import { deleteOne, patch } from 'lib/manuArrData';
 import axios from 'axios';
+import { useChangeTitleMode } from 'lib/hooks';
 import ToDo from './ToDo';
 
 const ToDoContainer = ({ id, data, setToDoList, edit }) => {
-  const [isChangeTitleMode, setChangeTitleMode] = useState(false);
-  const { isEditMode, isMultiMode } = useEditMenuValues();
-  const { toggleIdsToDelete, isSelected } = useEditMenuFns();
-  useEffect(() => {
-    if (!isEditMode && isChangeTitleMode) {
-      setChangeTitleMode(false);
-    }
-  }, [isEditMode]);
+  const { isEditMode, isMultiMode } = useListEditMenuValues();
+  const { toggleIdsToDelete, isSelected } = useListEditMenuFns();
+  const { titleChangeMode, setTitleChangeMode } = useChangeTitleMode({
+    isEditMode,
+    isMultiMode,
+  });
   const handleClick = e => {
-    if (!isEditMode) {
-      if (!window.confirm('완료하시겠습니까?')) return;
+    if (!edit && !isEditMode) {
+      const msg = data.isCompleted
+        ? '완료를 취소하시겠습니까?'
+        : '완료하시겠습니까?';
+      if (!window.confirm(msg)) return;
       axios({
-        url: `/me/toDo/complete/${id}`,
+        url: `/me/toDo/patch/${id}`,
         method: 'patch',
         data: {
-          isCompleted: true,
+          isCompleted: !data.isCompleted,
         },
       }).then(res => {
         setToDoList(patch(id, res.data));
@@ -28,19 +34,6 @@ const ToDoContainer = ({ id, data, setToDoList, edit }) => {
     } else if (isMultiMode) {
       toggleIdsToDelete(id);
     }
-  };
-  const cancelComplete = () => {
-    if (data.isCompleted) return;
-    if (!window.confirm('완료를 취소하시겠습니까?')) return;
-    axios({
-      url: `/me/toDo/complete/${id}`,
-      method: 'patch',
-      data: {
-        isCompleted: true,
-      },
-    }).then(res => {
-      setToDoList(patch(id, res.data));
-    });
   };
   const handleDelete = () => {
     if (!window.confirm('정말로 삭제하시겠습니까?')) return;
@@ -62,7 +55,7 @@ const ToDoContainer = ({ id, data, setToDoList, edit }) => {
     const patchedData = { title: titleRef.current.value };
     if (edit) {
       setToDoList(patch(id, patchedData));
-      setChangeTitleMode(false);
+      setTitleChangeMode(false);
       return;
     }
     axios({
@@ -71,7 +64,7 @@ const ToDoContainer = ({ id, data, setToDoList, edit }) => {
       data: patchedData,
     }).then(res => {
       setToDoList(patch(id, res.data));
-      setChangeTitleMode(false);
+      setTitleChangeMode(false);
     });
   };
   return (
@@ -80,13 +73,21 @@ const ToDoContainer = ({ id, data, setToDoList, edit }) => {
       isEditMode={isEditMode}
       isMultiMode={isMultiMode}
       isSelected={isSelected(id)}
-      isChangeTitleMode={isChangeTitleMode}
-      setChangeTitleMode={setChangeTitleMode}
       handleClick={handleClick}
       handleDelete={handleDelete}
       processPatch={processPatch}
-      cancelComplete={cancelComplete}
+      titleChangeMode={titleChangeMode}
+      setTitleChangeMode={setTitleChangeMode}
     />
   );
+};
+ToDoContainer.propTypes = {
+  id: PropTypes.string.isRequired,
+  data: PropTypes.shape({}).isRequired,
+  setToDoList: PropTypes.func.isRequired,
+  edit: PropTypes.bool,
+};
+ToDoContainer.defaultProps = {
+  edit: undefined,
 };
 export default ToDoContainer;

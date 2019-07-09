@@ -1,26 +1,29 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const Container = styled.div`
   box-sizing: border-box;
-  /* padding-top: 0; */
   width: ${props => props.theme.BREAKPOINTS.WIDE};
   margin: 0 auto;
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.WIDE}) {
     width: ${props => props.theme.BREAKPOINTS.LARGE};
   }
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.LARGE}) {
+    width: ${props => props.theme.BREAKPOINTS.MEDIUM};
+  }
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
     width: 100%;
   }
-`;
-const Grid = styled.div`
-  display: grid;
-  grid-gap: 0.3rem;
 `;
 const ProjectList = ({ children, EditProject }) => (
   <Container>
     {EditProject}
-    <Grid>{children}</Grid>
+    {children}
   </Container>
 );
+
+ProjectList.propTypes = {
+  EditProject: PropTypes.shape({}).isRequired,
+};
 export default ProjectList;

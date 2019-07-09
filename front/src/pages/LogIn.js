@@ -4,7 +4,7 @@ import Helmet from 'react-helmet';
 import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
 import { useFns } from 'store/User';
-import OnlyPublic from 'components/OnlyPublic';
+import OnlyPublic from 'components/Common/OnlyPublic';
 
 const LogIn = ({ history }) => {
   const { logIn, setError } = useFns();

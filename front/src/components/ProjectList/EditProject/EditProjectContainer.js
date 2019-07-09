@@ -1,16 +1,14 @@
-import React, { useRef } from 'react';
-// import PropTypes from 'prop-types';
+import React from 'react';
 import axios from 'axios';
-import { useDataFns } from 'store/Common/Data';
-import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
+import { useListEditMenuValues } from 'store/Common/ListEditMenu';
+import { useProjectListFns } from 'pages/ProjectList';
+import { unshift, deleteMany } from 'lib/manuArrData';
 import EditProject from './EditProject';
 
 const EditProjectContainer = () => {
-  const { idsToDelete, isEditMode, isMultiMode } = useEditMenuValues();
-  const { setEditMode, toggleMultiMode, initMode } = useEditMenuFns();
-  const { unshiftData, deleteManyData } = useDataFns();
-  const titleRef = useRef();
-  const createProject = () => {
+  const { idsToDelete } = useListEditMenuValues();
+  const { setProjectList } = useProjectListFns();
+  const createProject = titleRef => {
     if (!titleRef.current) return;
     if (!titleRef.current.value) return;
     axios({
@@ -21,16 +19,11 @@ const EditProjectContainer = () => {
       },
     })
       .then(res => {
-        unshiftData({ type: 'projectList', data: res.data });
+        setProjectList(unshift(res.data));
       })
       .finally(() => {
         titleRef.current.value = '';
       });
-  };
-  const handleCreateKeyUp = event => {
-    if (event.keyCode === 13) {
-      createProject();
-    }
   };
   const handleDeleteMany = () => {
     if (idsToDelete.length === 0) return;
@@ -40,19 +33,12 @@ const EditProjectContainer = () => {
       method: 'DELETE',
       data: idsToDelete,
     }).then(() => {
-      deleteManyData({ type: 'projectList', idList: idsToDelete });
+      setProjectList(deleteMany(idsToDelete));
     });
   };
   return (
     <EditProject
-      titleRef={titleRef}
       createProject={createProject}
-      handleCreateKeyUp={handleCreateKeyUp}
-      isEditMode={isEditMode}
-      setEditMode={setEditMode}
-      isMultiMode={isMultiMode}
-      toggleMultiMode={toggleMultiMode}
-      initMode={initMode}
       handleDeleteMany={handleDeleteMany}
     />
   );

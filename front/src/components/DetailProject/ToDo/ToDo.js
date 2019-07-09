@@ -1,13 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faStickyNote } from '@fortawesome/free-regular-svg-icons';
 import Title from 'components/Common/Title';
 import EditMenu from 'components/Common/EditMenu';
+import { hover, HOVER_TYPE } from 'styles/mixins';
+import Button from 'components/Common/Button';
 
 const Container = styled.div`
-  display: flex;
+  /* display: flex; */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr;
   position: relative;
   & + & {
     margin-top: 0.3rem;
@@ -20,7 +26,19 @@ const DataContainer = styled.div`
   box-sizing: border-box;
   padding-left: 0.5rem;
   align-items: center;
-  transition: background-color ${props => props.theme.TRANSITION};
+  &.isCompleted {
+    background: ${props => props.theme.SUCCESS(0.9)};
+    div:first-child {
+      border-color: white;
+      svg {
+        display: block;
+      }
+    }
+  }
+  ${props =>
+    props.isMultiMode || !props.isEditMode
+      ? hover({ type: HOVER_TYPE.TO_DO })
+      : null};
   &.selected {
     background-color: ${props => props.theme.PRIMARY()};
     div:first-child {
@@ -33,34 +51,6 @@ const DataContainer = styled.div`
       display: block;
     }
   }
-  &.isCompleted {
-    background: ${props => props.theme.SUCCESS(0.9)};
-    div:first-child {
-      border-color: white;
-      svg {
-        display: block;
-      }
-    }
-  }
-  ${props => {
-    if (!props.isCompleted && (props.isMultiMode || !props.isEditMode)) {
-      return css`
-        cursor: pointer;
-        &:hover {
-          background-color: ${props => props.theme.PRIMARY()};
-          div {
-            border-color: white;
-          }
-          p {
-            color: white;
-          }
-        }
-        &:active {
-          transform: scale(0.99);
-        }
-      `;
-    }
-  }};
 `;
 
 const CheckContainer = styled.div`
@@ -79,45 +69,53 @@ const CheckIcon = styled(FontAwesomeIcon)`
   font-size: 1rem;
 `;
 
+const ContentContainer = styled.div`
+  grid-column: 1 / span 2;
+`;
+
 const ToDo = ({
   data,
   isEditMode,
   isMultiMode,
   isSelected,
-  isChangeTitleMode,
-  setChangeTitleMode,
   handleClick,
   handleDelete,
   processPatch,
+  titleChangeMode,
+  setTitleChangeMode,
 }) => (
   <Container>
     <DataContainer
-      isCompleted={data.isCompleted}
-      onClick={handleClick}
       isMultiMode={isMultiMode}
       isEditMode={isEditMode}
       className={`${isSelected ? 'selected' : ''} ${
-        data.isCompleted ? 'isCompleted' : null
+        data.isCompleted && !isMultiMode ? 'isCompleted' : null
       }`}
+      onClick={handleClick}
     >
       <CheckContainer>
         <CheckIcon icon={faCheck} />
       </CheckContainer>
       <Title
         title={data.title}
-        isChangeTitleMode={isChangeTitleMode}
+        titleChangeMode={titleChangeMode}
         processPatch={processPatch}
       />
     </DataContainer>
     <EditMenu
-      isMultiMode={isMultiMode}
-      isEditMode={isEditMode}
-      isChangeTitleMode={isChangeTitleMode}
-      setChangeTitleMode={setChangeTitleMode}
+      titleChangeMode={titleChangeMode}
+      setTitleChangeMode={setTitleChangeMode}
       handleDelete={handleDelete}
-      isCompleted={data.isCompleted}
-      cssType="toDo"
+      csstype="toDo"
     />
+    {isEditMode ? null : (
+      <Button
+        icon={faStickyNote}
+        hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+        styles={{ padding: '0 0.5rem' }}
+      />
+    )}
+    <ContentContainer />
   </Container>
 );
 ToDo.propTypes = {
@@ -130,12 +128,12 @@ ToDo.propTypes = {
   }),
   isEditMode: PropTypes.bool.isRequired,
   isMultiMode: PropTypes.bool.isRequired,
-  isChangeTitleMode: PropTypes.bool.isRequired,
-  setChangeTitleMode: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
   handleClick: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   processPatch: PropTypes.func.isRequired,
+  titleChangeMode: PropTypes.bool.isRequired,
+  setTitleChangeMode: PropTypes.func.isRequired,
 };
 ToDo.defaultProps = {
   data: PropTypes.shape({

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, createContext, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import styled from 'styled-components';
@@ -6,8 +6,9 @@ import DetailProject from 'components/DetailProject';
 import Header from 'components/Common/Header';
 import axios from 'axios';
 import { useStatus } from 'lib/hooks';
-import DataProvider, { useDataValues, useDataFns } from 'store/Common/Data';
-import { useOnlyPrivateValues } from 'store/Common/OnlyPrivate';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import Button from 'components/Common/Button';
+import { HOVER_TYPE } from 'styles/mixins';
 
 const Container = styled.div`
   box-sizing: border-box;
@@ -21,25 +22,40 @@ const Title = styled.span`
   font-weight: 600;
   user-select: none;
   color: white;
+  margin-left: 0.5rem;
 `;
 
-const DetailProjectPage = ({ title }) => {
-  const { detailProject } = useDataValues();
-  const { loadData } = useDataFns();
-  const { selectedProjectId } = useOnlyPrivateValues();
+export const DetailProjectContext = createContext();
+export const useDetailProjectValues = () => {
+  const { fns, ...values } = useContext(DetailProjectContext);
+  return values;
+};
+export const useDetailProjectFns = () => {
+  const { fns } = useContext(DetailProjectContext);
+  return fns;
+};
+
+const DetailProjectPage = ({
+  match: {
+    params: { id },
+  },
+  history,
+}) => {
+  const [title, setTitle] = useState();
+  const [detailProject, setDetailProject] = useState();
   const {
     error,
     fns: { failure },
   } = useStatus();
-  useEffect(() => {}, [detailProject]);
   useEffect(() => {
     if (detailProject === undefined) {
       axios({
-        url: `/me/toDo/${selectedProjectId}?page=1`,
+        url: `/me/toDo/${id}?page=1`,
         method: 'get',
       })
         .then(res => {
-          loadData({ type: 'detailProject', data: res.data });
+          setTitle(res.data.title);
+          setDetailProject(res.data.toDoListByDate);
         })
         .catch(err => failure(err));
     }
@@ -47,28 +63,41 @@ const DetailProjectPage = ({ title }) => {
   return (
     <>
       <Helmet>
-        <title>ToDo</title>
+        <title>{title}</title>
       </Helmet>
       <Container>
-        <Header>
+        <Header page="detailProject">
+          <Button
+            icon={faArrowLeft}
+            hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+            hoverOpts={{ minus: 30 }}
+            styles={{
+              display: 'inline-block',
+              color: 'white',
+              fontSize: '1.3rem',
+              padding: '.4rem',
+            }}
+            onClick={() => history.goBack()}
+          />
           <Title>{title}</Title>
         </Header>
-        {detailProject === undefined || error ? null : <DetailProject />}
+        {detailProject === undefined || error ? null : (
+          <DetailProjectContext.Provider
+            value={{ detailProject, fns: { setDetailProject } }}
+          >
+            <DetailProject />
+          </DetailProjectContext.Provider>
+        )}
       </Container>
     </>
   );
 };
 
 DetailProjectPage.propTypes = {
-  title: PropTypes.string.isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
 };
-
-export default ({
-  match: {
-    params: { title },
-  },
-}) => (
-  <DataProvider>
-    <DetailProjectPage title={title} />
-  </DataProvider>
-);
+export default DetailProjectPage;

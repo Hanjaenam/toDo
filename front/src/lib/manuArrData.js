@@ -1,6 +1,5 @@
 export const push = data => state => [...state, data];
 export const unshift = data => state => [data, ...state];
-
 export const deleteOne = id => state => state.filter(data => data._id !== id);
 export const deleteMany = idList => state =>
   state.filter(data => !idList.some(id => data._id === id));

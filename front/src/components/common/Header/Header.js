@@ -1,15 +1,28 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const Container = styled.div`
   background-color: ${props => props.theme.PRIMARY()};
   box-sizing: border-box;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  ${props => {
+    switch (props.page) {
+      case 'projectList':
+        return css`
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
+        `;
+      case 'detailProject':
+        return css`
+          padding-top: 0.3rem;
+          padding-bottom: 0.3rem;
+        `;
+      default:
+        return null;
+    }
+  }}
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.HEADER}) {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 `;
 const Center = styled.div`
@@ -18,14 +31,29 @@ const Center = styled.div`
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.HEADER}) {
     width: 100%;
   }
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  ${props => {
+    switch (props.page) {
+      case 'projectList':
+        return css`
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          align-items: center;
+        `;
+      case 'detailProject':
+        return css`
+          display: flex;
+          align-items: center;
+        `;
+      default:
+        return null;
+    }
+  }}
 `;
 
-const Header = ({ children }) => (
-  <Container>
-    <Center>{children}</Center>
+const Header = ({ children, page }) => (
+  <Container page={page}>
+    <Center page={page}>{children}</Center>
   </Container>
 );
 
-export default withRouter(Header);
+export default Header;

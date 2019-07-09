@@ -1,1 +1,1 @@
-export { default } from './ListEditMenu';
+export { default } from './ListEditMenuContainer';

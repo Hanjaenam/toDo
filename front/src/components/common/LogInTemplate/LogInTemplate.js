@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import Message from 'components/Common/Message';
-import {} from 'styles/mixins';
 
 const LayOut = styled.div`
   background-color: ${props => props.theme.BACKGROUND[0]};

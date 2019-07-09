@@ -1,17 +1,24 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { useStatus } from 'lib/hooks';
 
 export const UserContext = createContext();
 const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState();
+  const {
+    loading,
+    fns: { end },
+  } = useStatus();
   useEffect(() => {
     axios({
       url: '/me',
       method: 'get',
-    }).then(res => {
-      setUser(res.data);
-    });
+    })
+      .then(res => {
+        setUser(res.data);
+      })
+      .finally(() => end());
   }, []);
   const logIn = data => {
     setUser(data);
@@ -19,7 +26,7 @@ const UserContextProvider = ({ children }) => {
   const logOut = () => {
     setUser(null);
   };
-  return (
+  return loading ? null : (
     <UserContext.Provider
       value={{ user, error, fns: { logIn, setError, logOut } }}
     >

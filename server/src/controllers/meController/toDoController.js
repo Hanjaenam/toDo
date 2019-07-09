@@ -8,6 +8,9 @@ export const readFromProject = async (req, res) => {
     query: { page },
   } = req;
   try {
+    const { title } = await Project.findById(
+      mongoose.Types.ObjectId(projectId),
+    );
     const toDoListByDate = await ToDo.aggregate([
       {
         $match: {
@@ -32,24 +35,29 @@ export const readFromProject = async (req, res) => {
       },
       { $skip: (page - 1) * 10 },
       { $limit: 10 },
-      // {
-      //   $sort: {
-      //     _id: 1,
-      //   },
-      // },
+      {
+        $sort: {
+          _id: -1,
+        },
+      },
       {
         $project: {
           toDoList: { $reverseArray: '$toDoList' },
         },
       },
     ]);
-    res.json(toDoListByDate);
+    return res.json({ title, toDoListByDate });
   } catch (err) {
     console.log(err);
-    res.status(500).end();
+    return res.status(500).end();
   }
 };
 
+/**
+ * @description [crate]
+ * 1. [now~forwardDay] : 생성가능
+ * 2. [previousDay] : 생성 불가
+ */
 export const createNPush = async (req, res) => {
   const {
     params: { id: projectId },
@@ -57,7 +65,6 @@ export const createNPush = async (req, res) => {
     body,
   } = req;
   try {
-    if (!body || !body.title) return res.status(400).end();
     const project = await Project.findOne({
       _id: projectId,
       creator: req.user._id,
@@ -79,11 +86,10 @@ export const createNPush = async (req, res) => {
             project: projectId,
           },
     );
-    console.log(toDo);
-    res.json(toDo);
+    return res.json(toDo);
   } catch (err) {
     console.log(err);
-    res.status(500).end();
+    return res.status(500).end();
   }
 };
 
@@ -99,7 +105,7 @@ export const deleteOne = async (req, res) => {
     return res.status(204).end();
   } catch (err) {
     console.log(err);
-    res.status(500).end();
+    return res.status(500).end();
   }
 };
 
@@ -112,10 +118,10 @@ export const deleteMany = async (req, res) => {
         creator: req.user._id,
       }).exec();
     }
-    res.status(204).end();
+    return res.status(204).end();
   } catch (err) {
     console.log(err);
-    res.status(500).end();
+    return res.status(500).end();
   }
   // toDoIds.forEach(async toDoId => {
   //   try {
@@ -130,32 +136,26 @@ export const deleteMany = async (req, res) => {
   // res.status(204).end();
 };
 
+/**
+ * @description [patch]
+ * 1. [now~forward] : 수정가능, 완료가능, 삭제가능
+ * 2. [previous~now] : 수정가능, 삭제가능, 완료가능
+ * 3. [!isCompleted] : 수정가능, 삭제가능, 완료가능
+ * 4. [isCompleted] : 수정가능, 삭제가능, 완료취소가능
+ * 5. [all] : 수정하는 데에는 제약 없음.
+ */
 export const patch = async (req, res) => {
   const {
     params: { id: toDoId },
     // title, content
     body,
   } = req;
-  if (!body || !body.title) return res.status(400).end();
   try {
-    const toDo = await ToDo.findByIdAndUpdate(toDoId, body, { new: true });
-    return res.json(toDo);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).end();
-  }
-};
-
-export const complete = async (req, res) => {
-  const {
-    params: { id: toDoId },
-    body: isCompleted,
-  } = req;
-  if (!isCompleted) return res.status(400).end();
-  try {
-    const toDo = await ToDo.findByIdAndUpdate(toDoId, isCompleted, {
-      new: true,
-    });
+    const toDo = await ToDo.findByIdAndUpdate(
+      toDoId,
+      { ...body },
+      { new: true },
+    );
     return res.json(toDo);
   } catch (err) {
     console.log(err);

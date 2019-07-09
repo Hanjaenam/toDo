@@ -5,7 +5,7 @@ import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
 import { useFns } from 'store/User';
 import { useStatus } from 'lib/hooks';
-import OnlyPublic from 'components/OnlyPublic';
+import OnlyPublic from 'components/Common/OnlyPublic';
 
 const Register = ({ history }) => {
   const { logIn, setError } = useFns();
