@@ -8,21 +8,21 @@ const Container = styled.div`
     switch (props.page) {
       case 'projectList':
         return css`
-          padding-top: 0.5rem;
-          padding-bottom: 0.5rem;
+          padding-top: ${props.theme.PADDING.STANDARD};
+          padding-bottom: ${props.theme.PADDING.STANDARD};
         `;
       case 'detailProject':
         return css`
-          padding-top: 0.3rem;
-          padding-bottom: 0.3rem;
+          padding-top: ${props.theme.PADDING.SMALL};
+          padding-bottom: ${props.theme.PADDING.SMALL};
         `;
       default:
         return null;
     }
   }}
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.HEADER}) {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: ${props => props.theme.PADDING.STANDARD};
+    padding-right: ${props => props.theme.PADDING.STANDARD};
   }
 `;
 const Center = styled.div`

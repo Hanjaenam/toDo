@@ -25,12 +25,12 @@ export const useChangeTitleMode = ({ isEditMode, isMultiMode }) => {
   return { titleChangeMode, setTitleChangeMode };
 };
 
-export const useToDoContent = ({ isEditMode }) => {
-  const [showContent, setShowContent] = useState(false);
+export const useToDoMemo = ({ isEditMode }) => {
+  const [showToDoMemo, setShowToDoMemo] = useState(false);
   useEffect(() => {
     if (isEditMode) {
-      setShowContent(false);
+      setShowToDoMemo(false);
     }
-  }, [showContent]);
-  return { showContent, setShowContent };
+  }, [isEditMode]);
+  return { showToDoMemo, setShowToDoMemo };
 };

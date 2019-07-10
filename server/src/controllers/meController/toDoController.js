@@ -2,7 +2,7 @@ import Project from 'models/Project';
 import ToDo from 'models/ToDo';
 import mongoose from 'mongoose';
 
-export const readFromProject = async (req, res) => {
+export const readAllFromProject = async (req, res) => {
   const {
     params: { id: projectId },
     query: { page },
@@ -25,7 +25,7 @@ export const readFromProject = async (req, res) => {
             $push: {
               _id: '$_id',
               title: '$title',
-              content: '$content',
+              memo: '$memo',
               isCompleted: '$isCompleted',
               createdAt: '$createdAt',
               creator: '$creator',
@@ -58,10 +58,10 @@ export const readFromProject = async (req, res) => {
  * 1. [now~forwardDay] : 생성가능
  * 2. [previousDay] : 생성 불가
  */
-export const createNPush = async (req, res) => {
+export const create = async (req, res) => {
   const {
     params: { id: projectId },
-    // title, content, createdAt
+    // title, memo, createdAt
     body,
   } = req;
   try {
@@ -112,12 +112,15 @@ export const deleteOne = async (req, res) => {
 export const deleteMany = async (req, res) => {
   const { body: toDoIds } = req;
   try {
-    for (let i = 0; i < toDoIds.length; ++i) {
-      ToDo.findOneAndDelete({
-        _id: toDoIds[i],
-        creator: req.user._id,
-      }).exec();
-    }
+    // for (let i = 0; i < toDoIds.length; i += 1) {
+    //   ToDo.findOneAndDelete({
+    //     _id: toDoIds[i],
+    //     creator: req.user._id,
+    //   }).exec();
+    // }
+    toDoIds.forEach(toDoId =>
+      ToDo.findOneAndDelete({ _id: toDoId, creator: req.user._id }).exec(),
+    );
     return res.status(204).end();
   } catch (err) {
     console.log(err);
@@ -147,10 +150,18 @@ export const deleteMany = async (req, res) => {
 export const patch = async (req, res) => {
   const {
     params: { id: toDoId },
-    // title, content
+    // title, memo
     body,
   } = req;
   try {
+    //
+    // const toDo = ToDo.findByIdAndUpdate(
+    //   toDoId,
+    //   { ...body },
+    //   { new: true },
+    // ).exec();
+    // console.log(toDo) // Promise { <pending> }
+    // // 수정은 정상적으로 완료되었음.
     const toDo = await ToDo.findByIdAndUpdate(
       toDoId,
       { ...body },

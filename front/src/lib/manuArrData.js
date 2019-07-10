@@ -5,6 +5,12 @@ export const deleteMany = idList => state =>
   state.filter(data => !idList.some(id => data._id === id));
 export const patch = (id, patchData) => state =>
   state.map(data => (data._id !== id ? data : { _id: id, ...patchData }));
+export const findOneNPush = (id, data) => state =>
+  state.map(_data =>
+    _data._id !== id
+      ? _data
+      : { _id: _data._id, toDoList: [..._data.toDoList, data] },
+  );
 export const init = () => [];
 export const checkArray = data => {
   if (!Array.isArray(data)) {

@@ -31,6 +31,7 @@ const USER = '/user';
 const PROJECT = '/project';
 const TO_DO_LIST = '/toDoList';
 const TO_DO = '/toDo';
+const MEMO = '/memo';
 
 const READ = '/read';
 const CREATE = '/create';
@@ -52,8 +53,9 @@ export default {
   user: USER,
   // db
   project: PROJECT,
-  toDo: TO_DO,
   toDoList: TO_DO_LIST,
+  toDo: TO_DO,
+  memo: MEMO,
   // db-common
   read: READ,
   create: CREATE,

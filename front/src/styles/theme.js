@@ -8,6 +8,10 @@ export default {
   RADIUS: '5px',
   BACKGROUND: ['rgba(200,200,200, 0.2)'],
   TRANSITION: '0.3s',
+  PADDING: {
+    STANDARD: '0.5rem',
+    SMALL: '0.3rem',
+  },
   BREAKPOINTS: {
     SMALL: '576px',
     MEDIUM: '768px',

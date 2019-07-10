@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Title from './Title';
 
-const TitleContainer = ({ title, titleChangeMode, processPatch }) => {
+const TitleContainer = ({ title, titleChangeMode, handlePatch }) => {
   return (
     <Title
       title={title}
       titleChangeMode={titleChangeMode}
-      processPatch={processPatch}
+      handlePatch={handlePatch}
     />
   );
 };
@@ -15,6 +15,6 @@ const TitleContainer = ({ title, titleChangeMode, processPatch }) => {
 TitleContainer.propTypes = {
   title: PropTypes.string.isRequired,
   titleChangeMode: PropTypes.bool.isRequired,
-  processPatch: PropTypes.func.isRequired,
+  handlePatch: PropTypes.func.isRequired,
 };
 export default TitleContainer;

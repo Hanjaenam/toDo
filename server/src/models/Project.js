@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import User from './User';
+import ToDo from './ToDo';
 
 const ProjectSchema = mongoose.Schema({
   title: {
@@ -53,25 +54,34 @@ const ProjectSchema = mongoose.Schema({
   title: 'efsef',
   __v: 0 } -> doc, this ( )
  */
-ProjectSchema.post('save', async function(doc, next) {
+// 안 될 경우 "async" 붙일 것
+ProjectSchema.post('save', function(doc, next) {
   // exec() -> async 필수!
   const { creator, _id } = doc;
   try {
-    await User.findByIdAndUpdate(creator, {
+    // await User.findByIdAndUpdate(creator, {
+    //   $push: { project: _id },
+    // });
+    User.findByIdAndUpdate(creator, {
       $push: { project: _id },
-    });
+    }).exec();
     return next();
   } catch (err) {
     throw new Error(err);
   }
 });
 
-ProjectSchema.post(/Delete$/, async function(doc, next) {
+// 안 될 경우 "async" 붙일 것
+ProjectSchema.post(/Delete$/, function(doc, next) {
   try {
-    const { creator, _id } = doc;
-    await User.findByIdAndUpdate(creator, {
+    const { creator, _id, toDo } = doc;
+    // await User.findByIdAndUpdate(creator, {
+    //   $pull: { project: _id },
+    // });
+    User.findByIdAndUpdate(creator, {
       $pull: { project: _id },
-    });
+    }).exec();
+    toDo.forEach(({ _id }) => ToDo.findByIdAndDelete(_id).exec());
     return next();
   } catch (err) {
     throw new Error(err);
@@ -80,12 +90,12 @@ ProjectSchema.post(/Delete$/, async function(doc, next) {
 
 // isCompleted === true 이면 막는다.
 // pre('save') 로는 findUpdate로 안됩니다.
-ProjectSchema.pre(/Update$/, function(next) {
-  if (this.isCompleted) {
-    throw new Error('이미 완료된 Project입니다.');
-  }
-  return next();
-});
+// ProjectSchema.pre(/Update$/, function(next) {
+//   if (this.isCompleted) {
+//     throw new Error('이미 완료된 Project입니다.');
+//   }
+//   return next();
+// });
 
 export default mongoose.model('Project', ProjectSchema);
 

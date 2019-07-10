@@ -5,17 +5,15 @@ import {
   useListEditMenuFns,
 } from 'store/Common/ListEditMenu';
 import { deleteOne, patch } from 'lib/manuArrData';
+import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
 import axios from 'axios';
-import { useChangeTitleMode } from 'lib/hooks';
 import ToDo from './ToDo';
 
 const ToDoContainer = ({ id, data, setToDoList, edit }) => {
   const { isEditMode, isMultiMode } = useListEditMenuValues();
-  const { toggleIdsToDelete, isSelected } = useListEditMenuFns();
-  const { titleChangeMode, setTitleChangeMode } = useChangeTitleMode({
-    isEditMode,
-    isMultiMode,
-  });
+  const { addOrRemoveIdToDelete, isSelected } = useListEditMenuFns();
+  const { titleChangeMode, showToDoMemo } = useEditMenuValues();
+  const { setTitleChangeMode, toggleShowToDoMemo } = useEditMenuFns();
   const handleClick = e => {
     if (!edit && !isEditMode) {
       const msg = data.isCompleted
@@ -32,40 +30,42 @@ const ToDoContainer = ({ id, data, setToDoList, edit }) => {
         setToDoList(patch(id, res.data));
       });
     } else if (isMultiMode) {
-      toggleIdsToDelete(id);
+      addOrRemoveIdToDelete(id);
     }
   };
-  const handleDelete = () => {
+  const deleteToDo = () => {
     if (!window.confirm('정말로 삭제하시겠습니까?')) return;
     if (edit) {
       setToDoList(deleteOne(id));
-      return;
-    }
-    axios({
-      url: `/me/toDo/delete/${id}`,
-      method: 'delete',
-    }).then(res => {
-      if (res.status === 204) {
+    } else {
+      axios({
+        url: `/me/toDo/delete/${id}`,
+        method: 'delete',
+      }).then(() => {
         setToDoList(deleteOne(id));
-      }
-    });
-  };
-  const processPatch = titleRef => {
-    if (!titleRef.current) return;
-    const patchedData = { title: titleRef.current.value };
-    if (edit) {
-      setToDoList(patch(id, patchedData));
-      setTitleChangeMode(false);
-      return;
+      });
     }
-    axios({
-      url: `/me/toDo/patch/${id}`,
-      method: 'patch',
-      data: patchedData,
-    }).then(res => {
-      setToDoList(patch(id, res.data));
+  };
+  const patchToDo = titleRef => {
+    if (!titleRef.current) return;
+    if (data.title === titleRef.current.value) return;
+    const _data = { title: titleRef.current.value };
+    if (edit) {
+      setToDoList(patch(id, _data));
       setTitleChangeMode(false);
-    });
+    } else {
+      axios({
+        url: `/me/toDo/patch/${id}`,
+        method: 'patch',
+        data: _data,
+      })
+        .then(res => {
+          setToDoList(patch(id, res.data));
+        })
+        .finally(() => {
+          setTitleChangeMode(false);
+        });
+    }
   };
   return (
     <ToDo
@@ -74,10 +74,12 @@ const ToDoContainer = ({ id, data, setToDoList, edit }) => {
       isMultiMode={isMultiMode}
       isSelected={isSelected(id)}
       handleClick={handleClick}
-      handleDelete={handleDelete}
-      processPatch={processPatch}
+      deleteToDo={deleteToDo}
+      patchToDo={patchToDo}
       titleChangeMode={titleChangeMode}
       setTitleChangeMode={setTitleChangeMode}
+      showToDoMemo={showToDoMemo}
+      toggleShowToDoMemo={toggleShowToDoMemo}
     />
   );
 };

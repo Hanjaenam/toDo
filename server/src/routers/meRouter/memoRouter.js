@@ -1,16 +1,16 @@
 import express from 'express';
+import routes from 'routes';
 import {
-  readAllFromProject,
+  readAllFromToDo,
   create,
   deleteOne,
   deleteMany,
   patch,
-} from 'controllers/meController/toDoController';
-import routes from 'routes';
+} from 'controllers/meController/memoController';
 
 const Router = express.Router();
 
-Router.get(routes.paramsId, readAllFromProject);
+Router.get(routes.paramsId, readAllFromToDo);
 Router.post(routes.create + routes.paramsId, create);
 Router.delete(routes.delete + routes.paramsId, deleteOne);
 Router.delete(routes.delete, deleteMany);

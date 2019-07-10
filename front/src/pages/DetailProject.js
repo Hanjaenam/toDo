@@ -96,7 +96,7 @@ const DetailProjectPage = ({
 DetailProjectPage.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({
-      title: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
 };

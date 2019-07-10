@@ -13,18 +13,18 @@ export const hover = ({ type, ...opts }) => {
       border-radius: ${props => props.theme.RADIUS};
       transition: background-color ${props => props.theme.TRANSITION}
         ${opts.timing ? 'linear' : opts.timing};
-      p {
+      > p {
         user-select: none;
       }
       &:hover {
         background-color: ${props =>
           props.theme.PRIMARY({ add: opts.add, minus: opts.minus })};
-        p {
+        > p {
           color: white;
         }
       }
       &:active {
-        p {
+        > p {
           transform: scale(0.9);
         }
       }

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import Button from 'components/Common/Button';
 import { HOVER_TYPE } from 'styles/mixins';
+import theme from 'styles/theme';
 
 const Container = styled.div`
   position: relative;
@@ -12,7 +13,7 @@ const Container = styled.div`
 const Input = styled.input`
   all: unset;
   box-sizing: border-box;
-  padding: 0.5rem;
+  padding: ${props => props.theme.PADDING.STANDARD};
   cursor: auto;
   font-size: 1rem;
   width: 100%;
@@ -25,19 +26,21 @@ const Input = styled.input`
 const TitleText = styled.p`
   box-sizing: border-box;
   border: 2px solid transparent;
-  padding: 0.5rem;
-  padding-left: 0.3rem;
-  color: ${props => props.theme.PRIMARY()};
+  padding: ${props => props.theme.PADDING.STANDARD};
+  padding-left: ${props => props.theme.PADDING.SMALL};
+  /* color: ${props => props.theme.PRIMARY()}; */
+  color:black;
+  word-break: break-all;
 `;
 
-const Title = ({ title, titleChangeMode, processPatch }) => {
+const Title = ({ title, titleChangeMode, handlePatch }) => {
   const titleRef = useRef();
   const buttonStyles = {
     position: 'absolute',
     right: 0,
     top: 0,
     height: '100%',
-    padding: '0 0.5rem',
+    padding: `0 ${theme.PADDING.STANDARD}`,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
   };
@@ -51,14 +54,14 @@ const Title = ({ title, titleChangeMode, processPatch }) => {
             ref={titleRef}
             onKeyUp={e => {
               if (e.keyCode === 13) {
-                processPatch(titleRef);
+                handlePatch(titleRef);
               }
             }}
           />
           <Button
             icon={faCheck}
             hoverType={HOVER_TYPE.BACKGROUND_COLOR}
-            onClick={() => processPatch(titleRef)}
+            onClick={() => handlePatch(titleRef)}
             styles={buttonStyles}
           />
         </>
@@ -71,7 +74,7 @@ const Title = ({ title, titleChangeMode, processPatch }) => {
 Title.propTypes = {
   title: PropTypes.string.isRequired,
   titleChangeMode: PropTypes.bool.isRequired,
-  processPatch: PropTypes.func,
+  handlePatch: PropTypes.func,
 };
 Title.defaultProps = {
   processPatch: undefined,

@@ -12,7 +12,7 @@ const ListEditMenuProvider = ({ children }) => {
    * components/Project/ProjectContainer - handleClick
    * 이 함수 하나로 id를 추가, 삭제하는 기능
    */
-  const toggleIdsToDelete = id => {
+  const addOrRemoveIdToDelete = id => {
     setIdsToDelete(state => {
       const idx = state.findIndex(_id => _id === id);
       if (idx === -1) {
@@ -40,7 +40,7 @@ const ListEditMenuProvider = ({ children }) => {
         idsToDelete,
         titleChangeMode,
         fns: {
-          toggleIdsToDelete,
+          addOrRemoveIdToDelete,
           toggleMultiMode,
           clearIdsToDelete,
           initMode,

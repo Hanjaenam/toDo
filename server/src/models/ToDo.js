@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Project from 'models/Project';
 import moment from 'moment';
+import Memo from 'models/Memo';
 
 export const ToDoSchema = mongoose.Schema({
   title: {
@@ -8,51 +9,55 @@ export const ToDoSchema = mongoose.Schema({
     required: true,
     index: true,
   },
-  content: {
-    type: String,
-  },
   isCompleted: {
     type: Boolean,
     default: false,
   },
   completedAt: {
     type: Date,
-    index: {
-      unique: false,
-    },
   },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
-  project: { type: mongoose.Schema.Types.ObjectId, ref: 'project' },
+  memo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Memo' }],
+  project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   readable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   writable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
 // create 다중 추가일 경우 그 개수만큼 호출됨
-ToDoSchema.post('save', async function(doc, next) {
+// 안 될 경우 "async" 붙일 것
+ToDoSchema.post('save', function(doc, next) {
   const { project, _id, createdAt } = doc;
   const now = Number(moment(Date.now()).format('YYYYMMDD'));
   if (now > Number(moment(createdAt).format('YYYYMMDD')))
     throw new Error('previous to do');
   try {
-    await Project.findByIdAndUpdate(project, {
+    // await Project.findByIdAndUpdate(project, {
+    //   $push: { toDo: _id },
+    // })
+    Project.findByIdAndUpdate(project, {
       $push: { toDo: _id },
-    });
+    }).exec();
     return next();
   } catch (err) {
     throw new Error(err);
   }
 });
 
-ToDoSchema.post(/Delete$/, async function(doc, next) {
-  const { project, _id } = doc;
+// 안 될 경우 "async" 붙일 것
+ToDoSchema.post(/Delete$/, function(doc, next) {
+  const { project, _id, memo } = doc;
   try {
-    await Project.findByIdAndUpdate(project._id, {
+    // await Project.findByIdAndUpdate(project._id, {
+    //   $pull: { toDo: _id },
+    // });
+    Project.findByIdAndUpdate(project._id, {
       $pull: { toDo: _id },
-    });
+    }).exec();
+    // memo.forEach(({ _id }) => Memo.findByIdAndDelete(_id).exec());
     return next();
   } catch (err) {
     throw new Error(err);

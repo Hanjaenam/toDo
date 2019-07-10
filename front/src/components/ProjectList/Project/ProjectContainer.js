@@ -5,41 +5,62 @@ import {
   useListEditMenuFns,
 } from 'store/Common/ListEditMenu';
 import { withRouter } from 'react-router-dom';
-import axios from 'axios';
-import { useChangeTitleMode } from 'lib/hooks';
 import { useProjectListFns } from 'pages/ProjectList';
-import { deleteOne, patch } from 'lib/manuArrData';
+import { unshift, deleteOne, deleteMany, patch } from 'lib/manuArrData';
+import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
+import axios from 'axios';
 import Project from './Project';
 
-const ProjectContainer = ({ id, data, history }) => {
+const ProjectContainer = ({ id, edit, data, history }) => {
   const { setProjectList } = useProjectListFns();
-  const { isEditMode, isMultiMode } = useListEditMenuValues();
-  const { toggleIdsToDelete, isSelected } = useListEditMenuFns();
-  const { titleChangeMode, setTitleChangeMode } = useChangeTitleMode({
-    isEditMode,
-    isMultiMode,
-  });
-
-  const handleDelete = () => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      axios({
-        url: `/me/project/delete/${id}`,
-        method: 'delete',
-      }).then(() => {
-        setProjectList(deleteOne(id));
-      });
-    }
-  };
-  const processPatch = titleRef => {
+  const { isEditMode, isMultiMode, idsToDelete } = useListEditMenuValues();
+  const { addOrRemoveIdToDelete, isSelected } = useListEditMenuFns();
+  const { titleChangeMode } = useEditMenuValues();
+  const { setTitleChangeMode } = useEditMenuFns();
+  const createProject = titleRef => {
     if (!titleRef.current) return;
-    const newTitle = titleRef.current.value;
-    if (data.title === newTitle) return;
+    if (!titleRef.current.value) return;
+    axios({
+      url: '/me/project/create',
+      method: 'post',
+      data: { title: titleRef.current.value },
+    })
+      .then(res => {
+        setProjectList(unshift(res.data));
+      })
+      .finally(() => {
+        titleRef.current.value = '';
+      });
+  };
+  const deleteProject = () => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    axios({
+      url: `/me/project/delete/${id}`,
+      method: 'delete',
+      setState: setProjectList,
+      id,
+    }).then(() => {
+      setProjectList(deleteOne(id));
+    });
+  };
+  const deleteManyProject = () => {
+    if (idsToDelete.length === 0) return;
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    axios({
+      url: `/me/project/delete`,
+      method: 'delete',
+      data: idsToDelete,
+    }).then(() => {
+      setProjectList(deleteMany(idsToDelete));
+    });
+  };
+  const patchProject = titleRef => {
+    if (!titleRef.current) return;
+    if (data.title === titleRef.current.value) return;
     axios({
       url: `/me/project/patch/${id}`,
       method: 'patch',
-      data: {
-        title: newTitle,
-      },
+      data: { title: titleRef.current.value },
     })
       .then(res => {
         setProjectList(patch(id, res.data));
@@ -52,30 +73,40 @@ const ProjectContainer = ({ id, data, history }) => {
     if (!isEditMode) {
       history.push(`/me/project/${data._id}`);
     } else if (isMultiMode) {
-      toggleIdsToDelete(id);
+      addOrRemoveIdToDelete(id);
     }
   };
   return (
     <Project
+      edit={edit}
       data={data}
-      handleDelete={handleDelete}
       isEditMode={isEditMode}
       isMultiMode={isMultiMode}
       isSelected={isSelected(id)}
       titleChangeMode={titleChangeMode}
       setTitleChangeMode={setTitleChangeMode}
-      processPatch={processPatch}
+      createProject={createProject}
+      deleteProject={deleteProject}
+      deleteManyProject={deleteManyProject}
+      patchProject={patchProject}
       handleClick={handleClick}
     />
   );
 };
 
 ProjectContainer.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
+  edit: PropTypes.bool,
   data: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    // createdAt: PropTypes.string.isRequired,
-    // isCompleted: PropTypes.bool.isRequired,
-  }).isRequired,
+    createdAt: PropTypes.string.isRequired,
+    isCompleted: PropTypes.bool.isRequired,
+  }),
+};
+
+ProjectContainer.defaultProps = {
+  id: undefined,
+  edit: undefined,
+  data: undefined,
 };
 export default withRouter(ProjectContainer);

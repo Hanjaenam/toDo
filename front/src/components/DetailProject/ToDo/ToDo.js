@@ -1,31 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faStickyNote } from '@fortawesome/free-regular-svg-icons';
 import Title from 'components/Common/Title';
 import EditMenu from 'components/Common/EditMenu';
 import { hover, HOVER_TYPE } from 'styles/mixins';
 import Button from 'components/Common/Button';
+import MemoList from 'components/DetailProject/MemoList';
+import theme from 'styles/theme';
+import ListEditMenuProvider from 'store/Common/ListEditMenu';
 
 const Container = styled.div`
   /* display: flex; */
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-rows: 1fr;
+  grid-auto-flow: row dense;
   position: relative;
-  & + & {
-    margin-top: 0.3rem;
-  }
+  border-radius: ${props => props.theme.RADIUS};
+  transition: box-shadow ${props => props.theme.TRANSITION};
+  ${props =>
+    props.showToDoMemo
+      ? css`
+          box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
+          border: 2px solid ${props => props.theme.PRIMARY()};
+          .memo {
+            padding: ${props => props.theme.PADDING.SMALL};
+          }
+        `
+      : null};
 `;
 
 const DataContainer = styled.div`
   display: flex;
   flex: 1;
   box-sizing: border-box;
-  padding-left: 0.5rem;
   align-items: center;
+  /* 여기서 padding을 주어야 toDo Data 에만 배경색이 적절하게 들어간다.*/
+  padding-left: ${props => props.theme.PADDING.STANDARD};
   &.isCompleted {
     background: ${props => props.theme.SUCCESS(0.9)};
     div:first-child {
@@ -69,22 +82,20 @@ const CheckIcon = styled(FontAwesomeIcon)`
   font-size: 1rem;
 `;
 
-const ContentContainer = styled.div`
-  grid-column: 1 / span 2;
-`;
-
 const ToDo = ({
   data,
   isEditMode,
   isMultiMode,
   isSelected,
   handleClick,
-  handleDelete,
-  processPatch,
+  deleteToDo,
+  patchToDo,
   titleChangeMode,
   setTitleChangeMode,
+  showToDoMemo,
+  toggleShowToDoMemo,
 }) => (
-  <Container>
+  <Container showToDoMemo={showToDoMemo}>
     <DataContainer
       isMultiMode={isMultiMode}
       isEditMode={isEditMode}
@@ -99,27 +110,33 @@ const ToDo = ({
       <Title
         title={data.title}
         titleChangeMode={titleChangeMode}
-        processPatch={processPatch}
+        handlePatch={patchToDo}
       />
     </DataContainer>
     <EditMenu
       titleChangeMode={titleChangeMode}
       setTitleChangeMode={setTitleChangeMode}
-      handleDelete={handleDelete}
+      handleDelete={deleteToDo}
       csstype="toDo"
     />
     {isEditMode ? null : (
       <Button
-        icon={faStickyNote}
+        icon={showToDoMemo ? faTimes : faStickyNote}
         hoverType={HOVER_TYPE.BACKGROUND_COLOR}
-        styles={{ padding: '0 0.5rem' }}
+        styles={{ padding: `0 1rem` }}
+        onClick={toggleShowToDoMemo}
       />
     )}
-    <ContentContainer />
+    {showToDoMemo ? (
+      <ListEditMenuProvider>
+        <MemoList id={data._id} />
+      </ListEditMenuProvider>
+    ) : null}
   </Container>
 );
 ToDo.propTypes = {
   data: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     content: PropTypes.string,
     isCompleted: PropTypes.bool,
@@ -130,10 +147,12 @@ ToDo.propTypes = {
   isMultiMode: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool.isRequired,
   handleClick: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
-  processPatch: PropTypes.func.isRequired,
+  deleteToDo: PropTypes.func.isRequired,
+  patchToDo: PropTypes.func.isRequired,
   titleChangeMode: PropTypes.bool.isRequired,
   setTitleChangeMode: PropTypes.func.isRequired,
+  showToDoMemo: PropTypes.bool.isRequired,
+  toggleShowToDoMemo: PropTypes.func.isRequired,
 };
 ToDo.defaultProps = {
   data: PropTypes.shape({

@@ -53,18 +53,36 @@ export const deleteOne = async (req, res) => {
 // check
 export const deleteMany = (req, res) => {
   const { body: projectIds } = req;
-  projectIds.forEach(async projectId => {
-    // { '$in': [ 5d21994f24c62420f29df3d3 ] } --> 자동으로 배열로 변해지는 듯.
-    try {
-      await Project.findOneAndDelete({
+  try {
+    // for (let i = 0; i < projectIds.length; i += 1) {
+    //   Project.findOneAndDelete({
+    //     _id: projectIds[i],
+    //     creator: req.user._id,
+    //   }).exec();
+    // }
+    projectIds.forEach(projectId =>
+      Project.findOneAndDelete({
         _id: projectId,
         creator: req.user._id,
-      });
-    } catch (err) {
-      throw new Error(err);
-    }
-  });
-  res.status(204).end();
+      }).exec(),
+    );
+    return res.status(204).end();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).end();
+  }
+  // projectIds.forEach(async projectId => {
+  //   // { '$in': [ 5d21994f24c62420f29df3d3 ] } --> 자동으로 배열로 변해지는 듯.
+  //   try {
+  //     Project.findOneAndDelete({
+  //       _id: projectId,
+  //       creator: req.user._id,
+  //     }).exec();
+  //   } catch (err) {
+  //     throw new Error(err);
+  //   }
+  // });
+  // res.status(204).end();
 };
 
 // /patch

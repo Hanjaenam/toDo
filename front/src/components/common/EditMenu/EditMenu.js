@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import { faTrashAlt, faPen, faTimes } from '@fortawesome/free-solid-svg-icons';
 import Button from 'components/Common/Button';
 import { HOVER_TYPE } from 'styles/mixins';
+import theme from 'styles/theme';
 
 const EditContainer = styled.div`
   ${props =>
@@ -30,7 +31,7 @@ const EditMenu = ({
 }) => {
   const buttonStyles = {
     height: '100%',
-    padding: '0 0.5rem',
+    padding: `0 ${theme.PADDING.STANDARD}`,
   };
   return isEditMode && !isMultiMode ? (
     <EditContainer csstype={csstype}>

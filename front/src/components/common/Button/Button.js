@@ -25,12 +25,6 @@ const Icon = styled(FontAwesomeIcon)`
           font-size: ${styles.fontSize ? styles.fontSize : '1rem'};
         `
       : null}
-  ${props =>
-    props.icon.iconName === 'times'
-      ? css`
-          font-size: 1.5rem;
-        `
-      : null}
 `;
 
 const Button = ({

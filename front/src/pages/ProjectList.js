@@ -8,6 +8,7 @@ import Header from 'components/Common/Header';
 import { useStatus } from 'lib/hooks';
 import axios from 'axios';
 import Button from 'components/Common/Button';
+import theme from 'styles/theme';
 
 const InputContainer = styled.div`
   display: flex;
@@ -20,7 +21,7 @@ const InputContainer = styled.div`
 const SearchInput = styled.input`
   font-size: 1rem;
   flex: 1;
-  padding: 0.3rem;
+  padding: ${props => props.theme.PADDING.SMALL};
   padding-right: 25px;
   border-radius: ${props => props.theme.RADIUS};
   outline: none;
@@ -74,14 +75,14 @@ const ProjectListPage = () => {
     }
   }, []);
   const buttonStyles = {
-    padding: '.3rem',
+    padding: `${theme.PADDING.SMALL}`,
     color: 'white',
   };
   const searchButtonStyles = {
     position: 'absolute',
     right: '0',
     height: '100%',
-    padding: '0 0.5rem',
+    padding: `0 ${theme.PADDING.STANDARD}`,
   };
   return (
     <>

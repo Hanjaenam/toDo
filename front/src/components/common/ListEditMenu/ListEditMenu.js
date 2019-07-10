@@ -8,6 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { HOVER_TYPE } from 'styles/mixins';
 import Button from 'components/Common/Button';
+import theme from 'styles/theme';
 
 const ListEditMenu = ({
   isEditMode,
@@ -19,7 +20,7 @@ const ListEditMenu = ({
 }) => {
   const buttonStyles = {
     fontSize: '1.5rem',
-    paddingLeft: '.5rem',
+    paddingLeft: `${theme.PADDING.STANDARD}`,
   };
   return isEditMode ? (
     <>

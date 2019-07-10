@@ -1,6 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import EditMenuProvider from 'store/Common/EditMenu';
+import Project from 'components/ProjectList/Project';
 
 const Container = styled.div`
   box-sizing: border-box;
@@ -16,14 +17,13 @@ const Container = styled.div`
     width: 100%;
   }
 `;
-const ProjectList = ({ children, EditProject }) => (
+const ProjectList = ({ children }) => (
   <Container>
-    {EditProject}
+    <EditMenuProvider>
+      <Project edit />
+    </EditMenuProvider>
     {children}
   </Container>
 );
 
-ProjectList.propTypes = {
-  EditProject: PropTypes.shape({}).isRequired,
-};
 export default ProjectList;
