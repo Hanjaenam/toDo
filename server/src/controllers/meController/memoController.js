@@ -1,27 +1,6 @@
 import Memo from 'models/Memo';
 import ToDo from 'models/ToDo';
 
-export const readAllFromToDo = async (req, res) => {
-  const {
-    params: { id: toDoId },
-    query: { page },
-  } = req;
-  try {
-    const { memo } = await ToDo.findById(toDoId).populate({
-      path: 'memo',
-      options: {
-        sort: { createdAt: -1 },
-        limit: 10,
-        skip: (page - 1) * 10,
-      },
-      populate: { path: 'creator', select: 'email nick' },
-    });
-    return res.json(memo);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).end();
-  }
-};
 export const create = async (req, res) => {
   const {
     params: { id: toDoId },
@@ -37,6 +16,7 @@ export const create = async (req, res) => {
       content,
       creator: req.user._id,
       toDo: toDoId,
+      createdAt: Date.now(),
     });
     const memoPopulateCreator = await memo
       .populate({
@@ -55,8 +35,7 @@ export const deleteOne = async (req, res) => {
     params: { id: memoId },
   } = req;
   try {
-    await ToDo.findOneAndDelete({ _id: memoId, creator: req.user._id });
-    // toDo pull 안함
+    await Memo.findOneAndDelete({ _id: memoId, creator: req.user._id });
     return res.status(204).end();
   } catch (err) {
     console.log(err);
@@ -81,14 +60,19 @@ export const deleteMany = async (req, res) => {
 export const patch = async (req, res) => {
   const {
     params: { id: memoId },
-    body: content,
+    body,
   } = req;
   try {
-    const memo = Memo.findByIdAndUpdate(
+    const memo = await Memo.findOneAndUpdate(
       { _id: memoId, creator: req.user._id },
-      { content },
+      body,
       { new: true },
-    );
+    )
+      .populate({
+        path: 'creator',
+        select: 'email nick',
+      })
+      .exec();
     return res.json(memo);
   } catch (err) {
     console.log(err);

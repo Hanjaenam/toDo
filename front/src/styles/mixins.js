@@ -33,11 +33,13 @@ export const hover = ({ type, ...opts }) => {
   if (type === HOVER_TYPE.COLOR) {
     return css`
       cursor: pointer;
-      color: rgba(0, 0, 0, 0.4);
+      color: rgb(178, 190, 195);
       transition: color ${props => props.theme.TRANSITION}
         ${opts.timing ? 'linear' : opts.timing};
       &:hover {
-        color: ${props => props.theme.PRIMARY()};
+        color: ${opts.hoverColor
+          ? opts.hoverColor
+          : props => props.theme.PRIMARY()};
       }
       &:active {
         transform: scale(0.9);

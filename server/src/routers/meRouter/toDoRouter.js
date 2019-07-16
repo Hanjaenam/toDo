@@ -1,6 +1,7 @@
 import express from 'express';
 import {
-  readAllFromProject,
+  // readAllFromProject,
+  readOne,
   create,
   deleteOne,
   deleteMany,
@@ -10,7 +11,8 @@ import routes from 'routes';
 
 const Router = express.Router();
 
-Router.get(routes.paramsId, readAllFromProject);
+// Router.get(routes.paramsId, readAllFromProject);
+Router.get(routes.paramsId, readOne);
 Router.post(routes.create + routes.paramsId, create);
 Router.delete(routes.delete + routes.paramsId, deleteOne);
 Router.delete(routes.delete, deleteMany);

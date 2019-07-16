@@ -1,91 +1,141 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrashAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import Button from 'components/Common/Button';
 import { HOVER_TYPE } from 'styles/mixins';
-import theme from 'styles/theme';
 import moment from 'moment';
+import theme from 'styles/theme';
+import Content from 'components/Common/Text';
 
 const Container = styled.div`
-  position: relative;
-  padding: ${props => props.theme.PADDING.SMALL};
-  background: #ffff88; /* Old browsers */
+  background: #ffffa5; /* Old browsers */
   background: -moz-linear-gradient(
     -45deg,
-    #ffff88 81%,
-    #ffff88 82%,
-    #ffff88 82%,
+    #ffffa5 81%,
+    #ffffa5 82%,
+    #ffffa5 82%,
     #ffffc6 100%
   ); /* FF3.6+ */
   background: -webkit-gradient(
     linear,
     left top,
     right bottom,
-    color-stop(81%, #ffff88),
-    color-stop(82%, #ffff88),
-    color-stop(82%, #ffff88),
+    color-stop(81%, #ffffa5),
+    color-stop(82%, #ffffa5),
+    color-stop(82%, #ffffa5),
     color-stop(100%, #ffffc6)
   ); /* Chrome,Safari4+ */
   background: -webkit-linear-gradient(
     -45deg,
-    #ffff88 81%,
-    #ffff88 82%,
-    #ffff88 82%,
+    #ffffa5 81%,
+    #ffffa5 82%,
+    #ffffa5 82%,
     #ffffc6 100%
   ); /* Chrome10+,Safari5.1+ */
   background: -o-linear-gradient(
     -45deg,
-    #ffff88 81%,
-    #ffff88 82%,
-    #ffff88 82%,
+    #ffffa5 81%,
+    #ffffa5 82%,
+    #ffffa5 82%,
     #ffffc6 100%
   ); /* Opera 11.10+ */
   background: -ms-linear-gradient(
     -45deg,
-    #ffff88 81%,
-    #ffff88 82%,
-    #ffff88 82%,
+    #ffffa5 81%,
+    #ffffa5 82%,
+    #ffffa5 82%,
     #ffffc6 100%
   ); /* IE10+ */
   background: linear-gradient(
     135deg,
-    #ffff88 81%,
-    #ffff88 82%,
-    #ffff88 82%,
+    #ffffa5 81%,
+    #ffffa5 82%,
+    #ffffa5 82%,
     #ffffc6 100%
   ); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffff88', endColorstr='#ffffc6',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFA5', endColorstr='#ffffc6',GradientType=1 );
+  position: relative;
+  padding: ${props => props.theme.PADDING.SMALL};
   border: 1px solid #e8e8e8;
+  margin-bottom: ${props => props.theme.PADDING.SMALL};
 `;
 
 const WhoWhenContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
 `;
 const Creator = styled.p`
   color: ${props => props.theme.PRIMARY()};
   font-weight: 600;
+  margin-right: ${props => props.theme.PADDING.STANDARD};
 `;
 const CreatedAt = styled.p`
   font-style: italic;
   font-size: 0.8rem;
-`;
-const Content = styled.p`
-  word-break: break-all;
-  padding: ${props => props.theme.PADDING.SMALL};
-  padding-bottom: 0;
+  color: #9e9e9e;
+  margin-right: ${props => props.theme.PADDING.STANDARD};
 `;
 
-const Memo = ({ data }) => (
-  <Container>
-    <WhoWhenContainer>
-      <Creator>{data.creator.email.split('@')[0]}</Creator>
-      <CreatedAt>
-        {moment(data.createdAt).format('YYYY-MM-DD H:mm:ss')}
-      </CreatedAt>
-    </WhoWhenContainer>
-    <Content>{data.content}</Content>
-  </Container>
-);
+const ButtonContainer = styled.div`
+  position: absolute;
+  top: ${props => props.theme.PADDING.SMALL};
+  right: ${props => props.theme.PADDING.SMALL};
+  display: flex;
+`;
+
+const Memo = ({
+  data,
+  deleteMemo,
+  patchMemo,
+  containerRef,
+  isEditMode,
+  contentChangeMode,
+  setContentChangeMode,
+}) => {
+  const buttonStyles = {
+    borderRadius: '50%',
+    padding: theme.PADDING.SMALL,
+  };
+  return (
+    <Container ref={containerRef}>
+      <WhoWhenContainer>
+        <Creator>{data.creator.email.split('@')[0]}</Creator>
+        <CreatedAt>{moment(data.createdAt).fromNow()}</CreatedAt>
+      </WhoWhenContainer>
+      <Content memo textChangeMode={contentChangeMode} handlePatch={patchMemo}>
+        {data.content}
+      </Content>
+      {isEditMode ? (
+        <ButtonContainer>
+          <Button
+            icon={contentChangeMode ? faTimes : faPen}
+            hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+            styles={buttonStyles}
+            onClick={() =>
+              contentChangeMode
+                ? setContentChangeMode(false)
+                : setContentChangeMode(true)
+            }
+          />
+          <Button
+            icon={faTrashAlt}
+            hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+            styles={buttonStyles}
+            onClick={deleteMemo}
+          />
+        </ButtonContainer>
+      ) : null}
+    </Container>
+  );
+};
+
+Memo.propTypes = {
+  deleteMemo: PropTypes.func.isRequired,
+  patchMemo: PropTypes.func.isRequired,
+  containerRef: PropTypes.shape({}).isRequired,
+  isEditMode: PropTypes.bool.isRequired,
+  contentChangeMode: PropTypes.bool.isRequired,
+  setContentChangeMode: PropTypes.func.isRequired,
+};
 export default Memo;

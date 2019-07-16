@@ -1,4 +1,6 @@
 import Project from 'models/Project';
+import ToDo from 'models/ToDo';
+import mongoose from 'mongoose';
 
 // /read
 // check
@@ -8,6 +10,57 @@ export const readAll = async (req, res) => {
       createdAt: -1,
     });
     return res.json(project);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).end();
+  }
+};
+
+export const readOne = async (req, res) => {
+  const {
+    params: { id: projectId },
+    query: { page },
+  } = req;
+  try {
+    const { title } = await Project.findById(
+      mongoose.Types.ObjectId(projectId),
+    );
+    const toDoListByDate = await ToDo.aggregate([
+      {
+        $match: {
+          creator: req.user._id,
+          project: mongoose.Types.ObjectId(projectId),
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          toDoList: {
+            $push: {
+              _id: '$_id',
+              title: '$title',
+              memo: '$memo',
+              isCompleted: '$isCompleted',
+              createdAt: '$createdAt',
+              creator: '$creator',
+            },
+          },
+        },
+      },
+      { $skip: (page - 1) * 10 },
+      { $limit: 10 },
+      {
+        $sort: {
+          _id: -1,
+        },
+      },
+      {
+        $project: {
+          toDoList: { $reverseArray: '$toDoList' },
+        },
+      },
+    ]);
+    return res.json({ title, toDoListByDate });
   } catch (err) {
     console.log(err);
     return res.status(500).end();

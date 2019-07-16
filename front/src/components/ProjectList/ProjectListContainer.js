@@ -10,7 +10,8 @@ const ProjectListContainer = () => {
   const mapToComponent = () =>
     projectList.map(project => (
       <EditMenuProvider key={project._id}>
-        <Project id={project._id} data={project} />
+        {/* <Project id={project._id} data={project} /> */}
+        <Project data={project} />
       </EditMenuProvider>
     ));
   return (

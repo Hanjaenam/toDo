@@ -11,7 +11,7 @@ import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
 import axios from 'axios';
 import Project from './Project';
 
-const ProjectContainer = ({ id, edit, data, history }) => {
+const ProjectContainer = ({ edit, data, history }) => {
   const { setProjectList } = useProjectListFns();
   const { isEditMode, isMultiMode, idsToDelete } = useListEditMenuValues();
   const { addOrRemoveIdToDelete, isSelected } = useListEditMenuFns();
@@ -35,12 +35,10 @@ const ProjectContainer = ({ id, edit, data, history }) => {
   const deleteProject = () => {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
     axios({
-      url: `/me/project/delete/${id}`,
+      url: `/me/project/delete/${data._id}`,
       method: 'delete',
-      setState: setProjectList,
-      id,
     }).then(() => {
-      setProjectList(deleteOne(id));
+      setProjectList(deleteOne(data._id));
     });
   };
   const deleteManyProject = () => {
@@ -55,15 +53,14 @@ const ProjectContainer = ({ id, edit, data, history }) => {
     });
   };
   const patchProject = titleRef => {
-    if (!titleRef.current) return;
     if (data.title === titleRef.current.value) return;
     axios({
-      url: `/me/project/patch/${id}`,
+      url: `/me/project/patch/${data._id}`,
       method: 'patch',
       data: { title: titleRef.current.value },
     })
       .then(res => {
-        setProjectList(patch(id, res.data));
+        setProjectList(patch(data._id, res.data));
       })
       .finally(() => {
         setTitleChangeMode(false);
@@ -73,7 +70,7 @@ const ProjectContainer = ({ id, edit, data, history }) => {
     if (!isEditMode) {
       history.push(`/me/project/${data._id}`);
     } else if (isMultiMode) {
-      addOrRemoveIdToDelete(id);
+      addOrRemoveIdToDelete(data._id);
     }
   };
   return (
@@ -82,7 +79,7 @@ const ProjectContainer = ({ id, edit, data, history }) => {
       data={data}
       isEditMode={isEditMode}
       isMultiMode={isMultiMode}
-      isSelected={isSelected(id)}
+      isSelected={isSelected(data && data._id)}
       titleChangeMode={titleChangeMode}
       setTitleChangeMode={setTitleChangeMode}
       createProject={createProject}
@@ -95,7 +92,6 @@ const ProjectContainer = ({ id, edit, data, history }) => {
 };
 
 ProjectContainer.propTypes = {
-  id: PropTypes.string,
   edit: PropTypes.bool,
   data: PropTypes.shape({
     title: PropTypes.string.isRequired,
@@ -105,7 +101,6 @@ ProjectContainer.propTypes = {
 };
 
 ProjectContainer.defaultProps = {
-  id: undefined,
   edit: undefined,
   data: undefined,
 };

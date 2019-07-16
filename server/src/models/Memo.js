@@ -7,6 +7,7 @@ export const MemoSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
+    required: true,
   },
   toDo: { type: mongoose.Schema.Types.ObjectId, ref: 'ToDo' },
 });

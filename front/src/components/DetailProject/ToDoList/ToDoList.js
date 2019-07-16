@@ -120,6 +120,7 @@ const Input = styled.input`
 const DataContainer = styled.div`
   border-bottom-right-radius: ${props => props.theme.RADIUS};
   border-bottom-left-radius: ${props => props.theme.RADIUS};
+  overflow: hidden;
   /* 여기서 padding을 주면 toDo 배경색이 짤린다.*/
   /* padding-left: 0.5rem; */
   @media screen and (min-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {

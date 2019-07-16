@@ -1,24 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import axios from 'axios';
 import { unshift } from 'lib/manuArrData';
 import Memo from 'components/DetailProject/Memo';
-import {
-  useListEditMenuValues,
-  useListEditMenuFns,
-} from 'store/Common/ListEditMenu';
+import { useToDoListFns } from 'components/DetailProject/ToDoList/ToDoListContainer';
 import MemoList from './MemoList';
 
+const MemoContext = createContext();
+
+export const useMemoListValues = () => {
+  const { fns, ...values } = useContext(MemoContext);
+  return values;
+};
+
+export const useMemoListFns = () => {
+  const { fns } = useContext(MemoContext);
+  return fns;
+};
+
 const MemoListConatiner = ({ id }) => {
-  const [memo, setMemo] = useState();
-  const { isEditMode, isMultiMode } = useListEditMenuValues();
-  const { setEditMode, toggleMultiMode } = useListEditMenuFns();
+  const { setToDoList } = useToDoListFns();
+  const [memoList, setMemoList] = useState();
   useEffect(() => {
-    if (!memo) {
+    if (!memoList) {
       axios({
-        url: `/me/memo/${id}?page=1`,
+        url: `/me/toDo/${id}?page=1`,
         method: 'get',
       }).then(res => {
-        setMemo(res.data);
+        setMemoList(res.data);
       });
     }
   }, []);
@@ -31,24 +39,29 @@ const MemoListConatiner = ({ id }) => {
       data: { content: contentRef.current.value },
     })
       .then(res => {
-        setMemo(unshift(res.data));
+        setMemoList(unshift(res.data));
+        setToDoList(state =>
+          state.map(data =>
+            data._id !== id
+              ? data
+              : { ...data, memo: [...data.memo, res.data._id] },
+          ),
+        );
       })
       .finally(() => {
-        contentRef.current.value = '';
+        if (contentRef.current) {
+          contentRef.current.value = '';
+        }
       });
   };
   const mapToComponent = () =>
-    memo.map(data => <Memo key={data._id} data={data} />);
+    memoList.map(data => <Memo key={data._id} data={data} toDoId={id} />);
   return (
-    <MemoList
-      // isEditMode={isEditMode}
-      // isMultiMode={isMultiMode}
-      // setEditMode={setEditMode}
-      // toggleMultiMode={toggleMultiMode}
-      createMemo={createMemo}
-    >
-      {memo ? mapToComponent() : null}
-    </MemoList>
+    <MemoContext.Provider value={{ memoList, fns: { setMemoList } }}>
+      <MemoList createMemo={createMemo}>
+        {memoList ? mapToComponent() : null}
+      </MemoList>
+    </MemoContext.Provider>
   );
 };
 export default MemoListConatiner;

@@ -4,19 +4,20 @@ import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import EditMenu from 'components/Common/EditMenu';
-import Title from 'components/Common/Title';
+import Title from 'components/Common/Text';
 import moment from 'moment';
 import Button from 'components/Common/Button';
 import { inputCss, HOVER_TYPE } from 'styles/mixins';
 import ListEditMenu from 'components/Common/ListEditMenu';
 import theme from 'styles/theme';
+import EditImportance from '../EditImportance';
 
 const Container = styled.div`
   display: flex;
   box-sizing: border-box;
   background: transparent;
   position: relative;
-  padding-bottom: ${props => props.theme.PADDING.SMALL};
+  margin-bottom: ${props => props.theme.PADDING.SMALL};
   ${props =>
     props.edit
       ? css`
@@ -39,11 +40,14 @@ const SelectIcon = styled(FontAwesomeIcon)`
 `;
 
 const DataContainer = styled.div`
-  display: flex;
+  /* display: flex; */
+  padding: ${props => props.theme.PADDING.STANDARD};
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr auto;
+  background: white;
   flex: 1;
   box-sizing: border-box;
-  padding: ${props => props.theme.PADDING.STANDARD};
-  background: white;
   border-radius: ${props => props.theme.RADIUS};
   justify-content: space-between;
   align-items: center;
@@ -82,7 +86,6 @@ const EditContainer = styled.div`
 const Date = styled.p`
   font-style: italic;
   font-size: 0.8rem;
-  margin-left: 0.5rem;
   color: ${props => props.theme.PRIMARY()};
 `;
 
@@ -146,9 +149,16 @@ const Project = ({
           <SelectIcon icon={faCheck} size="2x" />
         ) : null}
         <Title
-          title={data.title}
-          titleChangeMode={titleChangeMode}
+          textChangeMode={titleChangeMode}
           handlePatch={patchProject}
+          styles={{ gridRow: '1 / span 2' }}
+        >
+          {data.title}
+        </Title>
+        <EditImportance
+          id={data._id}
+          importance={data.importance}
+          isEditMode={isEditMode}
         />
         <Date>{moment(data.createdAt).format('YYYY-MM-DD')}</Date>
       </DataContainer>

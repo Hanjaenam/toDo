@@ -8,7 +8,10 @@ const Container = styled.div`
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  ${props => hover({ type: props.hoverType, ...props.hoverOpts })};
+  ${props =>
+    props.disabled
+      ? null
+      : hover({ type: props.hoverType, ...props.hoverOpts })}
   ${props => props.styles};
   ${props =>
     props.rest.isMultiMode
@@ -34,6 +37,7 @@ const Button = ({
   styles,
   hoverOpts,
   onClick,
+  disabled,
   ...rest
 }) => {
   return (
@@ -42,7 +46,8 @@ const Button = ({
       hoverType={hoverType}
       hoverOpts={hoverOpts}
       styles={styles}
-      onClick={onClick}
+      onClick={disabled ? null : onClick}
+      disabled={disabled}
     >
       <p>{icon ? <Icon icon={icon} /> : children}</p>
     </Container>
@@ -55,11 +60,13 @@ Button.propTypes = {
   styles: PropTypes.shape({}),
   hoverOpts: PropTypes.shape({}),
   onClick: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 Button.defaultProps = {
   icon: undefined,
   styles: undefined,
   hoverOpts: undefined,
   onClick: () => console.log('not defined onClick'),
+  disabled: undefined,
 };
 export default Button;

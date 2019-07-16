@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -13,15 +13,19 @@ import { useListEditMenuValues } from 'store/Common/ListEditMenu';
 import EditMenuProvider from 'store/Common/EditMenu';
 import ToDoList from './ToDoList';
 
-const ToDoListContainer = ({
-  createdAt,
-  data = [],
-  // match: {
-  //   params: { id },
-  // },
-  id,
-  edit,
-}) => {
+const ToDoListContext = createContext();
+
+export const useToDoListValues = () => {
+  const { fns, ...values } = useContext(ToDoListContext);
+  return values;
+};
+
+export const useToDoListFns = () => {
+  const { fns } = useContext(ToDoListContext);
+  return fns;
+};
+
+const ToDoListContainer = ({ createdAt, data = [], id, edit }) => {
   const [toDoList, setToDoList] = useState(data);
   const { setDetailProject } = useDetailProjectFns();
   const { detailProject } = useDetailProjectValues();
@@ -126,24 +130,27 @@ const ToDoListContainer = ({
   const mapToComponent = () =>
     toDoList.map(toDo => (
       <EditMenuProvider key={toDo._id}>
-        <ToDo id={toDo._id} data={toDo} setToDoList={setToDoList} edit={edit} />
+        <ToDo id={toDo._id} data={toDo} edit={edit} />
+        {/* <ToDo id={toDo._id} data={toDo} setToDoList={setToDoList} edit={edit} /> */}
       </EditMenuProvider>
     ));
   return (
-    <ToDoList
-      createdAt={createdAt}
-      selectedDay={selectedDay}
-      setSelectedDay={setSelectedDay}
-      isPreviousToDo={isPreviousToDo}
-      createToDo={createToDo}
-      deleteManyToDo={deleteManyToDo}
-      createToDoList={createToDoList}
-      deleteToDoList={deleteToDoList}
-      edit={edit || false}
-      isExistedTodayData={isExistedTodayData()}
-    >
-      {mapToComponent()}
-    </ToDoList>
+    <ToDoListContext.Provider value={{ toDoList, fns: { setToDoList } }}>
+      <ToDoList
+        createdAt={createdAt}
+        selectedDay={selectedDay}
+        setSelectedDay={setSelectedDay}
+        isPreviousToDo={isPreviousToDo}
+        createToDo={createToDo}
+        deleteManyToDo={deleteManyToDo}
+        createToDoList={createToDoList}
+        deleteToDoList={deleteToDoList}
+        edit={edit || false}
+        isExistedTodayData={isExistedTodayData()}
+      >
+        {mapToComponent()}
+      </ToDoList>
+    </ToDoListContext.Provider>
   );
 };
 ToDoListContainer.propTypes = {

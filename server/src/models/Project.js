@@ -27,8 +27,8 @@ const ProjectSchema = mongoose.Schema({
   },
   importance: {
     type: Number,
-    max: 5,
-    default: 0,
+    max: 3,
+    default: 1,
   },
   toDo: [
     {

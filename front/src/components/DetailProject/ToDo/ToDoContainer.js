@@ -7,13 +7,15 @@ import {
 import { deleteOne, patch } from 'lib/manuArrData';
 import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
 import axios from 'axios';
+import { useToDoListFns } from 'components/DetailProject/ToDoList/ToDoListContainer';
 import ToDo from './ToDo';
 
-const ToDoContainer = ({ id, data, setToDoList, edit }) => {
+const ToDoContainer = ({ id, data, edit }) => {
   const { isEditMode, isMultiMode } = useListEditMenuValues();
   const { addOrRemoveIdToDelete, isSelected } = useListEditMenuFns();
   const { titleChangeMode, showToDoMemo } = useEditMenuValues();
   const { setTitleChangeMode, toggleShowToDoMemo } = useEditMenuFns();
+  const { setToDoList } = useToDoListFns();
   const handleClick = e => {
     if (!edit && !isEditMode) {
       const msg = data.isCompleted
@@ -47,7 +49,6 @@ const ToDoContainer = ({ id, data, setToDoList, edit }) => {
     }
   };
   const patchToDo = titleRef => {
-    if (!titleRef.current) return;
     if (data.title === titleRef.current.value) return;
     const _data = { title: titleRef.current.value };
     if (edit) {
@@ -86,7 +87,6 @@ const ToDoContainer = ({ id, data, setToDoList, edit }) => {
 ToDoContainer.propTypes = {
   id: PropTypes.string.isRequired,
   data: PropTypes.shape({}).isRequired,
-  setToDoList: PropTypes.func.isRequired,
   edit: PropTypes.bool,
 };
 ToDoContainer.defaultProps = {

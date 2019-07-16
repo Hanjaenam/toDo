@@ -7,13 +7,14 @@ import { HOVER_TYPE } from 'styles/mixins';
 import theme from 'styles/theme';
 
 const EditContainer = styled.div`
+  ${props => props.styles};
   ${props =>
     props.csstype === 'toDo'
       ? css`
           margin-left: 0.2rem;
         `
       : css`
-          margin-left: 0.5rem;
+          margin-left: ${props.theme.PADDING.STANDARD};
         `}
   display: flex;
   align-items: center;

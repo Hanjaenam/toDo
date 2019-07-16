@@ -57,7 +57,7 @@ ToDoSchema.post(/Delete$/, function(doc, next) {
     Project.findByIdAndUpdate(project._id, {
       $pull: { toDo: _id },
     }).exec();
-    // memo.forEach(({ _id }) => Memo.findByIdAndDelete(_id).exec());
+    memo.forEach(({ _id }) => Memo.findByIdAndDelete(_id).exec());
     return next();
   } catch (err) {
     throw new Error(err);

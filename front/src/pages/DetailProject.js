@@ -50,7 +50,7 @@ const DetailProjectPage = ({
   useEffect(() => {
     if (detailProject === undefined) {
       axios({
-        url: `/me/toDo/${id}?page=1`,
+        url: `/me/project/${id}?page=1`,
         method: 'get',
       })
         .then(res => {

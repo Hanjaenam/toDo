@@ -9,6 +9,7 @@ import theme from 'styles/theme';
 const Container = styled.div`
   position: relative;
   flex: 1;
+  ${props => props.styles}
 `;
 const Input = styled.input`
   all: unset;
@@ -22,8 +23,9 @@ const Input = styled.input`
   &:focus {
     border-color: rgba(0, 0, 0, 0.5);
   }
+  padding-right: 2rem;
 `;
-const TitleText = styled.p`
+const Data = styled.p`
   box-sizing: border-box;
   border: 2px solid transparent;
   padding: ${props => props.theme.PADDING.STANDARD};
@@ -33,8 +35,15 @@ const TitleText = styled.p`
   word-break: break-all;
 `;
 
-const Title = ({ title, titleChangeMode, handlePatch }) => {
-  const titleRef = useRef();
+const Text = ({
+  children,
+  textChangeMode,
+  handlePatch,
+  isValid,
+  memo,
+  styles,
+}) => {
+  const textRef = useRef();
   const buttonStyles = {
     position: 'absolute',
     right: 0,
@@ -45,38 +54,45 @@ const Title = ({ title, titleChangeMode, handlePatch }) => {
     borderBottomLeftRadius: 0,
   };
   return (
-    <Container>
-      {titleChangeMode ? (
+    <Container styles={styles}>
+      {textChangeMode ? (
         <>
           <Input
-            defaultValue={title}
+            as={memo ? 'textarea' : 'input'}
+            defaultValue={children}
             autoFocus
-            ref={titleRef}
+            ref={textRef}
             onKeyUp={e => {
+              if (!isValid(textRef)) return;
               if (e.keyCode === 13) {
-                handlePatch(titleRef);
+                handlePatch(textRef);
               }
             }}
           />
           <Button
             icon={faCheck}
             hoverType={HOVER_TYPE.BACKGROUND_COLOR}
-            onClick={() => handlePatch(titleRef)}
+            onClick={() => {
+              if (!isValid(textRef)) return;
+              handlePatch(textRef);
+            }}
             styles={buttonStyles}
           />
         </>
       ) : (
-        <TitleText>{title}</TitleText>
+        <Data>{children}</Data>
       )}
     </Container>
   );
 };
-Title.propTypes = {
-  title: PropTypes.string.isRequired,
-  titleChangeMode: PropTypes.bool.isRequired,
+Text.propTypes = {
+  textChangeMode: PropTypes.bool.isRequired,
   handlePatch: PropTypes.func,
+  isValid: PropTypes.func.isRequired,
+  memo: PropTypes.bool,
 };
-Title.defaultProps = {
-  processPatch: undefined,
+Text.defaultProps = {
+  handlePatch: undefined,
+  memo: undefined,
 };
-export default Title;
+export default Text;

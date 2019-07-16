@@ -1,52 +1,22 @@
 import Project from 'models/Project';
 import ToDo from 'models/ToDo';
-import mongoose from 'mongoose';
 
-export const readAllFromProject = async (req, res) => {
+export const readOne = async (req, res) => {
   const {
-    params: { id: projectId },
+    params: { id: toDoId },
     query: { page },
   } = req;
   try {
-    const { title } = await Project.findById(
-      mongoose.Types.ObjectId(projectId),
-    );
-    const toDoListByDate = await ToDo.aggregate([
-      {
-        $match: {
-          creator: req.user._id,
-          project: mongoose.Types.ObjectId(projectId),
-        },
+    const { memo } = await ToDo.findById(toDoId).populate({
+      path: 'memo',
+      options: {
+        sort: { createdAt: -1 },
+        limit: 10,
+        skip: (page - 1) * 10,
       },
-      {
-        $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-          toDoList: {
-            $push: {
-              _id: '$_id',
-              title: '$title',
-              memo: '$memo',
-              isCompleted: '$isCompleted',
-              createdAt: '$createdAt',
-              creator: '$creator',
-            },
-          },
-        },
-      },
-      { $skip: (page - 1) * 10 },
-      { $limit: 10 },
-      {
-        $sort: {
-          _id: -1,
-        },
-      },
-      {
-        $project: {
-          toDoList: { $reverseArray: '$toDoList' },
-        },
-      },
-    ]);
-    return res.json({ title, toDoListByDate });
+      populate: { path: 'creator', select: 'email nick' },
+    });
+    return res.json(memo);
   } catch (err) {
     console.log(err);
     return res.status(500).end();
@@ -162,9 +132,9 @@ export const patch = async (req, res) => {
     // ).exec();
     // console.log(toDo) // Promise { <pending> }
     // // 수정은 정상적으로 완료되었음.
-    const toDo = await ToDo.findByIdAndUpdate(
-      toDoId,
-      { ...body },
+    const toDo = await ToDo.findOneAndUpdate(
+      { _id: toDoId, creator: req.user._id },
+      body,
       { new: true },
     );
     return res.json(toDo);

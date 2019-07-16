@@ -4,13 +4,12 @@ import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faStickyNote } from '@fortawesome/free-regular-svg-icons';
-import Title from 'components/Common/Title';
+import Title from 'components/Common/Text';
 import EditMenu from 'components/Common/EditMenu';
 import { hover, HOVER_TYPE } from 'styles/mixins';
 import Button from 'components/Common/Button';
 import MemoList from 'components/DetailProject/MemoList';
 import theme from 'styles/theme';
-import ListEditMenuProvider from 'store/Common/ListEditMenu';
 
 const Container = styled.div`
   /* display: flex; */
@@ -18,7 +17,6 @@ const Container = styled.div`
   grid-template-columns: 1fr auto;
   grid-auto-flow: row dense;
   position: relative;
-  border-radius: ${props => props.theme.RADIUS};
   transition: box-shadow ${props => props.theme.TRANSITION};
   ${props =>
     props.showToDoMemo
@@ -107,11 +105,9 @@ const ToDo = ({
       <CheckContainer>
         <CheckIcon icon={faCheck} />
       </CheckContainer>
-      <Title
-        title={data.title}
-        titleChangeMode={titleChangeMode}
-        handlePatch={patchToDo}
-      />
+      <Title textChangeMode={titleChangeMode} handlePatch={patchToDo}>
+        {data.title}
+      </Title>
     </DataContainer>
     <EditMenu
       titleChangeMode={titleChangeMode}
@@ -121,17 +117,15 @@ const ToDo = ({
     />
     {isEditMode ? null : (
       <Button
-        icon={showToDoMemo ? faTimes : faStickyNote}
+        icon={showToDoMemo ? faTimes : null}
         hoverType={HOVER_TYPE.BACKGROUND_COLOR}
-        styles={{ padding: `0 1rem` }}
+        styles={{ padding: `0 1rem`, marginLeft: '0.2rem' }}
         onClick={toggleShowToDoMemo}
-      />
+      >
+        {data.memo ? data.memo.length : 0}
+      </Button>
     )}
-    {showToDoMemo ? (
-      <ListEditMenuProvider>
-        <MemoList id={data._id} />
-      </ListEditMenuProvider>
-    ) : null}
+    {showToDoMemo ? <MemoList id={data._id} /> : null}
   </Container>
 );
 ToDo.propTypes = {

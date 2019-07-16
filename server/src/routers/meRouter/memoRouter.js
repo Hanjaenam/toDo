@@ -1,7 +1,7 @@
 import express from 'express';
 import routes from 'routes';
 import {
-  readAllFromToDo,
+  // readAllFromToDo,
   create,
   deleteOne,
   deleteMany,
@@ -10,7 +10,7 @@ import {
 
 const Router = express.Router();
 
-Router.get(routes.paramsId, readAllFromToDo);
+// Router.get(routes.paramsId, readAllFromToDo);
 Router.post(routes.create + routes.paramsId, create);
 Router.delete(routes.delete + routes.paramsId, deleteOne);
 Router.delete(routes.delete, deleteMany);

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// eslint-disable-next-line import/prefer-default-export
 export const useStatus = () => {
   const [status, setStatus] = useState({
     loading: true,
@@ -33,4 +32,26 @@ export const useToDoMemo = ({ isEditMode }) => {
     }
   }, [isEditMode]);
   return { showToDoMemo, setShowToDoMemo };
+};
+
+export const useMouseEnterEdit = ({ ref }) => {
+  const [isEditMode, setEditMode] = useState(false);
+  const [contentChangeMode, setContentChangeMode] = useState(false);
+  const handleMouseEnter = () => {
+    setEditMode(true);
+  };
+  const handleMouseLeave = () => {
+    setEditMode(false);
+  };
+  useEffect(() => {
+    if (!ref.current)
+      throw new Error('useMouseEnterEdit / useEffect / !ref.current');
+    ref.current.addEventListener('mouseenter', handleMouseEnter);
+    ref.current.addEventListener('mouseleave', handleMouseLeave);
+    return () => {
+      ref.current.removeEventListener('mouseenter', handleMouseEnter);
+      ref.current.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  });
+  return { isEditMode, setContentChangeMode, contentChangeMode };
 };
