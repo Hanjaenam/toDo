@@ -8,12 +8,9 @@ const Container = styled.div`
   width: ${props => props.theme.BREAKPOINTS.WIDE};
   margin: 0 auto;
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.WIDE}) {
-    width: ${props => props.theme.BREAKPOINTS.LARGE};
+    width: 95%;
   }
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.LARGE}) {
-    width: ${props => props.theme.BREAKPOINTS.MEDIUM};
-  }
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
     width: 100%;
   }
 `;

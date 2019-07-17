@@ -1,13 +1,13 @@
 import React, { useRef } from 'react';
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import styled, { css } from 'styled-components';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { HOVER_TYPE } from 'styles/mixins';
-import theme from 'styles/theme';
 import Button from 'components/Common/Button';
 
 const Container = styled.div`
   grid-column: 1 / span 2;
-  padding: ${props => props.theme.PADDING.SMALL};
+  padding: ${props => props.theme.GAP.SMALL};
 `;
 const EditContainer = styled.div`
   font-size: 1rem;
@@ -16,7 +16,7 @@ const EditContainer = styled.div`
 const Textarea = styled.textarea`
   flex: 1;
   font-size: 1rem;
-  padding: ${props => props.theme.PADDING.SMALL};
+  padding: ${props => props.theme.GAP.SMALL};
   padding-right: 25px;
   word-break: break-all;
   background: #ffffa5; /* Old browsers */
@@ -67,6 +67,10 @@ const Textarea = styled.textarea`
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFA5', endColorstr='#ffffc6',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
   border: 1px solid #e8e8e8;
 `;
+
+const buttonStyles = css`
+  padding: 0 ${props => props.theme.GAP.STANDARD};
+`;
 const MemoList = ({ children, createMemo }) => {
   const contentRef = useRef();
   return (
@@ -78,12 +82,14 @@ const MemoList = ({ children, createMemo }) => {
           icon={faPlus}
           hoverType={HOVER_TYPE.BACKGROUND_COLOR}
           onClick={() => createMemo(contentRef)}
-          styles={{
-            padding: `0 ${theme.PADDING.STANDARD}`,
-          }}
+          styles={buttonStyles}
         />
       </EditContainer>
     </Container>
   );
+};
+
+MemoList.propTypes = {
+  createMemo: PropTypes.func.isRequired,
 };
 export default MemoList;

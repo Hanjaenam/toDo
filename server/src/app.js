@@ -7,12 +7,10 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import session from 'express-session';
 import flash from 'connect-flash';
-import initPassport from 'config/passport';
-import routes from 'routes';
 import { authRouter, meRouter } from 'routers';
 import { onlyPrivate, onlyPublic } from 'middlewares/auth';
+import routes from 'routes';
 // import ToDo from 'models/ToDo';
-
 const app = express();
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,7 +27,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-initPassport();
+config.initPassport();
 
 app.use(routes.auth, onlyPublic, authRouter);
 app.use(routes.me, onlyPrivate, meRouter);

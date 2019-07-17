@@ -5,10 +5,11 @@ import {
   useListEditMenuFns,
 } from 'store/Common/ListEditMenu';
 import { withRouter } from 'react-router-dom';
-import { useProjectListFns } from 'pages/ProjectList';
+import { useProjectListFns } from 'store/ProjectList';
 import { unshift, deleteOne, deleteMany, patch } from 'lib/manuArrData';
 import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
 import axios from 'axios';
+import { API_PatchProject } from 'lib/API';
 import Project from './Project';
 
 const ProjectContainer = ({ edit, data, history }) => {
@@ -54,9 +55,8 @@ const ProjectContainer = ({ edit, data, history }) => {
   };
   const patchProject = titleRef => {
     if (data.title === titleRef.current.value) return;
-    axios({
-      url: `/me/project/patch/${data._id}`,
-      method: 'patch',
+    API_PatchProject({
+      id: data._id,
       data: { title: titleRef.current.value },
     })
       .then(res => {

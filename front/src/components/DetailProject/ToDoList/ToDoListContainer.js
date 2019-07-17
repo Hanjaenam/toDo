@@ -5,7 +5,7 @@ import axios from 'axios';
 import {
   useDetailProjectFns,
   useDetailProjectValues,
-} from 'pages/DetailProject';
+} from 'store/DetailProject';
 import { unshift, deleteMany, deleteOne } from 'lib/manuArrData';
 import ToDo from 'components/DetailProject/ToDo';
 import moment from 'moment';
@@ -25,7 +25,14 @@ export const useToDoListFns = () => {
   return fns;
 };
 
-const ToDoListContainer = ({ createdAt, data = [], id, edit }) => {
+const ToDoListContainer = ({
+  match: {
+    params: { id: projectId },
+  },
+  createdAt,
+  data = [],
+  edit,
+}) => {
   const [toDoList, setToDoList] = useState(data);
   const { setDetailProject } = useDetailProjectFns();
   const { detailProject } = useDetailProjectValues();
@@ -64,7 +71,7 @@ const ToDoListContainer = ({ createdAt, data = [], id, edit }) => {
       titleRef.current.value = '';
     } else {
       data.createdAt = createdAt;
-      axios({ url: `/me/toDo/create/${id}`, method: 'post', data })
+      axios({ url: `/me/toDo/create/${projectId}`, method: 'post', data })
         .then(res => {
           setToDoList(unshift(res.data));
         })
@@ -98,7 +105,7 @@ const ToDoListContainer = ({ createdAt, data = [], id, edit }) => {
     )
       return;
     axios({
-      url: `/me/toDo/create/${id}`,
+      url: `/me/toDo/create/${projectId}`,
       method: 'post',
       data: toDoList.map(toDo => ({
         title: toDo.title,
@@ -130,7 +137,7 @@ const ToDoListContainer = ({ createdAt, data = [], id, edit }) => {
   const mapToComponent = () =>
     toDoList.map(toDo => (
       <EditMenuProvider key={toDo._id}>
-        <ToDo id={toDo._id} data={toDo} edit={edit} />
+        <ToDo data={toDo} edit={edit} />
         {/* <ToDo id={toDo._id} data={toDo} setToDoList={setToDoList} edit={edit} /> */}
       </EditMenuProvider>
     ));
@@ -145,7 +152,7 @@ const ToDoListContainer = ({ createdAt, data = [], id, edit }) => {
         deleteManyToDo={deleteManyToDo}
         createToDoList={createToDoList}
         deleteToDoList={deleteToDoList}
-        edit={edit || false}
+        edit={edit}
         isExistedTodayData={isExistedTodayData()}
       >
         {mapToComponent()}
@@ -154,6 +161,7 @@ const ToDoListContainer = ({ createdAt, data = [], id, edit }) => {
   );
 };
 ToDoListContainer.propTypes = {
+  projectId: PropTypes.string,
   createdAt: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.shape({})),
   edit: PropTypes.bool,
@@ -164,8 +172,9 @@ ToDoListContainer.propTypes = {
   }).isRequired,
 };
 ToDoListContainer.defaultProps = {
-  data: undefined,
+  projectId: undefined,
   createdAt: undefined,
+  data: undefined,
   edit: undefined,
 };
 

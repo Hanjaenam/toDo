@@ -9,7 +9,6 @@ import EditMenu from 'components/Common/EditMenu';
 import { hover, HOVER_TYPE } from 'styles/mixins';
 import Button from 'components/Common/Button';
 import MemoList from 'components/DetailProject/MemoList';
-import theme from 'styles/theme';
 
 const Container = styled.div`
   /* display: flex; */
@@ -24,7 +23,7 @@ const Container = styled.div`
           box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
           border: 2px solid ${props => props.theme.PRIMARY()};
           .memo {
-            padding: ${props => props.theme.PADDING.SMALL};
+            padding: ${props => props.theme.GAP.SMALL};
           }
         `
       : null};
@@ -36,7 +35,7 @@ const DataContainer = styled.div`
   box-sizing: border-box;
   align-items: center;
   /* 여기서 padding을 주어야 toDo Data 에만 배경색이 적절하게 들어간다.*/
-  padding-left: ${props => props.theme.PADDING.STANDARD};
+  padding-left: ${props => props.theme.GAP.STANDARD};
   &.isCompleted {
     background: ${props => props.theme.SUCCESS(0.9)};
     div:first-child {
@@ -80,6 +79,11 @@ const CheckIcon = styled(FontAwesomeIcon)`
   font-size: 1rem;
 `;
 
+const buttonStyles = css`
+  padding: 0 1rem;
+  margin-left: 0.2rem;
+`;
+
 const ToDo = ({
   data,
   isEditMode,
@@ -98,7 +102,7 @@ const ToDo = ({
       isMultiMode={isMultiMode}
       isEditMode={isEditMode}
       className={`${isSelected ? 'selected' : ''} ${
-        data.isCompleted && !isMultiMode ? 'isCompleted' : null
+        data.isCompleted && !isMultiMode ? 'isCompleted' : ''
       }`}
       onClick={handleClick}
     >
@@ -119,7 +123,7 @@ const ToDo = ({
       <Button
         icon={showToDoMemo ? faTimes : null}
         hoverType={HOVER_TYPE.BACKGROUND_COLOR}
-        styles={{ padding: `0 1rem`, marginLeft: '0.2rem' }}
+        styles={buttonStyles}
         onClick={toggleShowToDoMemo}
       >
         {data.memo ? data.memo.length : 0}

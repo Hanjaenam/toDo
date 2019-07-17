@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { faPen, faTrashAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import Button from 'components/Common/Button';
 import { HOVER_TYPE } from 'styles/mixins';
 import moment from 'moment';
-import theme from 'styles/theme';
 import Content from 'components/Common/Text';
 
 const Container = styled.div`
@@ -56,9 +55,9 @@ const Container = styled.div`
   ); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFA5', endColorstr='#ffffc6',GradientType=1 );
   position: relative;
-  padding: ${props => props.theme.PADDING.SMALL};
+  padding: ${props => props.theme.GAP.SMALL};
   border: 1px solid #e8e8e8;
-  margin-bottom: ${props => props.theme.PADDING.SMALL};
+  margin-bottom: ${props => props.theme.GAP.SMALL};
 `;
 
 const WhoWhenContainer = styled.div`
@@ -68,20 +67,25 @@ const WhoWhenContainer = styled.div`
 const Creator = styled.p`
   color: ${props => props.theme.PRIMARY()};
   font-weight: 600;
-  margin-right: ${props => props.theme.PADDING.STANDARD};
+  margin-right: ${props => props.theme.GAP.STANDARD};
 `;
 const CreatedAt = styled.p`
   font-style: italic;
   font-size: 0.8rem;
   color: #9e9e9e;
-  margin-right: ${props => props.theme.PADDING.STANDARD};
+  margin-right: ${props => props.theme.GAP.STANDARD};
 `;
 
 const ButtonContainer = styled.div`
   position: absolute;
-  top: ${props => props.theme.PADDING.SMALL};
-  right: ${props => props.theme.PADDING.SMALL};
+  top: ${props => props.theme.GAP.SMALL};
+  right: ${props => props.theme.GAP.SMALL};
   display: flex;
+`;
+
+const buttonStyles = css`
+  border-radius: 50%;
+  padding: ${props => props.theme.GAP.SMALL};
 `;
 
 const Memo = ({
@@ -93,10 +97,6 @@ const Memo = ({
   contentChangeMode,
   setContentChangeMode,
 }) => {
-  const buttonStyles = {
-    borderRadius: '50%',
-    padding: theme.PADDING.SMALL,
-  };
   return (
     <Container ref={containerRef}>
       <WhoWhenContainer>

@@ -6,19 +6,22 @@ import ToDoList from 'components/DetailProject/ToDoList';
 const Container = styled.div`
   box-sizing: border-box;
   height: 100%;
-  display: flex;
   padding: 1rem;
-  /* grid-auto-flow: column dense; */
   overflow-x: scroll;
-  align-items: flex-start;
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
-    /* flex-direction: column-reverse; */
     display: block;
     -webkit-overflow-scrolling: touch;
+    /* flex-direction: column-reverse; */
   }
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
     padding: 0;
   }
+  /* grid-auto-flow: column dense; */
+  /* display: flex; */
+  display: grid;
+  grid-auto-flow: column;
+  align-items: flex-start;
+  grid-gap: ${props => props.theme.GAP.TO_DO_LIST};
 `;
 
 const Project = ({ children }) => (

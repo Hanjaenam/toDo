@@ -5,7 +5,7 @@ export default createGlobalStyle`
   ${reset}
   body{
     background-color: ${props => props.theme.BACKGROUND[0]};
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: Arial, Helvetica, 'Times New Roman', Times,'Courier New', Courier,Verdana,Georgia,'Trebuchet MS', sans-serif;
   }
   input[type="email"], input[type="password"]{
     outline:none;

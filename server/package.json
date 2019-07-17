@@ -21,6 +21,7 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "babel-plugin-module-resolver": "^3.2.0",
     "eslint": "^6.0.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^6.0.0",
@@ -30,6 +31,6 @@
     "prettier": "^1.18.2"
   },
   "scripts": {
-    "start": "NODE_PATH=src nodemon --exec babel-node src/init.js"
+    "start": "nodemon --exec babel-node src/init.js"
   }
 }

@@ -8,9 +8,10 @@ export default {
   RADIUS: '5px',
   BACKGROUND: ['rgba(200,200,200, 0.2)'],
   TRANSITION: '0.3s',
-  PADDING: {
+  GAP: {
     STANDARD: '0.5rem',
     SMALL: '0.3rem',
+    TO_DO_LIST: '1rem',
   },
   BREAKPOINTS: {
     SMALL: '576px',

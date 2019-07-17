@@ -1,14 +1,28 @@
 import Project from 'models/Project';
 import ToDo from 'models/ToDo';
 import mongoose from 'mongoose';
+import config from 'config';
 
 // /read
 // check
 export const readAll = async (req, res) => {
+  const {
+    query: { sort = 'latest', page = 1 },
+  } = req;
   try {
-    const project = await Project.find({ creator: req.user._id }).sort({
-      createdAt: -1,
-    });
+    const projectCount = await Project.find().count();
+    const project = await Project.aggregate([
+      {
+        $match: {
+          creator: req.user._id,
+        },
+      },
+      { $skip: (page - 1) * config.PAGE.LIMIT },
+      { $limit: config.PAGE.LIMIT },
+      { $sort: sort === 'latest' ? { createAt: -1 } : { importance: -1 } },
+    ]);
+    res.set('Last-Page', Math.ceil(projectCount / config.PAGE.LIMIT));
+    res.set('Data-Limit', config.PAGE.LIMIT);
     return res.json(project);
   } catch (err) {
     console.log(err);

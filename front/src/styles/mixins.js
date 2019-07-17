@@ -13,6 +13,15 @@ export const hover = ({ type, ...opts }) => {
       border-radius: ${props => props.theme.RADIUS};
       transition: background-color ${props => props.theme.TRANSITION}
         ${opts.timing ? 'linear' : opts.timing};
+      ${props =>
+        opts.active
+          ? css`
+              background-color: ${props.theme.PRIMARY({
+                add: opts.add,
+                minus: opts.minus,
+              })};
+            `
+          : null}
       > p {
         user-select: none;
       }

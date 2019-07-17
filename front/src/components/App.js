@@ -12,10 +12,8 @@ function App() {
         <Switch>
           <Route exact path="/" component={LogIn} />
           <Route exact path="/register" component={Register} />
-          <OnlyPrivate>
-            <Route exact path="/me/project" component={ProjectList} />
-            <Route exact path="/me/project/:id" component={DetailProject} />
-          </OnlyPrivate>
+          <Route exact path="/me/project" component={ProjectList} />
+          <Route exact path="/me/project/:id" component={DetailProject} />
         </Switch>
       </Router>
     </>

@@ -43,15 +43,36 @@ export const useMouseEnterEdit = ({ ref }) => {
   const handleMouseLeave = () => {
     setEditMode(false);
   };
+  const addEvent = () => {
+    ref.current.addEventListener('mouseenter', handleMouseEnter);
+    ref.current.addEventListener('mouseleave', handleMouseLeave);
+  };
+  const removeEvent = () => {
+    ref.current.removeEventListener('mouseenter', handleMouseEnter);
+    ref.current.removeEventListener('mouseleave', handleMouseLeave);
+  };
   useEffect(() => {
     if (!ref.current)
       throw new Error('useMouseEnterEdit / useEffect / !ref.current');
-    ref.current.addEventListener('mouseenter', handleMouseEnter);
-    ref.current.addEventListener('mouseleave', handleMouseLeave);
-    return () => {
-      ref.current.removeEventListener('mouseenter', handleMouseEnter);
-      ref.current.removeEventListener('mouseleave', handleMouseLeave);
-    };
+    addEvent();
+    return () => removeEvent();
   });
   return { isEditMode, setContentChangeMode, contentChangeMode };
+};
+
+export const useOnlyPublic = ({ user, history }) => {
+  const [startRender, setStartRender] = useState(false);
+  useEffect(() => {
+    if (user) history.replace('/me/project');
+    else setStartRender(true);
+  }, [user]);
+  return startRender;
+};
+export const useOnlyPrivate = ({ user, history }) => {
+  const [startRender, setStartRender] = useState(false);
+  useEffect(() => {
+    if (!user) history.replace('/');
+    else setStartRender(true);
+  }, [user]);
+  return startRender;
 };

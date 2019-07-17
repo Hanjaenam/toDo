@@ -3,10 +3,13 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
-import { useFns } from 'store/User';
-import OnlyPublic from 'components/Common/OnlyPublic';
+import { useFns, useUser } from 'store/User';
+// import OnlyPublic from 'components/Common/OnlyPublic';
+import { useOnlyPublic } from 'lib/hooks';
 
 const LogIn = ({ history }) => {
+  const user = useUser();
+  useOnlyPublic({ user, history });
   const { logIn, setError } = useFns();
   const handleFetch = ({ eValue, pValue }) => {
     axios({
@@ -37,8 +40,10 @@ const LogIn = ({ history }) => {
 LogIn.propTypes = {
   history: PropTypes.shape({}).isRequired,
 };
-export default ({ history }) => (
-  <OnlyPublic history={history}>
-    <LogIn history={history} />
-  </OnlyPublic>
-);
+// export default ({ history }) => (
+//   <OnlyPublic history={history}>
+//     <LogIn history={history} />
+//   </OnlyPublic>
+// );
+
+export default LogIn;

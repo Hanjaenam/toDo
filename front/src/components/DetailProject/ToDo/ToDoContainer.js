@@ -10,7 +10,7 @@ import axios from 'axios';
 import { useToDoListFns } from 'components/DetailProject/ToDoList/ToDoListContainer';
 import ToDo from './ToDo';
 
-const ToDoContainer = ({ id, data, edit }) => {
+const ToDoContainer = ({ data, edit }) => {
   const { isEditMode, isMultiMode } = useListEditMenuValues();
   const { addOrRemoveIdToDelete, isSelected } = useListEditMenuFns();
   const { titleChangeMode, showToDoMemo } = useEditMenuValues();
@@ -23,28 +23,28 @@ const ToDoContainer = ({ id, data, edit }) => {
         : '완료하시겠습니까?';
       if (!window.confirm(msg)) return;
       axios({
-        url: `/me/toDo/patch/${id}`,
+        url: `/me/toDo/patch/${data._id}`,
         method: 'patch',
         data: {
           isCompleted: !data.isCompleted,
         },
       }).then(res => {
-        setToDoList(patch(id, res.data));
+        setToDoList(patch(data._id, res.data));
       });
     } else if (isMultiMode) {
-      addOrRemoveIdToDelete(id);
+      addOrRemoveIdToDelete(data._id);
     }
   };
   const deleteToDo = () => {
     if (!window.confirm('정말로 삭제하시겠습니까?')) return;
     if (edit) {
-      setToDoList(deleteOne(id));
+      setToDoList(deleteOne(data._id));
     } else {
       axios({
-        url: `/me/toDo/delete/${id}`,
+        url: `/me/toDo/delete/${data._id}`,
         method: 'delete',
       }).then(() => {
-        setToDoList(deleteOne(id));
+        setToDoList(deleteOne(data._id));
       });
     }
   };
@@ -52,16 +52,16 @@ const ToDoContainer = ({ id, data, edit }) => {
     if (data.title === titleRef.current.value) return;
     const _data = { title: titleRef.current.value };
     if (edit) {
-      setToDoList(patch(id, _data));
+      setToDoList(patch(data._id, _data));
       setTitleChangeMode(false);
     } else {
       axios({
-        url: `/me/toDo/patch/${id}`,
+        url: `/me/toDo/patch/${data._id}`,
         method: 'patch',
         data: _data,
       })
         .then(res => {
-          setToDoList(patch(id, res.data));
+          setToDoList(patch(data._id, res.data));
         })
         .finally(() => {
           setTitleChangeMode(false);
@@ -73,7 +73,7 @@ const ToDoContainer = ({ id, data, edit }) => {
       data={data}
       isEditMode={isEditMode}
       isMultiMode={isMultiMode}
-      isSelected={isSelected(id)}
+      isSelected={isSelected(data._id)}
       handleClick={handleClick}
       deleteToDo={deleteToDo}
       patchToDo={patchToDo}
@@ -85,7 +85,6 @@ const ToDoContainer = ({ id, data, edit }) => {
   );
 };
 ToDoContainer.propTypes = {
-  id: PropTypes.string.isRequired,
   data: PropTypes.shape({}).isRequired,
   edit: PropTypes.bool,
 };

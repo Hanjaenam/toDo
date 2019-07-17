@@ -6,9 +6,14 @@ import {
   faTimes,
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
+import { css } from 'styled-components';
 import { HOVER_TYPE } from 'styles/mixins';
 import Button from 'components/Common/Button';
-import theme from 'styles/theme';
+
+const buttonStyles = css`
+  font-size: 1.5rem;
+  padding-left: ${props => props.theme.GAP.STANDARD};
+`;
 
 const ListEditMenu = ({
   isEditMode,
@@ -18,10 +23,6 @@ const ListEditMenu = ({
   initMode,
   handleDeleteMany,
 }) => {
-  const buttonStyles = {
-    fontSize: '1.5rem',
-    paddingLeft: `${theme.PADDING.STANDARD}`,
-  };
   return isEditMode ? (
     <>
       {isMultiMode ? (

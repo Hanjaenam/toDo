@@ -9,7 +9,6 @@ import moment from 'moment';
 import Button from 'components/Common/Button';
 import { inputCss, HOVER_TYPE } from 'styles/mixins';
 import ListEditMenu from 'components/Common/ListEditMenu';
-import theme from 'styles/theme';
 import EditImportance from '../EditImportance';
 
 const Container = styled.div`
@@ -17,7 +16,7 @@ const Container = styled.div`
   box-sizing: border-box;
   background: transparent;
   position: relative;
-  margin-bottom: ${props => props.theme.PADDING.SMALL};
+  margin-bottom: ${props => props.theme.GAP.SMALL};
   ${props =>
     props.edit
       ? css`
@@ -26,8 +25,8 @@ const Container = styled.div`
           justify-content: space-between;
           @media screen and (max-width: ${props =>
               props.theme.BREAKPOINTS.MEDIUM}) {
-            padding-left: ${props.theme.PADDING.STANDARD};
-            padding-right: ${props.theme.PADDING.STANDARD};
+            padding-left: ${props.theme.GAP.STANDARD};
+            padding-right: ${props.theme.GAP.STANDARD};
           }
         `
       : null}
@@ -41,7 +40,7 @@ const SelectIcon = styled(FontAwesomeIcon)`
 
 const DataContainer = styled.div`
   /* display: flex; */
-  padding: ${props => props.theme.PADDING.STANDARD};
+  padding: ${props => props.theme.GAP.STANDARD};
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-rows: 1fr auto;
@@ -80,7 +79,7 @@ const EditContainer = styled.div`
   display: flex;
   align-items: center;
   flex: 1;
-  padding-right: ${props => props.theme.PADDING.STANDARD};
+  padding-right: ${props => props.theme.GAP.STANDARD};
 `;
 
 const Date = styled.p`
@@ -91,10 +90,13 @@ const Date = styled.p`
 
 const Input = styled.input`
   flex: 1;
-  padding: ${props => props.theme.PADDING.STANDARD};
+  padding: ${props => props.theme.GAP.STANDARD};
   font-size: 1rem;
   ${inputCss}
 `;
+const ButtonStyles = css`
+padding-left:${props => props.theme.GAP.STANDARD}
+font-size:1.5rem;`;
 
 const Project = ({
   edit,
@@ -115,7 +117,7 @@ const Project = ({
     <Container edit={edit}>
       <EditContainer>
         <Input
-          placeholder="프로젝트 이름"
+          placeholder="프로젝트 만들기"
           id="addTitle"
           ref={titleRef}
           onKeyUp={e => {
@@ -128,10 +130,7 @@ const Project = ({
         <Button
           icon={faPlus}
           hoverType={HOVER_TYPE.COLOR}
-          styles={{
-            paddingLeft: `${theme.PADDING.STANDARD}`,
-            fontSize: '1.5rem',
-          }}
+          styles={ButtonStyles}
           onClick={() => createProject(titleRef)}
         />
       </EditContainer>

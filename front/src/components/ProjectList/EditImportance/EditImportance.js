@@ -5,17 +5,26 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 const Container = styled.div`
   grid-column: 2;
-  text-align: center;
   ${props => (props.isEditMode ? css`` : null)}
   display:flex;
   flex-direction: row-reverse;
+  justify-content: center;
+  align-items: center;
 `;
 
 const StarIcon = styled(FontAwesomeIcon)`
+  color: rgb(253, 216, 53);
+  padding: 0.1rem;
+  font-size: 1.1rem;
   ${props => {
     if (props.iseditmode === 'true') {
       return css`
         cursor: pointer;
+        ${props.gray === 'true'
+          ? css`
+              color: rgb(223, 230, 233);
+            `
+          : null}
         &:hover {
           &,
           & ~ svg {
@@ -33,27 +42,17 @@ const StarIcon = styled(FontAwesomeIcon)`
       `;
     }
   }}
-  ${props =>
-    props.color === 'true'
-      ? css`
-          color: rgb(253, 216, 53);
-        `
-      : css`
-          color: rgb(223, 230, 233);
-        `};
-  padding: 0.1rem;
-  font-size: 1.1rem;
 `;
 const EditImportance = ({ isEditMode, importance, patchProject }) => {
   return (
     <Container isEditMode={isEditMode}>
-      {new Array(3).fill('').map((_, idx) => (
+      {new Array(isEditMode ? 3 : importance).fill('').map((_, idx) => (
         <StarIcon
           key={`star${idx}`}
           icon={faStar}
           iseditmode={isEditMode.toString()}
-          color={(2 - idx <= importance).toString()}
-          onClick={() => patchProject(2 - idx)}
+          gray={(importance < 3 - idx).toString()}
+          onClick={() => patchProject(3 - idx)}
         />
       ))}
     </Container>

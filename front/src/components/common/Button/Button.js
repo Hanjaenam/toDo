@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const Container = styled.div`
   box-sizing: border-box;
   display: flex;
+  justify-content: center;
   align-items: center;
   ${props =>
     props.disabled
@@ -39,25 +40,23 @@ const Button = ({
   onClick,
   disabled,
   ...rest
-}) => {
-  return (
-    <Container
-      rest={rest}
-      hoverType={hoverType}
-      hoverOpts={hoverOpts}
-      styles={styles}
-      onClick={disabled ? null : onClick}
-      disabled={disabled}
-    >
-      <p>{icon ? <Icon icon={icon} /> : children}</p>
-    </Container>
-  );
-};
+}) => (
+  <Container
+    rest={rest}
+    hoverType={hoverType}
+    hoverOpts={hoverOpts}
+    styles={styles}
+    onClick={disabled ? null : onClick}
+    disabled={disabled}
+  >
+    <p text={children}>{icon ? <Icon icon={icon} /> : children}</p>
+  </Container>
+);
 
 Button.propTypes = {
   icon: PropTypes.shape({}),
   hoverType: PropTypes.string.isRequired,
-  styles: PropTypes.shape({}),
+  styles: PropTypes.array,
   hoverOpts: PropTypes.shape({}),
   onClick: PropTypes.func,
   disabled: PropTypes.bool,

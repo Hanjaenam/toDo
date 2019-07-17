@@ -4,50 +4,35 @@ import styled, { css } from 'styled-components';
 const Container = styled.div`
   background-color: ${props => props.theme.PRIMARY()};
   box-sizing: border-box;
-  ${props => {
-    switch (props.page) {
-      case 'projectList':
-        return css`
-          padding-top: ${props.theme.PADDING.STANDARD};
-          padding-bottom: ${props.theme.PADDING.STANDARD};
-        `;
-      case 'detailProject':
-        return css`
-          padding-top: ${props.theme.PADDING.SMALL};
-          padding-bottom: ${props.theme.PADDING.SMALL};
-        `;
-      default:
-        return null;
-    }
-  }}
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.HEADER}) {
-    padding-left: ${props => props.theme.PADDING.STANDARD};
-    padding-right: ${props => props.theme.PADDING.STANDARD};
-  }
+  ${props =>
+    props.page === 'projectList'
+      ? css`
+          padding-top: ${props => props.theme.GAP.STANDARD};
+          padding-bottom: ${props => props.theme.GAP.STANDARD};
+        `
+      : css`
+          padding-top: ${props => props.theme.GAP.SMALL};
+          padding-bottom: ${props => props.theme.GAP.SMALL};
+        `}
 `;
 const Center = styled.div`
-  width: ${props => props.theme.BREAKPOINTS.HEADER};
+  box-sizing: border-box;
+  width: ${props => props.theme.BREAKPOINTS.WIDE};
   margin: 0 auto;
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.HEADER}) {
-    width: 100%;
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.WIDE}) {
+    width: 95%;
   }
-  ${props => {
-    switch (props.page) {
-      case 'projectList':
-        return css`
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          align-items: center;
-        `;
-      case 'detailProject':
-        return css`
-          display: flex;
-          align-items: center;
-        `;
-      default:
-        return null;
-    }
-  }}
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
+    width: 99%;
+  }
+  ${props =>
+    props.page === 'projectList'
+      ? css`
+          justify-content: space-between;
+        `
+      : null};
+  display: flex;
+  align-items: center;
 `;
 
 const Header = ({ children, page }) => (

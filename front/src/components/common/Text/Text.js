@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import Button from 'components/Common/Button';
 import { HOVER_TYPE } from 'styles/mixins';
-import theme from 'styles/theme';
 
 const Container = styled.div`
   position: relative;
@@ -14,7 +13,7 @@ const Container = styled.div`
 const Input = styled.input`
   all: unset;
   box-sizing: border-box;
-  padding: ${props => props.theme.PADDING.STANDARD};
+  padding: ${props => props.theme.GAP.STANDARD};
   cursor: auto;
   font-size: 1rem;
   width: 100%;
@@ -28,11 +27,20 @@ const Input = styled.input`
 const Data = styled.p`
   box-sizing: border-box;
   border: 2px solid transparent;
-  padding: ${props => props.theme.PADDING.STANDARD};
-  padding-left: ${props => props.theme.PADDING.SMALL};
+  padding: ${props => props.theme.GAP.STANDARD};
+  padding-left: ${props => props.theme.GAP.SMALL};
   /* color: ${props => props.theme.PRIMARY()}; */
   color:black;
   word-break: break-all;
+`;
+const buttonStyles = css`
+  position: absolute;
+  right: 0;
+  top: 0%;
+  height: 100%;
+  padding: 0 ${props => props.theme.GAP.STANDARD};
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 `;
 
 const Text = ({
@@ -44,15 +52,6 @@ const Text = ({
   styles,
 }) => {
   const textRef = useRef();
-  const buttonStyles = {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    height: '100%',
-    padding: `0 ${theme.PADDING.STANDARD}`,
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-  };
   return (
     <Container styles={styles}>
       {textChangeMode ? (

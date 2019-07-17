@@ -10,7 +10,6 @@ import 'react-day-picker/lib/style.css';
 import ListEditMenu from 'components/Common/ListEditMenu';
 import Button from 'components/Common/Button';
 import moment from 'moment';
-import theme from 'styles/theme';
 import { MONTHS, WEEKDAYS_LONG, WEEKDAYS_SHORT } from './DayPickerCustom';
 
 const Container = styled.div`
@@ -20,11 +19,11 @@ const Container = styled.div`
   background: white;
   flex-shrink: 0;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  margin-right: 1rem;
+  /* margin-right: 1rem; */
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
     margin: 0 auto;
     & + & {
-      margin-top: ${props => props.theme.PADDING.STANDARD};
+      margin-top: ${props => props.theme.GAP.STANDARD};
     }
   }
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
@@ -35,6 +34,16 @@ const Container = styled.div`
     max-height: 100%;
     display: grid;
     grid-template-rows: auto auto 1fr;
+  }
+  position: relative;
+  &:last-child:after {
+    position: absolute;
+    top: 0;
+    right: -1rem;
+    content: '';
+    width: ${props => props.theme.GAP.TO_DO_LIST};
+    height: 1rem;
+    background: transparent;
   }
 `;
 
@@ -100,7 +109,7 @@ const CreatedAt = styled.span`
 
 const EditContainer = styled.div`
   flex: 1;
-  padding: ${props => props.theme.PADDING.STANDARD};
+  padding: ${props => props.theme.GAP.STANDARD};
   display: flex;
   align-items: center;
   ${props =>
@@ -113,7 +122,7 @@ const EditContainer = styled.div`
 const Input = styled.input`
   flex: 1;
   font-size: 1rem;
-  padding: ${props => props.theme.PADDING.STANDARD};
+  padding: ${props => props.theme.GAP.STANDARD};
   ${inputCss}
 `;
 
@@ -127,6 +136,16 @@ const DataContainer = styled.div`
     overflow-y: scroll;
   }
 `;
+
+const btnLargeStyles = css`
+  font-size: 2.1rem;
+  padding: 0 ${props => props.theme.GAP.STANDARD};
+`;
+const buttonStyles = css`
+  font-size: 1.4rem;
+  padding: ${props => props.theme.GAP.STANDARD};
+`;
+
 const ToDoList = ({
   children,
   createdAt,
@@ -172,10 +191,7 @@ const ToDoList = ({
           icon={edit ? faPlus : faTrashAlt}
           hoverType={HOVER_TYPE.COLOR}
           onClick={edit ? createToDoList : deleteToDoList}
-          styles={{
-            fontSize: '2.1rem',
-            padding: `0 ${theme.PADDING.STANDARD}`,
-          }}
+          styles={btnLargeStyles}
         />
       </CalendarContainer>
       <EditContainer isPreviousToDo={isPreviousToDo()}>
@@ -196,10 +212,7 @@ const ToDoList = ({
               icon={faPlus}
               hoverType={HOVER_TYPE.COLOR}
               onClick={() => createToDo(titleRef)}
-              styles={{
-                fontSize: '1.4rem',
-                padding: `${theme.PADDING.STANDARD}`,
-              }}
+              styles={buttonStyles}
             />
           </>
         ) : null}
@@ -219,11 +232,12 @@ ToDoList.propTypes = {
   deleteManyToDo: PropTypes.func.isRequired,
   createToDoList: PropTypes.func.isRequired,
   isPreviousToDo: PropTypes.func.isRequired,
-  edit: PropTypes.bool.isRequired,
+  edit: PropTypes.bool,
   isExistedTodayData: PropTypes.bool.isRequired,
 };
 ToDoList.defaultProps = {
   createdAt: undefined,
+  edit: undefined,
 };
 
 export default ToDoList;

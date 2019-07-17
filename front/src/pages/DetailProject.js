@@ -1,14 +1,16 @@
-import React, { useEffect, createContext, useContext, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import DetailProject from 'components/DetailProject';
 import Header from 'components/Common/Header';
 import axios from 'axios';
-import { useStatus } from 'lib/hooks';
+import { useStatus, useOnlyPrivate } from 'lib/hooks';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Button from 'components/Common/Button';
 import { HOVER_TYPE } from 'styles/mixins';
+import DetailProjectProvider from 'store/DetailProject';
+import { useUser } from 'store/User';
 
 const Container = styled.div`
   box-sizing: border-box;
@@ -25,15 +27,12 @@ const Title = styled.span`
   margin-left: 0.5rem;
 `;
 
-export const DetailProjectContext = createContext();
-export const useDetailProjectValues = () => {
-  const { fns, ...values } = useContext(DetailProjectContext);
-  return values;
-};
-export const useDetailProjectFns = () => {
-  const { fns } = useContext(DetailProjectContext);
-  return fns;
-};
+const buttonStyles = css`
+  display: inline-block;
+  color: white;
+  font-size: 1.3rem;
+  padding: 0.4rem;
+`;
 
 const DetailProjectPage = ({
   match: {
@@ -41,6 +40,8 @@ const DetailProjectPage = ({
   },
   history,
 }) => {
+  const user = useUser();
+  const startRender = useOnlyPrivate({ user, history });
   const [title, setTitle] = useState();
   const [detailProject, setDetailProject] = useState();
   const {
@@ -48,18 +49,18 @@ const DetailProjectPage = ({
     fns: { failure },
   } = useStatus();
   useEffect(() => {
-    if (detailProject === undefined) {
-      axios({
-        url: `/me/project/${id}?page=1`,
-        method: 'get',
+    if (!startRender) return;
+    if (!detailProject === undefined) return;
+    axios({
+      url: `/me/project/${id}?page=1`,
+      method: 'get',
+    })
+      .then(res => {
+        setTitle(res.data.title);
+        setDetailProject(res.data.toDoListByDate);
       })
-        .then(res => {
-          setTitle(res.data.title);
-          setDetailProject(res.data.toDoListByDate);
-        })
-        .catch(err => failure(err));
-    }
-  }, []);
+      .catch(err => failure(err));
+  }, [startRender]);
   return (
     <>
       <Helmet>
@@ -71,22 +72,17 @@ const DetailProjectPage = ({
             icon={faArrowLeft}
             hoverType={HOVER_TYPE.BACKGROUND_COLOR}
             hoverOpts={{ minus: 30 }}
-            styles={{
-              display: 'inline-block',
-              color: 'white',
-              fontSize: '1.3rem',
-              padding: '.4rem',
-            }}
+            styles={buttonStyles}
             onClick={() => history.goBack()}
           />
           <Title>{title}</Title>
         </Header>
         {detailProject === undefined || error ? null : (
-          <DetailProjectContext.Provider
+          <DetailProjectProvider
             value={{ detailProject, fns: { setDetailProject } }}
           >
             <DetailProject />
-          </DetailProjectContext.Provider>
+          </DetailProjectProvider>
         )}
       </Container>
     </>

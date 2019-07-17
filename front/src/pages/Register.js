@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
-import { useFns } from 'store/User';
-import { useStatus } from 'lib/hooks';
-import OnlyPublic from 'components/Common/OnlyPublic';
+import { useFns, useUser } from 'store/User';
+import { useStatus, useOnlyPublic } from 'lib/hooks';
+// import OnlyPublic from 'components/Common/OnlyPublic';
 
 const Register = ({ history }) => {
+  const user = useUser();
+  useOnlyPublic({ user, history });
   const { logIn, setError } = useFns();
   const {
     loading,
@@ -56,8 +58,10 @@ const Register = ({ history }) => {
 Register.propTypes = {
   history: PropTypes.shape({}).isRequired,
 };
-export default ({ history }) => (
-  <OnlyPublic history={history}>
-    <Register history={history} />
-  </OnlyPublic>
-);
+// export default ({ history }) => (
+//   <OnlyPublic history={history}>
+//     <Register history={history} />
+//   </OnlyPublic>
+// );
+
+export default Register;
