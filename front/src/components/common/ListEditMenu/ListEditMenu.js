@@ -10,9 +10,12 @@ import { css } from 'styled-components';
 import { HOVER_TYPE } from 'styles/mixins';
 import Button from 'components/Common/Button';
 
-const buttonStyles = css`
+const buttonStyles = page => css`
   font-size: 1.5rem;
-  padding-left: ${props => props.theme.GAP.STANDARD};
+  ${props =>
+    page === 'toDoList'
+      ? `padding:${props.theme.GAP.SMALL};`
+      : `padding:${props.theme.GAP.MEDIUM};`}
 `;
 
 const ListEditMenu = ({
@@ -22,6 +25,7 @@ const ListEditMenu = ({
   toggleMultiMode,
   initMode,
   handleDeleteMany,
+  page,
 }) => {
   return isEditMode ? (
     <>
@@ -30,13 +34,13 @@ const ListEditMenu = ({
           icon={faTrashAlt}
           hoverType={HOVER_TYPE.COLOR}
           onClick={handleDeleteMany}
-          styles={buttonStyles}
+          styles={buttonStyles(page)}
         />
       ) : null}
       <Button
         icon={faTasks}
         hoverType={HOVER_TYPE.COLOR}
-        styles={buttonStyles}
+        styles={buttonStyles(page)}
         onClick={() => toggleMultiMode()}
         isMultiMode={isMultiMode}
       />
@@ -44,7 +48,7 @@ const ListEditMenu = ({
         icon={faTimes}
         hoverType={HOVER_TYPE.COLOR}
         onClick={initMode}
-        styles={buttonStyles}
+        styles={buttonStyles(page)}
       />
     </>
   ) : (
@@ -52,7 +56,7 @@ const ListEditMenu = ({
       icon={faEdit}
       hoverType={HOVER_TYPE.COLOR}
       onClick={() => setEditMode(true)}
-      styles={buttonStyles}
+      styles={buttonStyles(page)}
     />
   );
 };
@@ -64,8 +68,10 @@ ListEditMenu.propTypes = {
   toggleMultiMode: PropTypes.func.isRequired,
   initMode: PropTypes.func.isRequired,
   handleDeleteMany: PropTypes.func,
+  page: PropTypes.string,
 };
 ListEditMenu.defaultProps = {
   handleDeleteMany: undefined,
+  page: undefined,
 };
 export default ListEditMenu;

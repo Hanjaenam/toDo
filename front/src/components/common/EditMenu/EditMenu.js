@@ -13,7 +13,7 @@ const EditContainer = styled.div`
           margin-left: 0.2rem;
         `
       : css`
-          margin-left: ${props.theme.GAP.STANDARD};
+          margin-left: ${props.theme.GAP.MEDIUM};
         `}
   display: flex;
   align-items: center;
@@ -22,7 +22,7 @@ const EditContainer = styled.div`
 `;
 const buttonStyles = css`
   height: 100%;
-  padding: 0 ${props => props.theme.GAP.STANDARD};
+  padding: 0 ${props => props.theme.GAP.MEDIUM};
 `;
 
 const EditMenu = ({

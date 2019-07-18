@@ -1,35 +1,36 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { useProjectListValues, useProjectListFns } from 'store/ProjectList';
 import Search from './Search';
 
-const SearchContainer = () => {
-  const { projectList, expandSearch } = useProjectListValues();
-  const { setSearchProject, setExpandSearch } = useProjectListFns();
-  const regex = new RegExp();
-  const handleKeyUp = e => {
+const SearchContainer = ({ history }) => {
+  const { expandSearch } = useProjectListValues();
+  const { setExpandSearch } = useProjectListFns();
+  const searchProject = e => {
     const {
       target: { value },
     } = e;
-    regex.compile(value, 'i');
-    setSearchProject({
-      regex: value,
-      result: projectList.filter(project => regex.test(project.title)),
-    });
+    history.push(`/me/project/search?term=${value}`);
   };
   const handleFocus = () => {
     setExpandSearch(true);
   };
-  const handleBlur = e => {
+  const handleBlur = () => {
     setExpandSearch(false);
   };
   return (
     <Search
       expandSearch={expandSearch}
-      handleKeyUp={handleKeyUp}
+      searchProject={searchProject}
       handleFocus={handleFocus}
       handleBlur={handleBlur}
     />
   );
 };
 
-export default SearchContainer;
+export default withRouter(SearchContainer);
+
+// setSearchProject({
+//   regex: value,
+//   result: projectList.filter(project => regex.test(project.title)),
+// });

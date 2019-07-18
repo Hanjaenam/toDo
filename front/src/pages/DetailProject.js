@@ -6,9 +6,9 @@ import DetailProject from 'components/DetailProject';
 import Header from 'components/Common/Header';
 import axios from 'axios';
 import { useStatus, useOnlyPrivate } from 'lib/hooks';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import Button from 'components/Common/Button';
-import { HOVER_TYPE } from 'styles/mixins';
+// import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+// import Button from 'components/Common/Button';
+// import { HOVER_TYPE } from 'styles/mixins';
 import DetailProjectProvider from 'store/DetailProject';
 import { useUser } from 'store/User';
 
@@ -27,12 +27,12 @@ const Title = styled.span`
   margin-left: 0.5rem;
 `;
 
-const buttonStyles = css`
-  display: inline-block;
-  color: white;
-  font-size: 1.3rem;
-  padding: 0.4rem;
-`;
+// const buttonStyles = css`
+//   display: inline-block;
+//   color: white;
+//   font-size: 1.3rem;
+//   padding: 0.4rem;
+// `;
 
 const DetailProjectPage = ({
   match: {
@@ -68,13 +68,13 @@ const DetailProjectPage = ({
       </Helmet>
       <Container>
         <Header page="detailProject">
-          <Button
+          {/* <Button
             icon={faArrowLeft}
             hoverType={HOVER_TYPE.BACKGROUND_COLOR}
             hoverOpts={{ minus: 30 }}
             styles={buttonStyles}
             onClick={() => history.goBack()}
-          />
+          /> */}
           <Title>{title}</Title>
         </Header>
         {detailProject === undefined || error ? null : (

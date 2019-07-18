@@ -37,6 +37,7 @@ const READ = '/read';
 const CREATE = '/create';
 const DELETE = '/delete';
 const PATCH = '/patch';
+const SEARCH = '/search';
 
 const PARAMS_ID = '/:id';
 const PARAMS_TITLE = '/:title';
@@ -61,6 +62,7 @@ export default {
   create: CREATE,
   delete: DELETE,
   patch: PATCH,
+  search: SEARCH,
   paramsId: PARAMS_ID,
   paramsTitle: PARAMS_TITLE,
 };

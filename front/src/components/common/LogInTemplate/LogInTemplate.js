@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 import Message from 'components/Common/Message';
 
 const LayOut = styled.div`
-  background-color: ${props => props.theme.BACKGROUND[0]};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -35,25 +34,25 @@ const MessageContianer = styled.div`
   div {
     padding: 1.5rem;
   }
-  border-bottom: 2px solid ${props => props.theme.BACKGROUND[0]};
+  border-bottom: 2px solid ${props => props.theme.BACKGROUND_COLOR()};
 `;
 const MainContainer = styled.div`
   padding: 2rem;
 `;
 const Main = styled.main`
   display: grid;
-  grid-gap: 1rem;
+  grid-gap: ${props => props.theme.GAP.ONE};
 `;
 const Label = styled.label`
-  margin-bottom: 0.5rem;
+  margin-bottom: ${props => props.theme.GAP.MEDIUM};
   &:nth-child(3),
   &:nth-child(5) {
-    margin-top: 1rem;
+    margin-top: ${props => props.theme.GAP.ONE};
   }
 `;
 const Input = styled.input`
   all: unset;
-  padding: 1rem;
+  padding: ${props => props.theme.GAP.ONE};
   border-radius: ${props => props.theme.RADIUS};
   border: 1px solid rgba(0, 0, 0, 0.2);
   text-align: left;
@@ -116,18 +115,18 @@ const Button = styled.button`
     `;
   }};
   border-radius: ${props => props.theme.RADIUS};
-  padding: 1rem;
+  padding: ${props => props.theme.GAP.ONE};
 `;
 
 const BtnContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 1rem;
+  grid-gap: ${props => props.theme.GAP.ONE};
 `;
 
 const SocialBtnContainer = styled.div`
   display: grid;
-  grid-gap: 0.5rem;
+  grid-gap: ${props => props.theme.GAP.MEDIUM};
   margin-top: 2.5rem;
 `;
 

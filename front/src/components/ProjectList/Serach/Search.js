@@ -1,70 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components';
-import Button from 'components/Common/Button';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { HOVER_TYPE } from 'styles/mixins';
-
-const Container = styled.div`
-  flex: 1;
-  position: relative;
-  max-width: 400px;
-`;
+import styled from 'styled-components';
 
 const SearchInput = styled.input`
-  font-size: 1rem;
   box-sizing: border-box;
-  width: 100%;
-  padding: ${props => props.theme.GAP.SMALL};
-  padding-right: 2rem;
   border-radius: ${props => props.theme.RADIUS};
-  outline: none;
-  border: none;
+  border: 1px solid ${props => props.theme.BORDER.NOT_FOCUS};
   transition: background-color ${props => props.theme.TRANSITION};
-  background-color: rgb(210, 210, 210);
   &:focus {
-    background: white;
+    border-color: ${props => props.theme.PRIMARY()};
+    /* box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05); */
   }
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
-    ${props =>
-      props.expandSearch
-        ? css`
-            width: 400px;
-          `
-        : null}
-  }
+  flex: 1;
+  padding: ${props => props.theme.GAP.MEDIUM};
+  font-size: 1rem;
 `;
 
-const ButtonStyles = css`
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  padding: 0 ${props => props.theme.GAP.STANDARD};
-`;
-
-const Search = ({ expandSearch, handleKeyUp, handleFocus, handleBlur }) => {
+const Search = ({ expandSearch, searchProject, handleFocus, handleBlur }) => {
   return (
-    <Container>
-      <SearchInput
-        placeholder="프로젝트 검색"
-        onKeyUp={handleKeyUp}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        expandSearch={expandSearch}
-      />
-      <Button
-        icon={faSearch}
-        hoverType={HOVER_TYPE.COLOR}
-        styles={ButtonStyles}
-      />
-    </Container>
+    <SearchInput
+      placeholder="프로젝트 검색"
+      onKeyUp={e => {
+        if (e.keyCode === 13) {
+          searchProject(e);
+        }
+      }}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      expandSearch={expandSearch}
+    />
   );
 };
 
 Search.propTypes = {
   expandSearch: PropTypes.bool.isRequired,
-  handleKeyUp: PropTypes.func.isRequired,
+  searchProject: PropTypes.func.isRequired,
   handleFocus: PropTypes.func.isRequired,
   handleBlur: PropTypes.func.isRequired,
 };

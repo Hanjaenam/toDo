@@ -15,7 +15,7 @@ const Container = styled.div`
       : hover({ type: props.hoverType, ...props.hoverOpts })}
   ${props => props.styles};
   ${props =>
-    props.rest.isMultiMode
+    props.isMultiMode
       ? css`
           color: ${props => props.theme.PRIMARY()};
         `
@@ -42,7 +42,7 @@ const Button = ({
   ...rest
 }) => (
   <Container
-    rest={rest}
+    {...rest}
     hoverType={hoverType}
     hoverOpts={hoverOpts}
     styles={styles}
@@ -55,7 +55,7 @@ const Button = ({
 
 Button.propTypes = {
   icon: PropTypes.shape({}),
-  hoverType: PropTypes.string.isRequired,
+  hoverType: PropTypes.string,
   styles: PropTypes.array,
   hoverOpts: PropTypes.shape({}),
   onClick: PropTypes.func,
@@ -63,6 +63,7 @@ Button.propTypes = {
 };
 Button.defaultProps = {
   icon: undefined,
+  hoverType: undefined,
   styles: undefined,
   hoverOpts: undefined,
   onClick: () => console.log('not defined onClick'),

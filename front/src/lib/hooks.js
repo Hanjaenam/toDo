@@ -76,3 +76,17 @@ export const useOnlyPrivate = ({ user, history }) => {
   }, [user]);
   return startRender;
 };
+
+export const usePage = () => {
+  const SORT = {
+    LATEST: 'latest',
+    IMPORTANCE: 'importance',
+  };
+  const [sort, setSort] = useState(SORT.LATEST);
+  const [page, setPage] = useState({
+    current: 1,
+    total: 1,
+    dataLimit: undefined,
+  });
+  return { SORT, sort, setSort, page, setPage };
+};

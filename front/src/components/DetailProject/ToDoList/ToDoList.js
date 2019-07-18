@@ -13,37 +13,47 @@ import moment from 'moment';
 import { MONTHS, WEEKDAYS_LONG, WEEKDAYS_SHORT } from './DayPickerCustom';
 
 const Container = styled.div`
+  position: relative;
   box-sizing: border-box;
   width: ${props => props.theme.WIDTH.TO_DO_LIST};
   border-radius: ${props => props.theme.RADIUS};
   background: white;
   flex-shrink: 0;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  /* margin-right: 1rem; */
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
-    margin: 0 auto;
-    & + & {
-      margin-top: ${props => props.theme.GAP.STANDARD};
-    }
-  }
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
-    width: 100%;
-  }
   /* 윈도우 화면에서 toDoList 에서 스크롤을 할 수 있게끔 해준 것.*/
-  @media screen and (min-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
-    max-height: 100%;
-    display: grid;
-    grid-template-rows: auto auto 1fr;
-  }
-  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  /* 윈도우 화면에서 toDoList 에서 스크롤을 할 수 있게끔 해준 것.*/
+  /* screen>MEDIUM 일 때 맨 오른쪽 여백 */
   &:last-child:after {
     position: absolute;
     top: 0;
     right: -1rem;
     content: '';
-    width: ${props => props.theme.GAP.TO_DO_LIST};
+    width: ${props => props.theme.GAP.ONE};
     height: 1rem;
     background: transparent;
+  }
+  /* screen>MEDIUM 일 때 맨 오른쪽 여백 */
+  & + & {
+    margin-left: ${props => props.theme.GAP.ONE};
+  }
+  @media screen and (min-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
+    max-height: 100%;
+  }
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
+    display: block;
+    margin: 0 auto !important;
+    & + & {
+      margin-top: ${props => props.theme.GAP.ONE} !important;
+    }
+    &:last-child:after {
+      display: none;
+    }
+  }
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
+    width: 100%;
+    border-radius: 0;
   }
 `;
 
@@ -76,7 +86,7 @@ const CalendarContainer = styled.div`
               font-weight: 400;
               cursor: pointer;
               width: 100%;
-              padding: 1rem;
+              padding: ${props => props.theme.GAP.ONE};
               border: none;
               border-top-left-radius: ${props => props.theme.RADIUS};
               transition: ${props => props.theme.TRANSITION};
@@ -103,13 +113,13 @@ const CalendarIcon = styled(FontAwesomeIcon)`
 const CreatedAt = styled.span`
   flex: 1;
   text-align: center;
-  padding: 1rem;
+  padding: ${props => props.theme.GAP.ONE};
   user-select: none;
 `;
 
 const EditContainer = styled.div`
   flex: 1;
-  padding: ${props => props.theme.GAP.STANDARD};
+  padding: ${props => props.theme.GAP.MEDIUM};
   display: flex;
   align-items: center;
   ${props =>
@@ -122,28 +132,36 @@ const EditContainer = styled.div`
 const Input = styled.input`
   flex: 1;
   font-size: 1rem;
-  padding: ${props => props.theme.GAP.STANDARD};
+  padding: ${props => props.theme.GAP.MEDIUM};
   ${inputCss}
 `;
 
 const DataContainer = styled.div`
-  border-bottom-right-radius: ${props => props.theme.RADIUS};
-  border-bottom-left-radius: ${props => props.theme.RADIUS};
-  overflow: hidden;
+  /* overflow: hidden; */
   /* 여기서 padding을 주면 toDo 배경색이 짤린다.*/
   /* padding-left: 0.5rem; */
   @media screen and (min-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
     overflow-y: scroll;
   }
+  > div:last-child {
+    border-bottom-left-radius: ${props => props.theme.RADIUS};
+    border-bottom-right-radius: ${props => props.theme.RADIUS};
+    overflow: hidden;
+  }
+  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
+    > div:last-child {
+      border-radius: 0;
+    }
+  }
 `;
 
 const btnLargeStyles = css`
   font-size: 2.1rem;
-  padding: 0 ${props => props.theme.GAP.STANDARD};
+  padding: 0 ${props => props.theme.GAP.MEDIUM};
 `;
 const buttonStyles = css`
   font-size: 1.4rem;
-  padding: ${props => props.theme.GAP.STANDARD};
+  padding: ${props => props.theme.GAP.SMALL};
 `;
 
 const ToDoList = ({
@@ -216,7 +234,7 @@ const ToDoList = ({
             />
           </>
         ) : null}
-        <ListEditMenu handleDeleteMany={deleteManyToDo} />
+        <ListEditMenu handleDeleteMany={deleteManyToDo} page="toDoList" />
       </EditContainer>
       <DataContainer>{children}</DataContainer>
     </Container>

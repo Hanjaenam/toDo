@@ -16,10 +16,7 @@ export const hover = ({ type, ...opts }) => {
       ${props =>
         opts.active
           ? css`
-              background-color: ${props.theme.PRIMARY({
-                add: opts.add,
-                minus: opts.minus,
-              })};
+              background-color: ${props.theme.PRIMARY()};
             `
           : null}
       > p {

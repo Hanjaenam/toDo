@@ -69,7 +69,7 @@ const Textarea = styled.textarea`
 `;
 
 const buttonStyles = css`
-  padding: 0 ${props => props.theme.GAP.STANDARD};
+  padding: 0 ${props => props.theme.GAP.MEDIUM};
 `;
 const MemoList = ({ children, createMemo }) => {
   const contentRef = useRef();

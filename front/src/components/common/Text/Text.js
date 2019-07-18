@@ -13,7 +13,7 @@ const Container = styled.div`
 const Input = styled.input`
   all: unset;
   box-sizing: border-box;
-  padding: ${props => props.theme.GAP.STANDARD};
+  padding: ${props => props.theme.GAP.MEDIUM};
   cursor: auto;
   font-size: 1rem;
   width: 100%;
@@ -27,10 +27,8 @@ const Input = styled.input`
 const Data = styled.p`
   box-sizing: border-box;
   border: 2px solid transparent;
-  padding: ${props => props.theme.GAP.STANDARD};
+  padding: ${props => props.theme.GAP.MEDIUM};
   padding-left: ${props => props.theme.GAP.SMALL};
-  /* color: ${props => props.theme.PRIMARY()}; */
-  color:black;
   word-break: break-all;
 `;
 const buttonStyles = css`
@@ -38,7 +36,7 @@ const buttonStyles = css`
   right: 0;
   top: 0%;
   height: 100%;
-  padding: 0 ${props => props.theme.GAP.STANDARD};
+  padding: 0 ${props => props.theme.GAP.MEDIUM};
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 `;

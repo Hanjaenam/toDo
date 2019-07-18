@@ -6,59 +6,36 @@ import {
 } from 'store/Common/ListEditMenu';
 import { withRouter } from 'react-router-dom';
 import { useProjectListFns } from 'store/ProjectList';
-import { unshift, deleteOne, deleteMany, patch } from 'lib/manuArrData';
+import { deleteOne, patch } from 'lib/manuArrData';
 import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
-import axios from 'axios';
-import { API_PatchProject } from 'lib/API';
+import { projectAPI } from 'lib/API';
 import Project from './Project';
 
-const ProjectContainer = ({ edit, data, history }) => {
+const ProjectContainer = ({ data, history }) => {
   const { setProjectList } = useProjectListFns();
-  const { isEditMode, isMultiMode, idsToDelete } = useListEditMenuValues();
-  const { addOrRemoveIdToDelete, isSelected } = useListEditMenuFns();
+  const { isEditMode, isMultiMode } = useListEditMenuValues();
+  const { addOrRemoveIdToDelete } = useListEditMenuFns();
   const { titleChangeMode } = useEditMenuValues();
   const { setTitleChangeMode } = useEditMenuFns();
-  const createProject = titleRef => {
-    if (!titleRef.current) return;
-    if (!titleRef.current.value) return;
-    axios({
-      url: '/me/project/create',
-      method: 'post',
-      data: { title: titleRef.current.value },
-    })
-      .then(res => {
-        setProjectList(unshift(res.data));
-      })
-      .finally(() => {
-        titleRef.current.value = '';
-      });
-  };
+
   const deleteProject = () => {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
-    axios({
-      url: `/me/project/delete/${data._id}`,
-      method: 'delete',
-    }).then(() => {
-      setProjectList(deleteOne(data._id));
-    });
+    projectAPI
+      .delete({
+        id: data._id,
+      })
+      .then(() => {
+        setProjectList(deleteOne(data._id));
+      });
   };
-  const deleteManyProject = () => {
-    if (idsToDelete.length === 0) return;
-    if (!window.confirm('정말 삭제하시겠습니까?')) return;
-    axios({
-      url: `/me/project/delete`,
-      method: 'delete',
-      data: idsToDelete,
-    }).then(() => {
-      setProjectList(deleteMany(idsToDelete));
-    });
-  };
+
   const patchProject = titleRef => {
     if (data.title === titleRef.current.value) return;
-    API_PatchProject({
-      id: data._id,
-      data: { title: titleRef.current.value },
-    })
+    projectAPI
+      .patch({
+        id: data._id,
+        data: { title: titleRef.current.value },
+      })
       .then(res => {
         setProjectList(patch(data._id, res.data));
       })
@@ -66,7 +43,7 @@ const ProjectContainer = ({ edit, data, history }) => {
         setTitleChangeMode(false);
       });
   };
-  const handleClick = e => {
+  const handleClick = () => {
     if (!isEditMode) {
       history.push(`/me/project/${data._id}`);
     } else if (isMultiMode) {
@@ -75,16 +52,8 @@ const ProjectContainer = ({ edit, data, history }) => {
   };
   return (
     <Project
-      edit={edit}
       data={data}
-      isEditMode={isEditMode}
-      isMultiMode={isMultiMode}
-      isSelected={isSelected(data && data._id)}
       titleChangeMode={titleChangeMode}
-      setTitleChangeMode={setTitleChangeMode}
-      createProject={createProject}
-      deleteProject={deleteProject}
-      deleteManyProject={deleteManyProject}
       patchProject={patchProject}
       handleClick={handleClick}
     />
@@ -92,7 +61,6 @@ const ProjectContainer = ({ edit, data, history }) => {
 };
 
 ProjectContainer.propTypes = {
-  edit: PropTypes.bool,
   data: PropTypes.shape({
     title: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
@@ -101,7 +69,6 @@ ProjectContainer.propTypes = {
 };
 
 ProjectContainer.defaultProps = {
-  edit: undefined,
   data: undefined,
 };
 export default withRouter(ProjectContainer);

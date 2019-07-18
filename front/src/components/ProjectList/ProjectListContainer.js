@@ -6,20 +6,19 @@ import EditMenuProvider from 'store/Common/EditMenu';
 import ProjectList from './ProjectList';
 
 const ProjectListContainer = () => {
-  const { projectList, searchProject } = useProjectListValues();
-  const mapToComponent = () => {
-    const { regex, result } = searchProject;
-    return (regex === '' ? projectList : result).map(project => (
+  const { projectList } = useProjectListValues();
+  const mapToComponent = () =>
+    projectList.map(project => (
       <EditMenuProvider key={project._id}>
-        {/* <Project id={project._id} data={project} /> */}
         <Project data={project} />
       </EditMenuProvider>
     ));
-  };
 
   return (
     <ListEditMenuProvider>
-      <ProjectList>{mapToComponent()}</ProjectList>
+      <ProjectList searchResult={mapToComponent()}>
+        {mapToComponent()}
+      </ProjectList>
     </ListEditMenuProvider>
   );
 };

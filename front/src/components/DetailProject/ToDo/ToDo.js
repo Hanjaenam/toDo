@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { faStickyNote } from '@fortawesome/free-regular-svg-icons';
+// import { faStickyNote } from '@fortawesome/free-regular-svg-icons';
 import Title from 'components/Common/Text';
 import EditMenu from 'components/Common/EditMenu';
 import { hover, HOVER_TYPE } from 'styles/mixins';
@@ -35,7 +35,7 @@ const DataContainer = styled.div`
   box-sizing: border-box;
   align-items: center;
   /* 여기서 padding을 주어야 toDo Data 에만 배경색이 적절하게 들어간다.*/
-  padding-left: ${props => props.theme.GAP.STANDARD};
+  padding-left: ${props => props.theme.GAP.MEDIUM};
   &.isCompleted {
     background: ${props => props.theme.SUCCESS(0.9)};
     div:first-child {
@@ -80,8 +80,8 @@ const CheckIcon = styled(FontAwesomeIcon)`
 `;
 
 const buttonStyles = css`
-  padding: 0 1rem;
-  margin-left: 0.2rem;
+  padding: 0 ${props => props.theme.GAP.ONE};
+  margin-left: ${props => props.theme.GAP.SMALL};
 `;
 
 const ToDo = ({

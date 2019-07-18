@@ -10,7 +10,7 @@ const buttonStyles = css`
   padding: ${props => props.theme.GAP.SMALL};
   color: white;
   & + & {
-    margin-left: 0.1rem;
+    margin-left: ${props => props.theme.GAP.TINY};
     font-size: 1.1rem;
   }
 `;

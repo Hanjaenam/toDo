@@ -10,7 +10,7 @@ export const readAll = async (req, res) => {
     query: { sort = 'latest', page = 1 },
   } = req;
   try {
-    const projectCount = await Project.find().count();
+    const projectCount = await Project.find().countDocuments();
     const project = await Project.aggregate([
       {
         $match: {
@@ -19,7 +19,7 @@ export const readAll = async (req, res) => {
       },
       { $skip: (page - 1) * config.PAGE.LIMIT },
       { $limit: config.PAGE.LIMIT },
-      { $sort: sort === 'latest' ? { createAt: -1 } : { importance: -1 } },
+      { $sort: sort === 'latest' ? { createdAt: -1 } : { importance: -1 } },
     ]);
     res.set('Last-Page', Math.ceil(projectCount / config.PAGE.LIMIT));
     res.set('Data-Limit', config.PAGE.LIMIT);
@@ -81,6 +81,20 @@ export const readOne = async (req, res) => {
   }
 };
 
+export const search = async (req, res) => {
+  const {
+    query: { term: searchingBy },
+  } = req;
+  try {
+    const project = await Project.find({
+      title: { $regex: searchingBy, $options: 'i' },
+    });
+    return res.json(project);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).end();
+  }
+};
 // /create
 // check
 export const create = async (req, res) => {

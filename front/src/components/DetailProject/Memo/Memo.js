@@ -65,15 +65,14 @@ const WhoWhenContainer = styled.div`
   align-items: center;
 `;
 const Creator = styled.p`
-  color: ${props => props.theme.PRIMARY()};
   font-weight: 600;
-  margin-right: ${props => props.theme.GAP.STANDARD};
+  margin-right: ${props => props.theme.GAP.MEDIUM};
 `;
 const CreatedAt = styled.p`
   font-style: italic;
   font-size: 0.8rem;
   color: #9e9e9e;
-  margin-right: ${props => props.theme.GAP.STANDARD};
+  margin-right: ${props => props.theme.GAP.MEDIUM};
 `;
 
 const ButtonContainer = styled.div`
