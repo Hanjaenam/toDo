@@ -4,19 +4,18 @@ import ToDo from 'models/ToDo';
 export const create = async (req, res) => {
   const {
     params: { id: toDoId },
-    body: { content },
+    body,
   } = req;
-  if (!content) return res.status(400).end();
+  if (!body) return res.status(400).end();
   try {
     const toDo = await ToDo.findById(toDoId);
     if (!toDo) {
       return res.status(400).end();
     }
     const memo = await Memo.create({
-      content,
+      ...body,
       creator: req.user._id,
       toDo: toDoId,
-      createdAt: Date.now(),
     });
     const memoPopulateCreator = await memo
       .populate({

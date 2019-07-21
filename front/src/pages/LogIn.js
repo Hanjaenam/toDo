@@ -4,8 +4,8 @@ import Helmet from 'react-helmet';
 import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
 import { useFns, useUser } from 'store/User';
-// import OnlyPublic from 'components/Common/OnlyPublic';
 import { useOnlyPublic } from 'lib/hooks';
+import CONFIG from 'config';
 
 const LogIn = ({ history }) => {
   const user = useUser();
@@ -22,7 +22,7 @@ const LogIn = ({ history }) => {
     })
       .then(res => {
         logIn(res.data);
-        history.replace('/me/project');
+        history.replace(CONFIG.HOME_URL);
       })
       .catch(err => {
         setError(err.response.data.message[0]);
@@ -40,10 +40,5 @@ const LogIn = ({ history }) => {
 LogIn.propTypes = {
   history: PropTypes.shape({}).isRequired,
 };
-// export default ({ history }) => (
-//   <OnlyPublic history={history}>
-//     <LogIn history={history} />
-//   </OnlyPublic>
-// );
 
 export default LogIn;

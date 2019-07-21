@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import CONFIG from 'config';
 
 export const useStatus = () => {
   const [status, setStatus] = useState({
@@ -63,30 +64,33 @@ export const useMouseEnterEdit = ({ ref }) => {
 export const useOnlyPublic = ({ user, history }) => {
   const [startRender, setStartRender] = useState(false);
   useEffect(() => {
-    if (user) history.replace('/me/project');
-    else setStartRender(true);
-  }, [user]);
-  return startRender;
-};
-export const useOnlyPrivate = ({ user, history }) => {
-  const [startRender, setStartRender] = useState(false);
-  useEffect(() => {
-    if (!user) history.replace('/');
+    if (user) history.replace(CONFIG.HOME_URL);
     else setStartRender(true);
   }, [user]);
   return startRender;
 };
 
+export const useOnlyPrivate = ({ user, history }) => {
+  const [userExisted, setUser] = useState(false);
+  useEffect(() => {
+    if (!user) history.replace('/');
+    else setUser(true);
+  }, [user]);
+  return userExisted;
+};
+
 export const usePage = () => {
-  const SORT = {
-    LATEST: 'latest',
-    IMPORTANCE: 'importance',
-  };
-  const [sort, setSort] = useState(SORT.LATEST);
-  const [page, setPage] = useState({
+  const [page, _setPage] = useState({
     current: 1,
     total: 1,
-    dataLimit: undefined,
+    limit: undefined,
+    mount: false,
   });
-  return { SORT, sort, setSort, page, setPage };
+  const setPage = current => _setPage(s => ({ ...s, current }));
+  const init = ({ total, limit }) => {
+    if (!page.mount) {
+      _setPage(s => ({ ...s, mount: true, total, limit }));
+    }
+  };
+  return { page, setPage, init };
 };

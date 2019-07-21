@@ -6,56 +6,32 @@ import { useStatus, useOnlyPrivate, usePage } from 'lib/hooks';
 import { projectAPI } from 'lib/API';
 import ProjectListProvider from 'store/ProjectList';
 import { useUser } from 'store/User';
-import queryString from 'query-string';
 
-const ProjectListPage = ({
-  history,
-  match: { path },
-  location: { search },
-}) => {
+const ProjectListPage = ({ history, location }) => {
   const user = useUser();
-  const startRender = useOnlyPrivate({ user, history });
+  const userExisted = useOnlyPrivate({ user, history });
   const [projectList, setProjectList] = useState();
   const [expandSearch, setExpandSearch] = useState(false);
-  const { SORT, sort, setSort, page, setPage } = usePage();
+  const { page, setPage, init } = usePage();
   const {
     error,
     fns: { failure },
   } = useStatus();
-  useEffect(() => {
-    if (!startRender) return;
-    // 이거 넣으면 sort안됩니다.
-    // if (projectList !== undefined) return;
-    if (path.includes('/search')) {
-      const { term } = queryString.parse(search);
-      projectAPI
-        .search({ term })
-        .then(res => {
-          const { headers, data } = res;
-          // setPage(s => ({
-          //   ...s,
-          //   totalPage: headers['last-page'],
-          //   dataLimit: headers['data-limit'],
-          // }));
-          setProjectList(data);
-        })
-        .catch(err => failure(err));
-    } else {
-      projectAPI
-        .readAll({ sort, page: page.current })
-        .then(res => {
-          const { headers, data } = res;
-          setPage(s => ({
-            ...s,
-            totalPage: headers['last-page'],
-            dataLimit: headers['data-limit'],
-          }));
-          setProjectList(data);
-        })
-        .catch(err => failure(err));
-    }
-  }, [sort, startRender, search]);
 
+  useEffect(() => {
+    if (!userExisted) return;
+    projectAPI
+      .readAll({ query: location.search })
+      .then(res => {
+        const { headers, data } = res;
+        init({
+          total: headers['last-page'],
+          limit: headers['page-limit'],
+        });
+        setProjectList(data);
+      })
+      .catch(err => failure(err));
+  }, [userExisted, location.search]);
   return (
     <>
       <Helmet>
@@ -64,13 +40,10 @@ const ProjectListPage = ({
       <ProjectListProvider
         value={{
           projectList,
-          sort,
           expandSearch,
           page,
-          SORT,
           fns: {
             setProjectList,
-            setSort,
             setExpandSearch,
             setPage,
           },

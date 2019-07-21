@@ -1,11 +1,14 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { HOVER_TYPE, hover } from 'styles/mixins';
+import { HOVER_TYPE, hover, ACTIVE_STYLES } from 'styles/mixins';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from 'components/Common/Button';
+import CONFIG from 'config';
 
-const Container = styled.div`
+const Details = styled.details`
+  background-color: white;
+  position: relative;
   display: flex;
   margin: 0 ${props => props.theme.GAP.MEDIUM};
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
@@ -19,9 +22,10 @@ const Container = styled.div`
       }
     }
   }
-`;
-const Details = styled.details`
-  position: relative;
+  &.open {
+    ${ACTIVE_STYLES.BACKGROUND_COLOR}
+  }
+  border-radius: ${props => props.theme.RADIUS};
 `;
 const DetailsMenu = styled.div`
   z-index: 1;
@@ -29,10 +33,10 @@ const DetailsMenu = styled.div`
   position: absolute;
   bottom: -0.25rem;
   left: 0;
-  border: 1px solid ${props => props.theme.PRIMARY()};
-  border-radius: ${props => props.theme.RADIUS};
-  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
   background: white;
+  border-radius: ${props => props.theme.RADIUS};
+  border: 1px solid ${props => props.theme.PRIMARY()};
+  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
 `;
 const Summary = styled.summary`
   outline: none;
@@ -55,6 +59,8 @@ const Summary = styled.summary`
   }
 `;
 const MenuContainer = styled.div`
+  box-sizing: border-box;
+  width: 100%;
   padding: ${props => props.theme.GAP.MEDIUM};
   display: flex;
   ${hover({ type: HOVER_TYPE.BACKGROUND_COLOR })}
@@ -83,47 +89,35 @@ const CheckIcon = styled(FontAwesomeIcon)`
       : null}
 `;
 
-const SortView = ({ setSort, sort, CONST_SORT }) => {
+const SortView = ({ setSort, sort, onClick }) => {
   return (
-    <Container>
-      <Details>
-        <Summary>
-          <p>
-            Sort: <span>{sort}</span>
-          </p>
-        </Summary>
-        <DetailsMenu role="menu">
-          <MenuContainer>
-            <CheckIcon
-              icon={faCheck}
-              show={(sort === CONST_SORT.LATEST).toString()}
-            />
-            <Button
-              type="button"
-              role="menuitem"
-              onClick={() => setSort(CONST_SORT.LATEST)}
-              styles={buttonStyles}
-            >
-              {CONST_SORT.LATEST}
-            </Button>
-          </MenuContainer>
-          <MenuContainer>
-            <CheckIcon
-              icon={faCheck}
-              show={(sort === CONST_SORT.IMPORTANCE).toString()}
-            />
-            <Button
-              type="button"
-              role="menuitem"
-              onClick={() => setSort(CONST_SORT.IMPORTANCE)}
-              styles={buttonStyles}
-            >
-              {CONST_SORT.IMPORTANCE}
-            </Button>
-          </MenuContainer>
-        </DetailsMenu>
-      </Details>
-    </Container>
+    <Details onClick={onClick}>
+      <Summary>
+        <p>
+          정렬: <span>{CONFIG.SORT.convertKorean(sort)}</span>
+        </p>
+      </Summary>
+      <DetailsMenu role="menu">
+        <MenuContainer onClick={() => setSort(CONFIG.SORT.LATEST)}>
+          <CheckIcon
+            icon={faCheck}
+            show={(sort === CONFIG.SORT.LATEST).toString()}
+          />
+          <Button type="button" role="menuitem" styles={buttonStyles}>
+            최신순
+          </Button>
+        </MenuContainer>
+        <MenuContainer onClick={() => setSort(CONFIG.SORT.IMPORTANCE)}>
+          <CheckIcon
+            icon={faCheck}
+            show={(sort === CONFIG.SORT.IMPORTANCE).toString()}
+          />
+          <Button type="button" role="menuitem" styles={buttonStyles}>
+            중요도
+          </Button>
+        </MenuContainer>
+      </DetailsMenu>
+    </Details>
   );
 };
 export default SortView;

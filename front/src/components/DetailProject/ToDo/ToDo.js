@@ -76,12 +76,15 @@ const CheckContainer = styled.div`
 const CheckIcon = styled(FontAwesomeIcon)`
   display: none;
   color: white;
-  font-size: 1rem;
+  transform: scale(1.5);
+  position: relative;
+  top: -0.3rem;
+  left: 0.1rem;
 `;
 
 const buttonStyles = css`
-  padding: 0 ${props => props.theme.GAP.ONE};
   margin-left: ${props => props.theme.GAP.SMALL};
+  padding: 0 ${props => props.theme.GAP.LARGE};
 `;
 
 const ToDo = ({

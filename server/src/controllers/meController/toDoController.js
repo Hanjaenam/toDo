@@ -34,6 +34,7 @@ export const create = async (req, res) => {
     // title, memo, createdAt
     body,
   } = req;
+  console.log(body);
   try {
     const project = await Project.findOne({
       _id: projectId,

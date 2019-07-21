@@ -2,9 +2,9 @@ import axios from 'axios';
 
 // eslint-disable-next-line import/prefer-default-export
 export const projectAPI = {
-  readAll: ({ sort, page }) => {
+  readAll: ({ query }) => {
     return axios({
-      url: `/me/project?sort=${sort}&page=${page}`,
+      url: `/me/project${query}`,
       method: 'GET',
     });
   },

@@ -6,8 +6,8 @@ import {
 } from 'store/Common/ListEditMenu';
 import { deleteOne, patch } from 'lib/manuArrData';
 import { useEditMenuValues, useEditMenuFns } from 'store/Common/EditMenu';
+import { useToDoListFns } from 'store/ToDoList';
 import axios from 'axios';
-import { useToDoListFns } from 'components/DetailProject/ToDoList/ToDoListContainer';
 import ToDo from './ToDo';
 
 const ToDoContainer = ({ data, edit }) => {
@@ -16,7 +16,7 @@ const ToDoContainer = ({ data, edit }) => {
   const { titleChangeMode, showToDoMemo } = useEditMenuValues();
   const { setTitleChangeMode, toggleShowToDoMemo } = useEditMenuFns();
   const { setToDoList } = useToDoListFns();
-  const handleClick = e => {
+  const handleClick = () => {
     if (!edit && !isEditMode) {
       const msg = data.isCompleted
         ? '완료를 취소하시겠습니까?'

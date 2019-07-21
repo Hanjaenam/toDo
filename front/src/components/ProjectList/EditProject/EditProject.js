@@ -21,6 +21,7 @@ const Container = styled.div`
 
 const ButtonStyles = css`
   box-sizing: border-box;
+  background-color: white;
   border: 1px solid ${props => props.theme.BORDER.NOT_FOCUS};
   padding: ${props => props.theme.GAP.MEDIUM};
   font-size: 1rem;

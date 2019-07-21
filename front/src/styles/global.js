@@ -4,8 +4,7 @@ import reset from 'styled-reset';
 export default createGlobalStyle`
   ${reset}
   body{
-    /* background-color: ${props => props.theme.BACKGROUND_COLOR()}; */
-    background-color:white;
+    background-color: ${props => props.theme.BACKGROUND_COLOR()};
     font-family: Arial, Helvetica, 'Times New Roman', Times,'Courier New', Courier,Verdana,Georgia,'Trebuchet MS', sans-serif;
   }
   input[type="email"], input[type="password"]{
@@ -13,6 +12,5 @@ export default createGlobalStyle`
   }
   a, button{
     all:unset;
-    cursor:pointer
   }
 `;

@@ -1,16 +1,19 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { useProjectListValues, useProjectListFns } from 'store/ProjectList';
+import queryString from 'query-string';
 import Search from './Search';
 
-const SearchContainer = ({ history }) => {
+const SearchContainer = ({ location: { search }, history }) => {
   const { expandSearch } = useProjectListValues();
   const { setExpandSearch } = useProjectListFns();
   const searchProject = e => {
     const {
       target: { value },
     } = e;
-    history.push(`/me/project/search?term=${value}`);
+    const parsed = queryString.parse(search);
+    parsed.q = value;
+    history.push(`/me/project?${queryString.stringify(parsed)}`);
   };
   const handleFocus = () => {
     setExpandSearch(true);

@@ -5,7 +5,7 @@ import LogInTemplate from 'components/Common/LogInTemplate';
 import axios from 'axios';
 import { useFns, useUser } from 'store/User';
 import { useStatus, useOnlyPublic } from 'lib/hooks';
-// import OnlyPublic from 'components/Common/OnlyPublic';
+import CONFIG from 'config';
 
 const Register = ({ history }) => {
   const user = useUser();
@@ -22,7 +22,7 @@ const Register = ({ history }) => {
     })
       .then(res => {
         logIn(res.data);
-        history.replace('/me/project');
+        history.replace(CONFIG.HOME_URL);
       })
       .catch(() => end());
   }, []);
@@ -38,7 +38,7 @@ const Register = ({ history }) => {
     })
       .then(res => {
         logIn(res.data);
-        history.replace('/me/project');
+        history.replace(CONFIG.HOME_URL);
       })
       .catch(err => {
         setError(err.response.data.message[0]);
@@ -58,10 +58,5 @@ const Register = ({ history }) => {
 Register.propTypes = {
   history: PropTypes.shape({}).isRequired,
 };
-// export default ({ history }) => (
-//   <OnlyPublic history={history}>
-//     <Register history={history} />
-//   </OnlyPublic>
-// );
 
 export default Register;

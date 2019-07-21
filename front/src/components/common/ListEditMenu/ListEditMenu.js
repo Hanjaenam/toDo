@@ -1,21 +1,42 @@
 import React from 'react';
+import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import {
   faTasks,
-  faEdit,
   faTimes,
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { css } from 'styled-components';
 import { HOVER_TYPE } from 'styles/mixins';
 import Button from 'components/Common/Button';
 
-const buttonStyles = page => css`
-  font-size: 1.5rem;
+const ButtonContainer = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: ${props => props.theme.GAP.SMALL};
+`;
+
+const buttonStyles = ({ icon = true, page } = {}) => css`
   ${props =>
-    page === 'toDoList'
-      ? `padding:${props.theme.GAP.SMALL};`
-      : `padding:${props.theme.GAP.MEDIUM};`}
+    icon
+      ? css`
+          svg {
+            transform: scale(1.5);
+          }
+        `
+      : null}
+  ${props =>
+    page === 'notEditToDoList'
+      ? css`
+          &.e {
+            border-top-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+          }
+        `
+      : css`
+          border: 1px solid ${props => props.theme.BORDER.NOT_FOCUS};
+        `};
+  padding: ${props => props.theme.GAP.MEDIUM};
 `;
 
 const ListEditMenu = ({
@@ -28,36 +49,38 @@ const ListEditMenu = ({
   page,
 }) => {
   return isEditMode ? (
-    <>
+    <ButtonContainer>
       {isMultiMode ? (
         <Button
           icon={faTrashAlt}
-          hoverType={HOVER_TYPE.COLOR}
+          hoverType={HOVER_TYPE.BACKGROUND_COLOR}
           onClick={handleDeleteMany}
-          styles={buttonStyles(page)}
+          styles={buttonStyles({ page })}
         />
       ) : null}
       <Button
         icon={faTasks}
-        hoverType={HOVER_TYPE.COLOR}
-        styles={buttonStyles(page)}
+        hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+        styles={buttonStyles({ page })}
         onClick={() => toggleMultiMode()}
-        isMultiMode={isMultiMode}
+        hoverOpts={{ active: isMultiMode }}
       />
       <Button
         icon={faTimes}
-        hoverType={HOVER_TYPE.COLOR}
+        hoverType={HOVER_TYPE.BACKGROUND_COLOR}
         onClick={initMode}
-        styles={buttonStyles(page)}
+        styles={buttonStyles({ page })}
       />
-    </>
+    </ButtonContainer>
   ) : (
     <Button
-      icon={faEdit}
-      hoverType={HOVER_TYPE.COLOR}
+      className="e"
+      hoverType={HOVER_TYPE.BACKGROUND_COLOR}
       onClick={() => setEditMode(true)}
-      styles={buttonStyles(page)}
-    />
+      styles={buttonStyles({ icon: false, page })}
+    >
+      수정
+    </Button>
   );
 };
 
@@ -68,10 +91,8 @@ ListEditMenu.propTypes = {
   toggleMultiMode: PropTypes.func.isRequired,
   initMode: PropTypes.func.isRequired,
   handleDeleteMany: PropTypes.func,
-  page: PropTypes.string,
 };
 ListEditMenu.defaultProps = {
   handleDeleteMany: undefined,
-  page: undefined,
 };
 export default ListEditMenu;

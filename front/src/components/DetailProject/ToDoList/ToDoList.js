@@ -1,113 +1,20 @@
 import React, { useRef } from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
+import ToDoListTemplate from 'components/DetailProject/ToDoListTemplate';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { inputCss, HOVER_TYPE } from 'styles/mixins';
-import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import ListEditMenu from 'components/Common/ListEditMenu';
 import Button from 'components/Common/Button';
 import moment from 'moment';
-import { MONTHS, WEEKDAYS_LONG, WEEKDAYS_SHORT } from './DayPickerCustom';
-
-const Container = styled.div`
-  position: relative;
-  box-sizing: border-box;
-  width: ${props => props.theme.WIDTH.TO_DO_LIST};
-  border-radius: ${props => props.theme.RADIUS};
-  background: white;
-  flex-shrink: 0;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  /* 윈도우 화면에서 toDoList 에서 스크롤을 할 수 있게끔 해준 것.*/
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  /* 윈도우 화면에서 toDoList 에서 스크롤을 할 수 있게끔 해준 것.*/
-  /* screen>MEDIUM 일 때 맨 오른쪽 여백 */
-  &:last-child:after {
-    position: absolute;
-    top: 0;
-    right: -1rem;
-    content: '';
-    width: ${props => props.theme.GAP.ONE};
-    height: 1rem;
-    background: transparent;
-  }
-  /* screen>MEDIUM 일 때 맨 오른쪽 여백 */
-  & + & {
-    margin-left: ${props => props.theme.GAP.ONE};
-  }
-  @media screen and (min-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
-    max-height: 100%;
-  }
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
-    display: block;
-    margin: 0 auto !important;
-    & + & {
-      margin-top: ${props => props.theme.GAP.ONE} !important;
-    }
-    &:last-child:after {
-      display: none;
-    }
-  }
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
-    width: 100%;
-    border-radius: 0;
-  }
-`;
 
 const CalendarContainer = styled.div`
   display: flex;
-  align-items: center;
   justify-content: center;
   box-sizing: border-box;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   position: relative;
-  ${props =>
-    props.edit
-      ? css`
-          .DayPickerInput {
-            display: block !important;
-            text-align: center;
-            width: 100%;
-            &:hover {
-              & + svg {
-                color: white;
-              }
-            }
-            input {
-              margin-bottom: 0;
-              margin-top: 0;
-              outline: none;
-              box-sizing: border-box;
-              font-size: 1em;
-              text-align: center;
-              font-weight: 400;
-              cursor: pointer;
-              width: 100%;
-              padding: ${props => props.theme.GAP.ONE};
-              border: none;
-              border-top-left-radius: ${props => props.theme.RADIUS};
-              transition: ${props => props.theme.TRANSITION};
-              &:hover {
-                background-color: ${props => props.theme.PRIMARY()};
-                color: white;
-              }
-              &:focus {
-                background-color: ${props => props.theme.PRIMARY()};
-                color: white;
-              }
-            }
-          }
-        `
-      : null}
-`;
-const CalendarIcon = styled(FontAwesomeIcon)`
-  font-size: 1.2rem;
-  position: absolute;
-  left: 1rem;
-  pointer-events: none;
 `;
 
 const CreatedAt = styled.span`
@@ -119,15 +26,20 @@ const CreatedAt = styled.span`
 
 const EditContainer = styled.div`
   flex: 1;
-  padding: ${props => props.theme.GAP.MEDIUM};
-  display: flex;
-  align-items: center;
   ${props =>
     props.isPreviousToDo
       ? css`
+          display: flex;
           justify-content: flex-end;
         `
-      : null}
+      : css`
+          margin: 0 ${props => props.theme.GAP.SMALL};
+          padding: ${props => props.theme.GAP.SMALL} 0;
+          display: grid;
+          grid-auto-flow: column;
+          grid-template-columns: 1fr;
+          grid-gap: ${props => props.theme.GAP.SMALL};
+        `}
 `;
 const Input = styled.input`
   flex: 1;
@@ -136,85 +48,48 @@ const Input = styled.input`
   ${inputCss}
 `;
 
-const DataContainer = styled.div`
-  /* overflow: hidden; */
-  /* 여기서 padding을 주면 toDo 배경색이 짤린다.*/
-  /* padding-left: 0.5rem; */
-  @media screen and (min-width: ${props => props.theme.BREAKPOINTS.MEDIUM}) {
-    overflow-y: scroll;
-  }
-  > div:last-child {
-    border-bottom-left-radius: ${props => props.theme.RADIUS};
-    border-bottom-right-radius: ${props => props.theme.RADIUS};
-    overflow: hidden;
-  }
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
-    > div:last-child {
-      border-radius: 0;
-    }
-  }
-`;
-
 const btnLargeStyles = css`
-  font-size: 2.1rem;
+  font-size: 1.5rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
   padding: 0 ${props => props.theme.GAP.MEDIUM};
 `;
-const buttonStyles = css`
-  font-size: 1.4rem;
+
+const btnPlusStyles = css`
   padding: ${props => props.theme.GAP.SMALL};
+  border: 1px solid ${props => props.theme.BORDER.NOT_FOCUS};
 `;
 
 const ToDoList = ({
   children,
   createdAt,
-  selectedDay,
-  setSelectedDay,
   isPreviousToDo,
   createToDo,
   deleteManyToDo,
-  createToDoList,
   deleteToDoList,
-  edit,
-  isExistedTodayData,
 }) => {
   const titleRef = useRef();
   return (
-    <Container>
-      <CalendarContainer edit={edit}>
-        {edit ? (
-          <>
-            <DayPickerInput
-              onDayChange={day => setSelectedDay(day)}
-              value={selectedDay}
-              dayPickerProps={{
-                todayButton: 'Today',
-                months: MONTHS,
-                weekdaysLong: WEEKDAYS_LONG,
-                weekdaysShort: WEEKDAYS_SHORT,
-                modifiers: {
-                  disabled: [
-                    { before: new Date() },
-                    isExistedTodayData ? new Date() : undefined,
-                  ],
-                },
-              }}
-              inputProps={{ readOnly: true }}
-            />
-            <CalendarIcon icon={faCalendarAlt} />
-          </>
-        ) : (
+    <ToDoListTemplate
+      calendar={
+        <CalendarContainer>
+          <Button
+            icon={faTrashAlt}
+            hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+            onClick={deleteToDoList}
+            styles={btnLargeStyles}
+          />
           <CreatedAt>{moment(createdAt).format('YYYY-MM-DD')}</CreatedAt>
-        )}
-        <Button
-          icon={edit ? faPlus : faTrashAlt}
-          hoverType={HOVER_TYPE.COLOR}
-          onClick={edit ? createToDoList : deleteToDoList}
-          styles={btnLargeStyles}
-        />
-      </CalendarContainer>
-      <EditContainer isPreviousToDo={isPreviousToDo()}>
-        {edit || !isPreviousToDo() ? (
-          <>
+          <ListEditMenu
+            handleDeleteMany={deleteManyToDo}
+            page="notEditToDoList"
+          />
+        </CalendarContainer>
+      }
+      edit={
+        isPreviousToDo() ? (
+          <EditContainer isPreviousToDo={isPreviousToDo()}>
             <Input
               type="text"
               maxLength="100"
@@ -227,35 +102,30 @@ const ToDoList = ({
               }}
             />
             <Button
-              icon={faPlus}
-              hoverType={HOVER_TYPE.COLOR}
+              hoverType={HOVER_TYPE.BACKGROUND_COLOR}
               onClick={() => createToDo(titleRef)}
-              styles={buttonStyles}
-            />
-          </>
-        ) : null}
-        <ListEditMenu handleDeleteMany={deleteManyToDo} page="toDoList" />
-      </EditContainer>
-      <DataContainer>{children}</DataContainer>
-    </Container>
+              styles={btnPlusStyles}
+            >
+              추가
+            </Button>
+          </EditContainer>
+        ) : null
+      }
+    >
+      {children}
+    </ToDoListTemplate>
   );
 };
 
 ToDoList.propTypes = {
   createdAt: PropTypes.string,
-  selectedDay: PropTypes.instanceOf(Date).isRequired,
-  setSelectedDay: PropTypes.func.isRequired,
-  deleteToDoList: PropTypes.func.isRequired,
+
   createToDo: PropTypes.func.isRequired,
   deleteManyToDo: PropTypes.func.isRequired,
-  createToDoList: PropTypes.func.isRequired,
   isPreviousToDo: PropTypes.func.isRequired,
-  edit: PropTypes.bool,
-  isExistedTodayData: PropTypes.bool.isRequired,
 };
 ToDoList.defaultProps = {
   createdAt: undefined,
-  edit: undefined,
 };
 
 export default ToDoList;

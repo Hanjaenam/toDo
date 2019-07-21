@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { hover } from 'styles/mixins';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const Container = styled.div`
+const Btn = styled.button`
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -14,12 +14,6 @@ const Container = styled.div`
       ? null
       : hover({ type: props.hoverType, ...props.hoverOpts })}
   ${props => props.styles};
-  ${props =>
-    props.isMultiMode
-      ? css`
-          color: ${props => props.theme.PRIMARY()};
-        `
-      : null};
 `;
 
 const Icon = styled(FontAwesomeIcon)`
@@ -41,7 +35,7 @@ const Button = ({
   disabled,
   ...rest
 }) => (
-  <Container
+  <Btn
     {...rest}
     hoverType={hoverType}
     hoverOpts={hoverOpts}
@@ -50,7 +44,7 @@ const Button = ({
     disabled={disabled}
   >
     <p text={children}>{icon ? <Icon icon={icon} /> : children}</p>
-  </Container>
+  </Btn>
 );
 
 Button.propTypes = {

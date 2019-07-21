@@ -5,14 +5,15 @@ export default {
       minus},${alpha})`,
   SUCCESS: (alpha = 1) => `rgba(46,204,113,${alpha})`,
   DANGER: '#e74e3c',
-  RADIUS: '5px',
+
   BACKGROUND_COLOR: ({ alpha = 0.2, add = 0, minus = 0 } = {}) =>
-    `rgba(${180 + add - minus},${180 + add - minus},${180 +
+    `rgba(${178 + add - minus},${190 + add - minus},${195 +
       add -
       minus}, ${alpha})`,
   BORDER: {
     NOT_FOCUS: 'rgba(0,0,0,0.2)',
   },
+  RADIUS: '5px',
   TRANSITION: '0.3s',
   GAP: {
     TINY: '0.1rem',
@@ -22,7 +23,6 @@ export default {
     WIDE: '0.9rem',
     ONE: '1rem',
   },
-
   BREAKPOINTS: {
     SMALL: '576px',
     MEDIUM: '768px',
@@ -33,7 +33,7 @@ export default {
   WIDTH: {
     TO_DO_LIST: '450px',
   },
+  BOX_SHADOW: {
+    TO_DO_LIST: '0 0 5px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);',
+  },
 };
-
-// rgba(52, 73, 94,1.0)
-// rgba(44, 62, 80,1.0)

@@ -1,29 +1,15 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import {
-  useDetailProjectFns,
-  useDetailProjectValues,
-} from 'store/DetailProject';
 import { unshift, deleteMany, deleteOne } from 'lib/manuArrData';
+import { useDetailProjectFns } from 'store/DetailProject';
 import ToDo from 'components/DetailProject/ToDo';
 import moment from 'moment';
 import { useListEditMenuValues } from 'store/Common/ListEditMenu';
 import EditMenuProvider from 'store/Common/EditMenu';
+import ToDoListProvider from 'store/ToDoList';
 import ToDoList from './ToDoList';
-
-const ToDoListContext = createContext();
-
-export const useToDoListValues = () => {
-  const { fns, ...values } = useContext(ToDoListContext);
-  return values;
-};
-
-export const useToDoListFns = () => {
-  const { fns } = useContext(ToDoListContext);
-  return fns;
-};
 
 const ToDoListContainer = ({
   match: {
@@ -31,100 +17,39 @@ const ToDoListContainer = ({
   },
   createdAt,
   data = [],
-  edit,
 }) => {
   const [toDoList, setToDoList] = useState(data);
   const { setDetailProject } = useDetailProjectFns();
-  const { detailProject } = useDetailProjectValues();
   const { idsToDelete } = useListEditMenuValues();
-  const isExistedTodayData = () =>
-    detailProject.findIndex(
-      data => data._id === moment(Date.now()).format('YYYY-MM-DD'),
-    ) !== -1;
-  const getTommorrowDay = () => {
-    const date = new Date();
-    return date.setDate(date.getDate() + 1);
-  };
-  const [selectedDay, setSelectedDay] = useState(
-    isExistedTodayData() ? moment(getTommorrowDay())._d : moment()._d,
-  );
-  const generateId = () =>
-    Math.random()
-      .toString(36)
-      .substr(2, 9);
   const isPreviousToDo = () => {
-    if (edit) return;
     const now = Number(moment(Date.now()).format('YYYYMMDD'));
-    return now === Number(createdAt.replace(/-/g, ''))
-      ? false
-      : now >= Number(createdAt.replace(/-/g, ''));
+    return now === Number(createdAt.replace(/-/g, ''));
   };
-
   const createToDo = titleRef => {
     if (!titleRef.current || !titleRef.current.value) return;
     const data = {
       title: titleRef.current.value,
     };
-    if (edit) {
-      data._id = generateId();
-      setToDoList(unshift(data));
-      titleRef.current.value = '';
-    } else {
-      data.createdAt = createdAt;
-      axios({ url: `/me/toDo/create/${projectId}`, method: 'post', data })
-        .then(res => {
-          setToDoList(unshift(res.data));
-        })
-        .finally(() => {
-          titleRef.current.value = '';
-        });
-    }
+    data.createdAt = createdAt;
+    axios({ url: `/me/toDo/create/${projectId}`, method: 'post', data })
+      .then(res => {
+        setToDoList(unshift(res.data));
+      })
+      .finally(() => {
+        titleRef.current.value = '';
+      });
   };
   const deleteManyToDo = () => {
     if (idsToDelete.length === 0) return;
     if (!window.confirm(`총 ${idsToDelete.length} 개를 삭제하시겠습니까?`))
       return;
-    if (edit) setToDoList(deleteMany(idsToDelete));
-    else {
-      axios({
-        url: '/me/toDo/delete',
-        data: idsToDelete,
-        method: 'delete',
-      }).then(() => setToDoList(deleteMany(idsToDelete)));
-    }
-  };
-  const createToDoList = () => {
-    if (!edit) return;
-    if (toDoList.length === 0) return;
-    if (
-      !window.confirm(
-        `${moment(selectedDay).format(
-          'YYYY-MM-DD',
-        )} 이 날짜로 할 일을 추가하시겠습니까?`,
-      )
-    )
-      return;
     axios({
-      url: `/me/toDo/create/${projectId}`,
-      method: 'post',
-      data: toDoList.map(toDo => ({
-        title: toDo.title,
-        createdAt: selectedDay,
-      })),
-    })
-      .then(res => {
-        const data = {
-          _id: moment(selectedDay).format('YYYY-MM-DD'),
-          toDoList: res.data,
-        };
-        setDetailProject(unshift(data));
-      })
-      .finally(() => {
-        setToDoList([]);
-      });
+      url: '/me/toDo/delete',
+      data: idsToDelete,
+      method: 'delete',
+    }).then(() => setToDoList(deleteMany(idsToDelete)));
   };
   const deleteToDoList = () => {
-    if (edit) return;
     if (!window.confirm(`${createdAt} 삭제하시겠습니까?`)) return;
     axios({
       url: `/me/toDo/delete`,
@@ -137,45 +62,35 @@ const ToDoListContainer = ({
   const mapToComponent = () =>
     toDoList.map(toDo => (
       <EditMenuProvider key={toDo._id}>
-        <ToDo data={toDo} edit={edit} />
-        {/* <ToDo id={toDo._id} data={toDo} setToDoList={setToDoList} edit={edit} /> */}
+        <ToDo data={toDo} />
       </EditMenuProvider>
     ));
   return (
-    <ToDoListContext.Provider value={{ toDoList, fns: { setToDoList } }}>
+    <ToDoListProvider value={{ toDoList, fns: { setToDoList } }}>
       <ToDoList
         createdAt={createdAt}
-        selectedDay={selectedDay}
-        setSelectedDay={setSelectedDay}
         isPreviousToDo={isPreviousToDo}
         createToDo={createToDo}
         deleteManyToDo={deleteManyToDo}
-        createToDoList={createToDoList}
         deleteToDoList={deleteToDoList}
-        edit={edit}
-        isExistedTodayData={isExistedTodayData()}
       >
         {mapToComponent()}
       </ToDoList>
-    </ToDoListContext.Provider>
+    </ToDoListProvider>
   );
 };
 ToDoListContainer.propTypes = {
-  projectId: PropTypes.string,
   createdAt: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.shape({})),
-  edit: PropTypes.bool,
   match: PropTypes.shape({
     params: PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      projectId: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
 };
 ToDoListContainer.defaultProps = {
-  projectId: undefined,
   createdAt: undefined,
   data: undefined,
-  edit: undefined,
 };
 
 export default withRouter(ToDoListContainer);

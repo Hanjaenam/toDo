@@ -5,20 +5,7 @@ import EditMenuProvider from 'store/Common/EditMenu';
 import EditProject from 'components/ProjectList/EditProject';
 import queryString from 'query-string';
 import PaginationComponent from 'components/ProjectList/Pagination';
-
-const Container = styled.div`
-  box-sizing: border-box;
-  width: ${props => props.theme.BREAKPOINTS.WIDE};
-  /* margin: ${props => props.theme.GAP.MEDIUM} auto;
-  margin-top: 0; */
-  margin:0 auto;
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.WIDE}) {
-    width: 95%;
-  }
-  @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
-    width: 100%;
-  }
-`;
+import PageTemplate from 'components/Common/PageTemplate';
 
 const SearchContainer = styled.div`
   display: flex;
@@ -35,20 +22,19 @@ const Text = styled.div`
 `;
 
 const ProjectList = ({ children, match: { path }, location: { search } }) => (
-  <Container>
+  <PageTemplate>
     <EditMenuProvider>
       <EditProject />
     </EditMenuProvider>
-    {path.includes('/search') ? (
+    {queryString.parse(search).q === '' ? null : (
       <SearchContainer>
         <Text>
-          &quot;&nbsp;{queryString.parse(search).term}&nbsp;&quot; 검색 결과
+          &quot;&nbsp;{queryString.parse(search).q}&nbsp;&quot; 검색 결과
         </Text>
       </SearchContainer>
-    ) : null}
+    )}
     {children}
     <PaginationComponent />
-  </Container>
+  </PageTemplate>
 );
-
 export default withRouter(ProjectList);

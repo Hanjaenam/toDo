@@ -3,17 +3,34 @@ import ToDo from 'models/ToDo';
 import mongoose from 'mongoose';
 import config from 'config';
 
+export const search = async (req, res) => {
+  const {
+    query: { term: searchingBy },
+  } = req;
+  try {
+    const project = await Project.find({
+      title: { $regex: searchingBy, $options: 'i' },
+    });
+    return res.json(project);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).end();
+  }
+};
 // /read
 // check
 export const readAll = async (req, res) => {
   const {
-    query: { sort = 'latest', page = 1 },
+    query: { sort = 'latest', page = 1, q = '' },
   } = req;
   try {
     const projectCount = await Project.find().countDocuments();
+    const search =
+      q === '' ? undefined : { title: { $regex: q, $options: 'i' } };
     const project = await Project.aggregate([
       {
         $match: {
+          ...search,
           creator: req.user._id,
         },
       },
@@ -22,7 +39,7 @@ export const readAll = async (req, res) => {
       { $sort: sort === 'latest' ? { createdAt: -1 } : { importance: -1 } },
     ]);
     res.set('Last-Page', Math.ceil(projectCount / config.PAGE.LIMIT));
-    res.set('Data-Limit', config.PAGE.LIMIT);
+    res.set('Page-Limit', config.PAGE.LIMIT);
     return res.json(project);
   } catch (err) {
     console.log(err);
@@ -81,20 +98,6 @@ export const readOne = async (req, res) => {
   }
 };
 
-export const search = async (req, res) => {
-  const {
-    query: { term: searchingBy },
-  } = req;
-  try {
-    const project = await Project.find({
-      title: { $regex: searchingBy, $options: 'i' },
-    });
-    return res.json(project);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).end();
-  }
-};
 // /create
 // check
 export const create = async (req, res) => {

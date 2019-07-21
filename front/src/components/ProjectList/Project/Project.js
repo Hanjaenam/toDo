@@ -6,6 +6,7 @@ import moment from 'moment';
 import EditImportance from '../EditImportance';
 
 const Container = styled.div`
+  background-color: white;
   & + & {
     margin-top: ${props => props.theme.GAP.MEDIUM};
   }
