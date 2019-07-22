@@ -7,28 +7,18 @@ const Container = styled.div`
   border-radius: ${props => props.theme.RADIUS};
   background: white;
   flex-shrink: 0;
-  box-shadow: ${props => props.theme.BOX_SHADOW.TO_DO_LIST};
+  border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
   margin: 0 auto;
-  &:first-child {
-    margin-top: ${props => props.theme.GAP.MEDIUM};
-  }
-  &:last-child {
-    margin-bottom: ${props => props.theme.GAP.MEDIUM};
-  }
-  & + & {
-    margin-top: ${props => props.theme.GAP.ONE};
-  }
+  width: ${props => props.theme.BREAKPOINTS.SMALL};
   @media screen and (max-width: ${props => props.theme.BREAKPOINTS.SMALL}) {
     width: 100%;
     border-radius: 0;
   }
-  max-width: ${props => props.theme.BREAKPOINTS.SMALL};
 `;
 
 const DataContainer = styled.div`
   /* 여기서 padding을 주면 toDo 배경색이 짤린다.*/
   /* padding-left: 0.5rem; */
-  overflow-y: scroll;
   > div:last-child {
     border-bottom-left-radius: ${props => props.theme.RADIUS};
     border-bottom-right-radius: ${props => props.theme.RADIUS};

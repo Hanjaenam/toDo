@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-// import { faStickyNote } from '@fortawesome/free-regular-svg-icons';
 import Title from 'components/Common/Text';
 import EditMenu from 'components/Common/EditMenu';
 import { hover, HOVER_TYPE } from 'styles/mixins';
@@ -14,6 +13,7 @@ const Container = styled.div`
   /* display: flex; */
   display: grid;
   grid-template-columns: 1fr auto;
+  grid-gap: ${props => props.theme.GAP.SMALL};
   grid-auto-flow: row dense;
   position: relative;
   transition: box-shadow ${props => props.theme.TRANSITION};
@@ -21,7 +21,7 @@ const Container = styled.div`
     props.showToDoMemo
       ? css`
           box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
-          border: 2px solid ${props => props.theme.PRIMARY()};
+          border: 2px solid ${props => props.theme.COLOR.PRIMARY()};
           .memo {
             padding: ${props => props.theme.GAP.SMALL};
           }
@@ -37,7 +37,7 @@ const DataContainer = styled.div`
   /* 여기서 padding을 주어야 toDo Data 에만 배경색이 적절하게 들어간다.*/
   padding-left: ${props => props.theme.GAP.MEDIUM};
   &.isCompleted {
-    background: ${props => props.theme.SUCCESS(0.9)};
+    background: ${props => props.theme.COLOR.SUCCESS(0.9)};
     div:first-child {
       border-color: white;
       svg {
@@ -50,7 +50,7 @@ const DataContainer = styled.div`
       ? hover({ type: HOVER_TYPE.TO_DO })
       : null};
   &.selected {
-    background-color: ${props => props.theme.PRIMARY()};
+    background-color: ${props => props.theme.COLOR.PRIMARY()};
     div:first-child {
       border-color: white;
     }
@@ -64,7 +64,7 @@ const DataContainer = styled.div`
 `;
 
 const CheckContainer = styled.div`
-  border: 2px solid ${props => props.theme.PRIMARY()};
+  border: 2px solid ${props => props.theme.COLOR.PRIMARY()};
   border-radius: 50%;
   width: 1rem;
   height: 1rem;
@@ -83,7 +83,7 @@ const CheckIcon = styled(FontAwesomeIcon)`
 `;
 
 const buttonStyles = css`
-  margin-left: ${props => props.theme.GAP.SMALL};
+  /* margin-left: ${props => props.theme.GAP.SMALL}; */
   padding: 0 ${props => props.theme.GAP.LARGE};
 `;
 
@@ -95,8 +95,8 @@ const ToDo = ({
   handleClick,
   deleteToDo,
   patchToDo,
-  titleChangeMode,
-  setTitleChangeMode,
+  textChangeMode,
+  setTextChangeMode,
   showToDoMemo,
   toggleShowToDoMemo,
 }) => (
@@ -112,13 +112,13 @@ const ToDo = ({
       <CheckContainer>
         <CheckIcon icon={faCheck} />
       </CheckContainer>
-      <Title textChangeMode={titleChangeMode} handlePatch={patchToDo}>
+      <Title textChangeMode={textChangeMode} handlePatch={patchToDo}>
         {data.title}
       </Title>
     </DataContainer>
     <EditMenu
-      titleChangeMode={titleChangeMode}
-      setTitleChangeMode={setTitleChangeMode}
+      textChangeMode={textChangeMode}
+      setTextChangeMode={setTextChangeMode}
       handleDelete={deleteToDo}
       csstype="toDo"
     />
@@ -150,8 +150,8 @@ ToDo.propTypes = {
   handleClick: PropTypes.func.isRequired,
   deleteToDo: PropTypes.func.isRequired,
   patchToDo: PropTypes.func.isRequired,
-  titleChangeMode: PropTypes.bool.isRequired,
-  setTitleChangeMode: PropTypes.func.isRequired,
+  textChangeMode: PropTypes.bool.isRequired,
+  setTextChangeMode: PropTypes.func.isRequired,
   showToDoMemo: PropTypes.bool.isRequired,
   toggleShowToDoMemo: PropTypes.func.isRequired,
 };

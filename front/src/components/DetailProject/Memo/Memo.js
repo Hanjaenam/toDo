@@ -102,7 +102,11 @@ const Memo = ({
         <Creator>{data.creator.email.split('@')[0]}</Creator>
         <CreatedAt>{moment(data.createdAt).fromNow()}</CreatedAt>
       </WhoWhenContainer>
-      <Content memo textChangeMode={contentChangeMode} handlePatch={patchMemo}>
+      <Content
+        inputAs="textarea"
+        textChangeMode={contentChangeMode}
+        handlePatch={patchMemo}
+      >
         {data.content}
       </Content>
       {isEditMode ? (

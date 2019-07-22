@@ -2,21 +2,6 @@ import Project from 'models/Project';
 import ToDo from 'models/ToDo';
 import mongoose from 'mongoose';
 import config from 'config';
-
-export const search = async (req, res) => {
-  const {
-    query: { term: searchingBy },
-  } = req;
-  try {
-    const project = await Project.find({
-      title: { $regex: searchingBy, $options: 'i' },
-    });
-    return res.json(project);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).end();
-  }
-};
 // /read
 // check
 export const readAll = async (req, res) => {
@@ -27,17 +12,11 @@ export const readAll = async (req, res) => {
     const projectCount = await Project.find().countDocuments();
     const search =
       q === '' ? undefined : { title: { $regex: q, $options: 'i' } };
-    const project = await Project.aggregate([
-      {
-        $match: {
-          ...search,
-          creator: req.user._id,
-        },
-      },
-      { $skip: (page - 1) * config.PAGE.LIMIT },
-      { $limit: config.PAGE.LIMIT },
-      { $sort: sort === 'latest' ? { createdAt: -1 } : { importance: -1 } },
-    ]);
+    const project = await Project.find({ ...search, creator: req.user._id })
+      .skip((page - 1) * config.PAGE.LIMIT)
+      .limit(config.PAGE.LIMIT)
+      .sort(sort === 'latest' ? { createdAt: -1 } : { importance: -1 })
+      .lean();
     res.set('Last-Page', Math.ceil(projectCount / config.PAGE.LIMIT));
     res.set('Page-Limit', config.PAGE.LIMIT);
     return res.json(project);
@@ -53,9 +32,8 @@ export const readOne = async (req, res) => {
     query: { page },
   } = req;
   try {
-    const { title } = await Project.findById(
-      mongoose.Types.ObjectId(projectId),
-    );
+    const project = await Project.findById(mongoose.Types.ObjectId(projectId));
+    // No need to lean pipeline output . Aggregate output is already lean
     const toDoListByDate = await ToDo.aggregate([
       {
         $match: {
@@ -65,7 +43,13 @@ export const readOne = async (req, res) => {
       },
       {
         $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          _id: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: '$createdAt',
+              timezone: 'Asia/Seoul',
+            },
+          },
           toDoList: {
             $push: {
               _id: '$_id',
@@ -78,8 +62,8 @@ export const readOne = async (req, res) => {
           },
         },
       },
-      { $skip: (page - 1) * 10 },
-      { $limit: 10 },
+      { $skip: (page - 1) * config.PAGE.LIMIT },
+      { $limit: config.PAGE.LIMIT },
       {
         $sort: {
           _id: -1,
@@ -91,7 +75,7 @@ export const readOne = async (req, res) => {
         },
       },
     ]);
-    return res.json({ title, toDoListByDate });
+    return res.json({ project, toDoListByDate });
   } catch (err) {
     console.log(err);
     return res.status(500).end();
@@ -102,11 +86,13 @@ export const readOne = async (req, res) => {
 // check
 export const create = async (req, res) => {
   const {
-    body: { title },
+    body: { title, isPublic, importance },
   } = req;
   try {
     const project = await Project.create({
       title,
+      isPublic,
+      importance,
       creator: req.user._id,
     });
     return res.json(project);
@@ -184,7 +170,7 @@ export const patch = async (req, res) => {
       },
       body,
       { new: true },
-    );
+    ).lean();
     return res.json(project);
   } catch (err) {
     console.log(err);

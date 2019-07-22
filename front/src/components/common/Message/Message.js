@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 
 const Container = styled.div`
   &.error {
-    background-color: ${props => props.theme.DANGER};
+    background-color: ${props => props.theme.COLOR.DANGER};
   }
   &.success {
-    background-color: ${props => props.theme.SUCCESS};
+    background-color: ${props => props.theme.COLOR.SUCCESS};
   }
   &.error,
   &.success {

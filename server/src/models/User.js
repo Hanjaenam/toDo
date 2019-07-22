@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import mongoose from 'mongoose';
+import moment from 'moment';
 
 const UserSchema = mongoose.Schema({
   nick: { type: String, unique: true },
@@ -24,7 +25,7 @@ const UserSchema = mongoose.Schema({
     index: {
       unique: false,
     },
-    default: Date.now,
+    default: moment.now(),
   },
   project: [
     {

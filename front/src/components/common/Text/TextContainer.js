@@ -6,7 +6,8 @@ const TextContainer = ({
   children,
   textChangeMode,
   handlePatch,
-  memo,
+  inputAs = 'input',
+  hideIcon = false,
   styles,
 }) => {
   const isValid = textRef => {
@@ -19,8 +20,9 @@ const TextContainer = ({
       textChangeMode={textChangeMode}
       handlePatch={handlePatch}
       isValid={isValid}
-      memo={memo}
+      inputAs={inputAs}
       styles={styles}
+      hideIcon={hideIcon}
     >
       {children}
     </Text>
@@ -29,11 +31,15 @@ const TextContainer = ({
 
 TextContainer.propTypes = {
   children: PropTypes.string.isRequired,
-  textChangeMode: PropTypes.bool.isRequired,
-  handlePatch: PropTypes.func.isRequired,
-  memo: PropTypes.bool,
+  textChangeMode: PropTypes.bool,
+  handlePatch: PropTypes.func,
+  inputAs: PropTypes.string,
+  hideIcon: PropTypes.bool,
 };
 TextContainer.defaultProps = {
-  memo: undefined,
+  textChangeMode: undefined,
+  handlePatch: undefined,
+  inputAs: undefined,
+  hideIcon: undefined,
 };
 export default TextContainer;

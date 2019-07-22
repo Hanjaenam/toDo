@@ -16,9 +16,7 @@ const ProjectListContainer = () => {
 
   return (
     <ListEditMenuProvider>
-      <ProjectList searchResult={mapToComponent()}>
-        {mapToComponent()}
-      </ProjectList>
+      <ProjectList>{mapToComponent()}</ProjectList>
     </ListEditMenuProvider>
   );
 };

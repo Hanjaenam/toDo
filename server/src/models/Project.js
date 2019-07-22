@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import moment from 'moment';
 import User from './User';
 import ToDo from './ToDo';
 
@@ -23,7 +24,7 @@ const ProjectSchema = mongoose.Schema({
     index: {
       unique: false,
     },
-    default: Date.now(),
+    default: moment.now(),
   },
   importance: {
     type: Number,
@@ -37,6 +38,7 @@ const ProjectSchema = mongoose.Schema({
     },
   ],
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  isPublic: { type: Boolean, default: true },
   readable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   writable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });

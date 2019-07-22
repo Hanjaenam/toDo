@@ -1,28 +1,13 @@
 import React from 'react';
-import { useProjectListFns } from 'store/ProjectList';
-import { unshift } from 'lib/manuArrData';
-import axios from 'axios';
+import { withRouter } from 'react-router-dom';
 import EditProject from './EditProject';
 
-const EditProjectContainer = () => {
-  const { setProjectList } = useProjectListFns();
-  const createProject = titleRef => {
-    if (!titleRef.current) return;
-    if (!titleRef.current.value) return;
-    axios({
-      url: '/me/project/create',
-      method: 'post',
-      data: { title: titleRef.current.value },
-    })
-      .then(res => {
-        setProjectList(unshift(res.data));
-      })
-      .finally(() => {
-        titleRef.current.value = '';
-      });
+const EditProjectContainer = ({ history }) => {
+  const createProject = () => {
+    history.push('/me/project/create');
   };
 
   return <EditProject createProject={createProject} />;
 };
 
-export default EditProjectContainer;
+export default withRouter(EditProjectContainer);

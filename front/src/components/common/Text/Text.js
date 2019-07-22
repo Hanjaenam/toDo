@@ -28,7 +28,7 @@ const Data = styled.p`
   box-sizing: border-box;
   border: 2px solid transparent;
   padding: ${props => props.theme.GAP.MEDIUM};
-  padding-left: ${props => props.theme.GAP.SMALL};
+  /* padding-left: ${props => props.theme.GAP.SMALL}; */
   word-break: break-all;
 `;
 const buttonStyles = css`
@@ -45,8 +45,9 @@ const Text = ({
   children,
   textChangeMode,
   handlePatch,
+  inputAs,
   isValid,
-  memo,
+  hideIcon,
   styles,
 }) => {
   const textRef = useRef();
@@ -55,7 +56,7 @@ const Text = ({
       {textChangeMode ? (
         <>
           <Input
-            as={memo ? 'textarea' : 'input'}
+            as={inputAs}
             defaultValue={children}
             autoFocus
             ref={textRef}
@@ -66,15 +67,17 @@ const Text = ({
               }
             }}
           />
-          <Button
-            icon={faCheck}
-            hoverType={HOVER_TYPE.BACKGROUND_COLOR}
-            onClick={() => {
-              if (!isValid(textRef)) return;
-              handlePatch(textRef);
-            }}
-            styles={buttonStyles}
-          />
+          {hideIcon ? null : (
+            <Button
+              icon={faCheck}
+              hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+              onClick={() => {
+                if (!isValid(textRef)) return;
+                handlePatch(textRef);
+              }}
+              styles={buttonStyles}
+            />
+          )}
         </>
       ) : (
         <Data>{children}</Data>
@@ -83,13 +86,14 @@ const Text = ({
   );
 };
 Text.propTypes = {
-  textChangeMode: PropTypes.bool.isRequired,
+  textChangeMode: PropTypes.bool,
   handlePatch: PropTypes.func,
   isValid: PropTypes.func.isRequired,
-  memo: PropTypes.bool,
+  inputAs: PropTypes.string,
 };
 Text.defaultProps = {
+  textChangeMode: undefined,
   handlePatch: undefined,
-  memo: undefined,
+  inputAs: undefined,
 };
 export default Text;

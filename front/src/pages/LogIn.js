@@ -22,7 +22,7 @@ const LogIn = ({ history }) => {
     })
       .then(res => {
         logIn(res.data);
-        history.replace(CONFIG.HOME_URL);
+        history.replace(`/me/project?${CONFIG.HOME_INIT_QUERY}`);
       })
       .catch(err => {
         setError(err.response.data.message[0]);

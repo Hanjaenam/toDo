@@ -1,12 +1,12 @@
 import React, { createContext, useContext } from 'react';
-import { useChangeTitleMode, useToDoMemo } from 'lib/hooks';
+import { useTextChangeMode, useToDoMemo } from 'lib/hooks';
 import { useListEditMenuValues } from 'store/Common/ListEditMenu';
 
 export const EditMenuContext = createContext();
 
 const EditMenuProvider = ({ children }) => {
   const { isEditMode, isMultiMode } = useListEditMenuValues();
-  const { titleChangeMode, setTitleChangeMode } = useChangeTitleMode({
+  const { textChangeMode, setTextChangeMode } = useTextChangeMode({
     isEditMode,
     isMultiMode,
   });
@@ -19,10 +19,10 @@ const EditMenuProvider = ({ children }) => {
   return (
     <EditMenuContext.Provider
       value={{
-        titleChangeMode,
+        textChangeMode,
         showToDoMemo,
         fns: {
-          setTitleChangeMode,
+          setTextChangeMode,
           toggleShowToDoMemo,
         },
       }}

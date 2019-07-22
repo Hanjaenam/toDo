@@ -1,5 +1,5 @@
 export default {
-  HOME_URL: '/me/project?page=1&sort=latest&q=',
+  HOME_INIT_QUERY: 'page=1&sort=latest&q=',
   SORT: {
     LATEST: 'latest',
     IMPORTANCE: 'importance',

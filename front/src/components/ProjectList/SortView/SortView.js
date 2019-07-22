@@ -22,10 +22,10 @@ const Details = styled.details`
       }
     }
   }
-  &.open {
+  border-radius: ${props => props.theme.RADIUS};
+  &[open] {
     ${ACTIVE_STYLES.BACKGROUND_COLOR}
   }
-  border-radius: ${props => props.theme.RADIUS};
 `;
 const DetailsMenu = styled.div`
   z-index: 1;
@@ -35,7 +35,7 @@ const DetailsMenu = styled.div`
   left: 0;
   background: white;
   border-radius: ${props => props.theme.RADIUS};
-  border: 1px solid ${props => props.theme.PRIMARY()};
+  border: 1px solid ${props => props.theme.COLOR.PRIMARY()};
   box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
 `;
 const Summary = styled.summary`
@@ -46,7 +46,7 @@ const Summary = styled.summary`
   box-sizing: border-box;
   height: 100%;
   border-radius: ${props => props.theme.RADIUS};
-  border: 1px solid ${props => props.theme.BORDER.NOT_FOCUS};
+  border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
   &::-webkit-details-marker {
     display: none;
   }
@@ -59,10 +59,10 @@ const Summary = styled.summary`
   }
 `;
 const MenuContainer = styled.div`
+  display: flex;
   box-sizing: border-box;
   width: 100%;
   padding: ${props => props.theme.GAP.MEDIUM};
-  display: flex;
   ${hover({ type: HOVER_TYPE.BACKGROUND_COLOR })}
   border-radius:0;
   &:hover {
@@ -74,7 +74,6 @@ const MenuContainer = styled.div`
 `;
 const buttonStyles = css`
   flex: 1;
-  text-transform: capitalize;
   justify-content: flex-start;
 `;
 
@@ -89,35 +88,43 @@ const CheckIcon = styled(FontAwesomeIcon)`
       : null}
 `;
 
-const SortView = ({ setSort, sort, onClick }) => {
+const SortView = ({ setSort, sort }) => {
   return (
-    <Details onClick={onClick}>
-      <Summary>
-        <p>
-          정렬: <span>{CONFIG.SORT.convertKorean(sort)}</span>
-        </p>
-      </Summary>
-      <DetailsMenu role="menu">
-        <MenuContainer onClick={() => setSort(CONFIG.SORT.LATEST)}>
-          <CheckIcon
-            icon={faCheck}
-            show={(sort === CONFIG.SORT.LATEST).toString()}
-          />
-          <Button type="button" role="menuitem" styles={buttonStyles}>
-            최신순
-          </Button>
-        </MenuContainer>
-        <MenuContainer onClick={() => setSort(CONFIG.SORT.IMPORTANCE)}>
-          <CheckIcon
-            icon={faCheck}
-            show={(sort === CONFIG.SORT.IMPORTANCE).toString()}
-          />
-          <Button type="button" role="menuitem" styles={buttonStyles}>
-            중요도
-          </Button>
-        </MenuContainer>
-      </DetailsMenu>
-    </Details>
+    <>
+      <Details className="details">
+        <Summary>
+          <p>
+            정렬: <span>{CONFIG.SORT.convertKorean(sort)}</span>
+          </p>
+        </Summary>
+        <DetailsMenu role="menu">
+          <MenuContainer
+            onClick={() => setSort(CONFIG.SORT.LATEST)}
+            role="menuitem"
+          >
+            <CheckIcon
+              icon={faCheck}
+              show={(sort === CONFIG.SORT.LATEST).toString()}
+            />
+            <Button type="button" styles={buttonStyles}>
+              최신순
+            </Button>
+          </MenuContainer>
+          <MenuContainer
+            onClick={() => setSort(CONFIG.SORT.IMPORTANCE)}
+            role="menuitem"
+          >
+            <CheckIcon
+              icon={faCheck}
+              show={(sort === CONFIG.SORT.IMPORTANCE).toString()}
+            />
+            <Button type="button" styles={buttonStyles}>
+              중요도
+            </Button>
+          </MenuContainer>
+        </DetailsMenu>
+      </Details>
+    </>
   );
 };
 export default SortView;

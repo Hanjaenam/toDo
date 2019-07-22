@@ -4,16 +4,16 @@ import { useListEditMenuValues } from 'store/Common/ListEditMenu';
 import EditMenu from './EditMenu';
 
 const EditMenuContainer = ({
-  titleChangeMode,
-  setTitleChangeMode,
+  textChangeMode,
+  setTextChangeMode,
   handleDelete,
   csstype,
 }) => {
   const { isEditMode, isMultiMode } = useListEditMenuValues();
   return (
     <EditMenu
-      titleChangeMode={titleChangeMode}
-      setTitleChangeMode={setTitleChangeMode}
+      textChangeMode={textChangeMode}
+      setTextChangeMode={setTextChangeMode}
       handleDelete={handleDelete}
       csstype={csstype}
       isEditMode={isEditMode}
@@ -23,8 +23,8 @@ const EditMenuContainer = ({
 };
 
 EditMenuContainer.propTypes = {
-  titleChangeMode: PropTypes.bool.isRequired,
-  setTitleChangeMode: PropTypes.func.isRequired,
+  textChangeMode: PropTypes.bool.isRequired,
+  setTextChangeMode: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   csstype: PropTypes.string,
 };

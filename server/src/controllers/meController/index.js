@@ -17,3 +17,8 @@ export const getInfo = async (req, res) => {
   // }
   // return res.status(204).end();
 };
+
+export const logOut = (req, res) => {
+  req.logout();
+  return res.status(200).end();
+};

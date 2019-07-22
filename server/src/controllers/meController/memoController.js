@@ -8,7 +8,7 @@ export const create = async (req, res) => {
   } = req;
   if (!body) return res.status(400).end();
   try {
-    const toDo = await ToDo.findById(toDoId);
+    const toDo = await ToDo.findById(toDoId).lean();
     if (!toDo) {
       return res.status(400).end();
     }
@@ -17,13 +17,14 @@ export const create = async (req, res) => {
       creator: req.user._id,
       toDo: toDoId,
     });
-    const memoPopulateCreator = await memo
-      .populate({
-        path: 'creator',
-        select: 'email nick',
-      })
-      .execPopulate();
-    return res.json(memoPopulateCreator);
+    await memo.populate({ path: 'creator', select: 'email nick' });
+    // const memoPopulateCreator = await memo.populate({
+    //   path: 'creator',
+    //   select: 'email nick',
+    // });
+    return res.json(
+      await memo.populate({ path: 'creator', select: 'email nick' }),
+    );
   } catch (err) {
     console.log(err);
     return res.status(500).end();
@@ -71,7 +72,7 @@ export const patch = async (req, res) => {
         path: 'creator',
         select: 'email nick',
       })
-      .exec();
+      .lean();
     return res.json(memo);
   } catch (err) {
     console.log(err);

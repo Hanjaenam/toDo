@@ -28,13 +28,13 @@ const Container = styled.div`
   overflow: hidden;
   text-transform: capitalize;
   background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: ${props => props.theme.BOX_SHADOW.LOGIN_TEMPLATE};
 `;
 const MessageContianer = styled.div`
   div {
     padding: 1.5rem;
   }
-  border-bottom: 2px solid ${props => props.theme.BACKGROUND_COLOR()};
+  border-bottom: 2px solid ${props => props.theme.COLOR.BACKGROUND()};
 `;
 const MainContainer = styled.div`
   padding: 2rem;
@@ -58,7 +58,7 @@ const Input = styled.input`
   text-align: left;
   text-transform: initial;
   &:focus {
-    border-color: ${props => props.theme.PRIMARY()};
+    border-color: ${props => props.theme.COLOR.PRIMARY()};
   }
 `;
 const InputContainer = styled.div`
@@ -70,6 +70,7 @@ const InputContainer = styled.div`
 `;
 
 const Button = styled.button`
+  cursor: pointer;
   transition: ${props => props.theme.TRANSITION};
   ${props => {
     if (props.facebook) {

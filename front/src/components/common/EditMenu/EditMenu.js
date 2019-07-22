@@ -26,8 +26,8 @@ const buttonStyles = css`
 `;
 
 const EditMenu = ({
-  titleChangeMode,
-  setTitleChangeMode,
+  textChangeMode,
+  setTextChangeMode,
   handleDelete,
   isEditMode,
   isMultiMode,
@@ -36,12 +36,12 @@ const EditMenu = ({
   return isEditMode && !isMultiMode ? (
     <EditContainer csstype={csstype}>
       <Button
-        icon={titleChangeMode ? faTimes : faPen}
+        icon={textChangeMode ? faTimes : faPen}
         hoverType={HOVER_TYPE.BACKGROUND_COLOR}
         onClick={
-          titleChangeMode
-            ? () => setTitleChangeMode(false)
-            : () => setTitleChangeMode(true)
+          textChangeMode
+            ? () => setTextChangeMode(false)
+            : () => setTextChangeMode(true)
         }
         styles={buttonStyles}
       />
@@ -55,8 +55,8 @@ const EditMenu = ({
   ) : null;
 };
 EditMenu.propTypes = {
-  titleChangeMode: PropTypes.bool.isRequired,
-  setTitleChangeMode: PropTypes.func.isRequired,
+  textChangeMode: PropTypes.bool.isRequired,
+  setTextChangeMode: PropTypes.func.isRequired,
   handleDelete: PropTypes.func,
   isEditMode: PropTypes.bool.isRequired,
   isMultiMode: PropTypes.bool.isRequired,

@@ -18,13 +18,13 @@ export const ToDoSchema = mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: moment.now(),
   },
   memo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Memo' }],
   project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  readable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  writable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  // readable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  // writable: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
 // create 다중 추가일 경우 그 개수만큼 호출됨

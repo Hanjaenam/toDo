@@ -12,31 +12,39 @@ import Button from 'components/Common/Button';
 const ButtonContainer = styled.div`
   display: grid;
   grid-auto-flow: column;
-  grid-gap: ${props => props.theme.GAP.SMALL};
+  box-sizing: border-box;
 `;
 
-const buttonStyles = ({ icon = true, page } = {}) => css`
-  ${props =>
-    icon
-      ? css`
-          svg {
-            transform: scale(1.5);
-          }
-        `
-      : null}
-  ${props =>
-    page === 'notEditToDoList'
-      ? css`
-          &.e {
-            border-top-left-radius: 0;
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
-          }
-        `
-      : css`
-          border: 1px solid ${props => props.theme.BORDER.NOT_FOCUS};
-        `};
+const buttonStyles = css`
+  /* border-radius: 0; */
+  padding: ${props => props.theme.GAP.LARGE};
+  box-sizing: border-box;
+`;
+
+const iconStyles = css`
+  box-sizing: border-box;
+  ${buttonStyles};
+  p {
+    transform: scale(1.5);
+  }
+`;
+
+const iconTopRightRadiusStyles = css`
+  box-sizing: border-box;
+  ${buttonStyles};
+  p {
+    transform: scale(1.5);
+  }
+  border-top-right-radius: ${props => props.theme.RADIUS};
+`;
+
+const topRightRadiusStyles = css`
+  box-sizing: border-box;
+  ${buttonStyles};
   padding: ${props => props.theme.GAP.MEDIUM};
+  border-radius: 0;
+  border-top-right-radius: ${props => props.theme.RADIUS};
+  border-left: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
 `;
 
 const ListEditMenu = ({
@@ -46,7 +54,6 @@ const ListEditMenu = ({
   toggleMultiMode,
   initMode,
   handleDeleteMany,
-  page,
 }) => {
   return isEditMode ? (
     <ButtonContainer>
@@ -55,29 +62,28 @@ const ListEditMenu = ({
           icon={faTrashAlt}
           hoverType={HOVER_TYPE.BACKGROUND_COLOR}
           onClick={handleDeleteMany}
-          styles={buttonStyles({ page })}
+          styles={iconStyles}
         />
       ) : null}
       <Button
         icon={faTasks}
         hoverType={HOVER_TYPE.BACKGROUND_COLOR}
-        styles={buttonStyles({ page })}
-        onClick={() => toggleMultiMode()}
         hoverOpts={{ active: isMultiMode }}
+        onClick={() => toggleMultiMode()}
+        styles={iconStyles}
       />
       <Button
         icon={faTimes}
         hoverType={HOVER_TYPE.BACKGROUND_COLOR}
         onClick={initMode}
-        styles={buttonStyles({ page })}
+        styles={iconTopRightRadiusStyles}
       />
     </ButtonContainer>
   ) : (
     <Button
-      className="e"
       hoverType={HOVER_TYPE.BACKGROUND_COLOR}
       onClick={() => setEditMode(true)}
-      styles={buttonStyles({ icon: false, page })}
+      styles={topRightRadiusStyles}
     >
       수정
     </Button>

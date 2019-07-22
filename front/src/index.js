@@ -3,8 +3,12 @@ import ReactDOM from 'react-dom';
 import { ThemeProvider } from 'styled-components';
 import theme from 'styles/theme';
 import UserContextProvider from 'store/User';
+import moment from 'moment';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
+import 'moment/min/locales';
+
+moment.locale('ko');
 
 ReactDOM.render(
   <UserContextProvider>

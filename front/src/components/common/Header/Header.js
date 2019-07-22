@@ -5,7 +5,7 @@ import { HOVER_TYPE } from 'styles/mixins';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 
 const Container = styled.div`
-  background-color: ${props => props.theme.PRIMARY()};
+  background-color: ${props => props.theme.COLOR.PRIMARY()};
   box-sizing: border-box;
   padding-top: ${props => props.theme.GAP.MEDIUM};
   padding-bottom: ${props => props.theme.GAP.MEDIUM};
@@ -23,10 +23,11 @@ const Center = styled.div`
   display: flex;
   align-items: center;
 `;
-const buttonStyles = css`
+const LogoIconStyles = css`
   font-size: 1.5rem;
   padding: ${props => props.theme.GAP.SMALL};
   margin-right: ${props => props.theme.GAP.SMALL};
+  border: 1px solid white;
 `;
 const ChildrenContainer = styled.div`
   flex: 1;
@@ -34,15 +35,33 @@ const ChildrenContainer = styled.div`
   align-items: center;
 `;
 
-const Header = ({ children }) => (
+const logoutBtnStyles = css`
+  padding: ${props => props.theme.GAP.MEDIUM};
+  color: white;
+  &:hover {
+    background-color: ${props => props.theme.COLOR.PRIMARY({ minus: 15 })};
+  }
+`;
+
+const Header = ({ children, goHome, user, logOut }) => (
   <Container>
     <Center>
       <Button
         icon={faHome}
         hoverType={HOVER_TYPE.COLOR}
-        styles={buttonStyles}
+        styles={LogoIconStyles}
+        onClick={goHome}
       />
       <ChildrenContainer>{children}</ChildrenContainer>
+      {user ? (
+        <Button
+          hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+          styles={logoutBtnStyles}
+          onClick={logOut}
+        >
+          로그아웃
+        </Button>
+      ) : null}
     </Center>
   </Container>
 );

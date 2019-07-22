@@ -1,16 +1,24 @@
 import React from 'react';
+import styled from 'styled-components';
 import ListEditMenuProvider from 'store/Common/ListEditMenu';
 import EditToDoList from 'components/DetailProject/EditToDoList';
-import PageTemplate from 'components/Common/PageTemplate';
+import EditProject from 'components/DetailProject/EditProject';
+
+export const Container = styled.div`
+  display: grid;
+  grid-auto-flow: row;
+  grid-gap: ${props => props.theme.GAP.ONE};
+`;
 
 const DetailProject = ({ children }) => {
   return (
-    <PageTemplate>
+    <Container>
+      <EditProject />
       <ListEditMenuProvider>
         <EditToDoList />
       </ListEditMenuProvider>
       {children}
-    </PageTemplate>
+    </Container>
   );
 };
 

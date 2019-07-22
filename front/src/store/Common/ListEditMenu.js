@@ -5,7 +5,7 @@ const ListEditMenuProvider = ({ children }) => {
   const [isEditMode, setEditMode] = useState(false);
   const [isMultiMode, setMultiMode] = useState(false);
   const [idsToDelete, setIdsToDelete] = useState([]);
-  const [titleChangeMode, setTitleChangeMode] = useState(false);
+  // const [textChangeMode, setTextChangeMode] = useState(false);
   /**
    *
    * @param {String} id
@@ -38,7 +38,6 @@ const ListEditMenuProvider = ({ children }) => {
         isEditMode,
         isMultiMode,
         idsToDelete,
-        titleChangeMode,
         fns: {
           addOrRemoveIdToDelete,
           toggleMultiMode,
@@ -46,7 +45,6 @@ const ListEditMenuProvider = ({ children }) => {
           initMode,
           setEditMode,
           isSelected,
-          setTitleChangeMode,
         },
       }}
     >

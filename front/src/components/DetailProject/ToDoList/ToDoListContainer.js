@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -22,8 +22,10 @@ const ToDoListContainer = ({
   const { setDetailProject } = useDetailProjectFns();
   const { idsToDelete } = useListEditMenuValues();
   const isPreviousToDo = () => {
-    const now = Number(moment(Date.now()).format('YYYYMMDD'));
-    return now === Number(createdAt.replace(/-/g, ''));
+    const now = Number(moment().format('YYYYMMDD'));
+    return now === Number(createdAt.replace(/-/g, ''))
+      ? false
+      : now >= Number(createdAt.replace(/-/g, ''));
   };
   const createToDo = titleRef => {
     if (!titleRef.current || !titleRef.current.value) return;
@@ -84,7 +86,7 @@ ToDoListContainer.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({})),
   match: PropTypes.shape({
     params: PropTypes.shape({
-      projectId: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
 };

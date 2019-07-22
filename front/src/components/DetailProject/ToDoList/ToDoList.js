@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import ToDoListTemplate from 'components/DetailProject/ToDoListTemplate';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { inputCss, HOVER_TYPE } from 'styles/mixins';
 import 'react-day-picker/lib/style.css';
 import ListEditMenu from 'components/Common/ListEditMenu';
@@ -13,8 +12,8 @@ const CalendarContainer = styled.div`
   display: flex;
   justify-content: center;
   box-sizing: border-box;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   position: relative;
+  border-bottom: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
 `;
 
 const CreatedAt = styled.span`
@@ -26,20 +25,11 @@ const CreatedAt = styled.span`
 
 const EditContainer = styled.div`
   flex: 1;
-  ${props =>
-    props.isPreviousToDo
-      ? css`
-          display: flex;
-          justify-content: flex-end;
-        `
-      : css`
-          margin: 0 ${props => props.theme.GAP.SMALL};
-          padding: ${props => props.theme.GAP.SMALL} 0;
-          display: grid;
-          grid-auto-flow: column;
-          grid-template-columns: 1fr;
-          grid-gap: ${props => props.theme.GAP.SMALL};
-        `}
+  margin: ${props => props.theme.GAP.MEDIUM};
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr;
+  grid-gap: ${props => props.theme.GAP.SMALL};
 `;
 const Input = styled.input`
   flex: 1;
@@ -48,17 +38,16 @@ const Input = styled.input`
   ${inputCss}
 `;
 
-const btnLargeStyles = css`
-  font-size: 1.5rem;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  border-top-right-radius: 0;
-  padding: 0 ${props => props.theme.GAP.MEDIUM};
+const deleteBtnStyles = css`
+  padding: ${props => props.theme.GAP.MEDIUM};
+  border-radius: 0;
+  border-right: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
+  border-top-left-radius: ${props => props.theme.RADIUS};
 `;
 
-const btnPlusStyles = css`
+const createBtnStyles = css`
   padding: ${props => props.theme.GAP.SMALL};
-  border: 1px solid ${props => props.theme.BORDER.NOT_FOCUS};
+  border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
 `;
 
 const ToDoList = ({
@@ -75,21 +64,21 @@ const ToDoList = ({
       calendar={
         <CalendarContainer>
           <Button
-            icon={faTrashAlt}
+            // icon={faTrashAlt}
             hoverType={HOVER_TYPE.BACKGROUND_COLOR}
             onClick={deleteToDoList}
-            styles={btnLargeStyles}
-          />
+            styles={deleteBtnStyles}
+            noBorder
+          >
+            삭제
+          </Button>
           <CreatedAt>{moment(createdAt).format('YYYY-MM-DD')}</CreatedAt>
-          <ListEditMenu
-            handleDeleteMany={deleteManyToDo}
-            page="notEditToDoList"
-          />
+          <ListEditMenu handleDeleteMany={deleteManyToDo} page="toDoList" />
         </CalendarContainer>
       }
       edit={
-        isPreviousToDo() ? (
-          <EditContainer isPreviousToDo={isPreviousToDo()}>
+        isPreviousToDo() ? null : (
+          <EditContainer>
             <Input
               type="text"
               maxLength="100"
@@ -104,12 +93,12 @@ const ToDoList = ({
             <Button
               hoverType={HOVER_TYPE.BACKGROUND_COLOR}
               onClick={() => createToDo(titleRef)}
-              styles={btnPlusStyles}
+              styles={createBtnStyles}
             >
               추가
             </Button>
           </EditContainer>
-        ) : null
+        )
       }
     >
       {children}
@@ -119,10 +108,10 @@ const ToDoList = ({
 
 ToDoList.propTypes = {
   createdAt: PropTypes.string,
-
+  isPreviousToDo: PropTypes.func.isRequired,
   createToDo: PropTypes.func.isRequired,
   deleteManyToDo: PropTypes.func.isRequired,
-  isPreviousToDo: PropTypes.func.isRequired,
+  deleteToDoList: PropTypes.func.isRequired,
 };
 ToDoList.defaultProps = {
   createdAt: undefined,

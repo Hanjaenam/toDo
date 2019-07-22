@@ -6,7 +6,7 @@ import {
 } from 'store/Common/ListEditMenu';
 import ListEditMenu from './ListEditMenu';
 
-const ListEditMenuContainer = ({ handleDeleteMany, page }) => {
+const ListEditMenuContainer = ({ handleDeleteMany }) => {
   const { isEditMode, isMultiMode } = useListEditMenuValues();
   const { setEditMode, toggleMultiMode, initMode } = useListEditMenuFns();
   return (
@@ -17,15 +17,11 @@ const ListEditMenuContainer = ({ handleDeleteMany, page }) => {
       toggleMultiMode={toggleMultiMode}
       initMode={initMode}
       handleDeleteMany={handleDeleteMany}
-      page={page}
     />
   );
 };
 ListEditMenuContainer.propTypes = {
   handleDeleteMany: PropTypes.func.isRequired,
-  page: PropTypes.string,
 };
-ListEditMenuContainer.defaultProps = {
-  page: undefined,
-};
+
 export default ListEditMenuContainer;

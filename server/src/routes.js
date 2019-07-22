@@ -27,6 +27,7 @@ const LOGIN = '/logIn';
 const REGISTER = '/register';
 
 const ME = '/me';
+const LOG_OUT = '/logOut';
 const USER = '/user';
 const PROJECT = '/project';
 const TO_DO_LIST = '/toDoList';
@@ -37,7 +38,6 @@ const READ = '/read';
 const CREATE = '/create';
 const DELETE = '/delete';
 const PATCH = '/patch';
-const SEARCH = '/search';
 
 const PARAMS_ID = '/:id';
 const PARAMS_TITLE = '/:title';
@@ -51,6 +51,7 @@ export default {
   register: REGISTER,
   // user
   me: ME,
+  logOut: LOG_OUT,
   user: USER,
   // db
   project: PROJECT,
@@ -62,7 +63,6 @@ export default {
   create: CREATE,
   delete: DELETE,
   patch: PATCH,
-  search: SEARCH,
   paramsId: PARAMS_ID,
   paramsTitle: PARAMS_TITLE,
 };

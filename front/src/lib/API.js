@@ -24,3 +24,12 @@ export const projectAPI = {
     });
   },
 };
+
+export const userAPI = {
+  logOut: () => {
+    return axios({
+      url: `/me/logOut`,
+      method: 'GET',
+    });
+  },
+};

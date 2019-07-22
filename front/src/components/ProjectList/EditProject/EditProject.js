@@ -22,7 +22,7 @@ const Container = styled.div`
 const ButtonStyles = css`
   box-sizing: border-box;
   background-color: white;
-  border: 1px solid ${props => props.theme.BORDER.NOT_FOCUS};
+  border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
   padding: ${props => props.theme.GAP.MEDIUM};
   font-size: 1rem;
 `;

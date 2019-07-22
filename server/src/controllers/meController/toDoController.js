@@ -1,5 +1,6 @@
 import Project from 'models/Project';
 import ToDo from 'models/ToDo';
+import config from 'config';
 
 export const readOne = async (req, res) => {
   const {
@@ -7,15 +8,17 @@ export const readOne = async (req, res) => {
     query: { page },
   } = req;
   try {
-    const { memo } = await ToDo.findById(toDoId).populate({
-      path: 'memo',
-      options: {
-        sort: { createdAt: -1 },
-        limit: 10,
-        skip: (page - 1) * 10,
-      },
-      populate: { path: 'creator', select: 'email nick' },
-    });
+    const { memo } = await ToDo.findById(toDoId)
+      .populate({
+        path: 'memo',
+        options: {
+          sort: { createdAt: -1 },
+          limit: config.PAGE.LIMIT,
+          skip: (page - 1) * config.PAGE.LIMIT,
+        },
+        populate: { path: 'creator', select: 'email nick' },
+      })
+      .lean();
     return res.json(memo);
   } catch (err) {
     console.log(err);
@@ -34,12 +37,11 @@ export const create = async (req, res) => {
     // title, memo, createdAt
     body,
   } = req;
-  console.log(body);
   try {
     const project = await Project.findOne({
       _id: projectId,
       creator: req.user._id,
-    });
+    }).lean();
     // 찾은 project가 없을 시 project === null
     if (!project) {
       return res.status(400).end();
@@ -137,7 +139,7 @@ export const patch = async (req, res) => {
       { _id: toDoId, creator: req.user._id },
       body,
       { new: true },
-    );
+    ).lean();
     return res.json(toDo);
   } catch (err) {
     console.log(err);

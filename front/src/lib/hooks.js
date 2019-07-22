@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import CONFIG from 'config';
+import moment from 'moment';
 
 export const useStatus = () => {
   const [status, setStatus] = useState({
@@ -15,14 +16,14 @@ export const useStatus = () => {
   };
 };
 
-export const useChangeTitleMode = ({ isEditMode, isMultiMode }) => {
-  const [titleChangeMode, setTitleChangeMode] = useState(false);
+export const useTextChangeMode = ({ isEditMode, isMultiMode }) => {
+  const [textChangeMode, setTextChangeMode] = useState(false);
   useEffect(() => {
-    if ((!isEditMode && titleChangeMode) || isMultiMode) {
-      setTitleChangeMode(false);
+    if ((!isEditMode && textChangeMode) || isMultiMode) {
+      setTextChangeMode(false);
     }
   }, [isEditMode, isMultiMode]);
-  return { titleChangeMode, setTitleChangeMode };
+  return { textChangeMode, setTextChangeMode };
 };
 
 export const useToDoMemo = ({ isEditMode }) => {
@@ -64,7 +65,7 @@ export const useMouseEnterEdit = ({ ref }) => {
 export const useOnlyPublic = ({ user, history }) => {
   const [startRender, setStartRender] = useState(false);
   useEffect(() => {
-    if (user) history.replace(CONFIG.HOME_URL);
+    if (user) history.replace(`/me/project?${CONFIG.HOME_INIT_QUERY}`);
     else setStartRender(true);
   }, [user]);
   return startRender;
@@ -93,4 +94,46 @@ export const usePage = () => {
     }
   };
   return { page, setPage, init };
+};
+
+export const useSelectedDay = ({ detailProject }) => {
+  const [selectedDay, setSelectedDay] = useState();
+  const isExistedDate = () =>
+    detailProject
+      .filter(
+        ({ _id }) =>
+          Number(moment().format('YYYYMMDD')) <= Number(_id.replace(/-/g, '')),
+      )
+      .sort((a, b) => (a._id > b._id ? 1 : -1))
+      .filter(
+        ({ _id }, idx) =>
+          moment()
+            .add(idx, 'days')
+            .format('YYYY-MM-DD') === _id,
+      )
+      .map(data => moment(data._id)._d);
+  const initDay = () => {
+    const arr = isExistedDate();
+    if (arr.length === 0) {
+      return setSelectedDay(moment()._d);
+    }
+    return setSelectedDay(moment(arr[arr.length - 1]).add(1, 'days')._d);
+  };
+  useEffect(() => {
+    initDay();
+  }, [detailProject]);
+  return { selectedDay, setSelectedDay, isExistedDate };
+};
+
+export const useProjectData = ({
+  title = '',
+  isPublic = true,
+  importance = 1,
+} = {}) => {
+  const [data, setData] = useState({
+    title,
+    isPublic,
+    importance,
+  });
+  return { data, setData };
 };

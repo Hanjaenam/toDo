@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Helmet from 'react-helmet';
 import ProjectListComponent from 'components/ProjectList';
-import HeaderComponent from 'components/Common/Header';
+import Header from 'components/Common/Header';
 import { useStatus, useOnlyPrivate, usePage } from 'lib/hooks';
 import { projectAPI } from 'lib/API';
 import ProjectListProvider from 'store/ProjectList';
 import { useUser } from 'store/User';
+import PageTemplate from 'components/Common/PageTemplate';
+import CONFIG from 'config';
 
 const ProjectListPage = ({ history, location }) => {
   const user = useUser();
@@ -13,6 +14,7 @@ const ProjectListPage = ({ history, location }) => {
   const [projectList, setProjectList] = useState();
   const [expandSearch, setExpandSearch] = useState(false);
   const { page, setPage, init } = usePage();
+  const [query, setQuery] = useState(CONFIG.HOME_INIT_QUERY);
   const {
     error,
     fns: { failure },
@@ -32,27 +34,29 @@ const ProjectListPage = ({ history, location }) => {
       })
       .catch(err => failure(err));
   }, [userExisted, location.search]);
+  useEffect(() => {
+    if (query === CONFIG.HOME_INIT_QUERY) return;
+    history.push(`/me/project?${query}`);
+  }, [query]);
   return (
-    <>
-      <Helmet>
-        <title>할 일 묵록</title>
-      </Helmet>
+    <PageTemplate title="할 일 묵록" header={<Header history={history} />}>
       <ProjectListProvider
         value={{
           projectList,
           expandSearch,
           page,
+          query,
           fns: {
             setProjectList,
             setExpandSearch,
             setPage,
+            setQuery,
           },
         }}
       >
-        <HeaderComponent />
-        {projectList === undefined || error ? null : <ProjectListComponent />}
+        {projectList === undefined || error || <ProjectListComponent />}
       </ProjectListProvider>
-    </>
+    </PageTemplate>
   );
 };
 export default ProjectListPage;

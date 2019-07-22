@@ -1,14 +1,15 @@
 import mongoose from 'mongoose';
 import ToDo from 'models/ToDo';
+import moment from 'moment';
 
 export const MemoSchema = mongoose.Schema({
-  creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   content: { type: String },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: moment.now(),
     required: true,
   },
+  creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   toDo: { type: mongoose.Schema.Types.ObjectId, ref: 'ToDo' },
 });
 

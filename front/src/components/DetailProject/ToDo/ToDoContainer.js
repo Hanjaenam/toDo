@@ -13,8 +13,8 @@ import ToDo from './ToDo';
 const ToDoContainer = ({ data, edit }) => {
   const { isEditMode, isMultiMode } = useListEditMenuValues();
   const { addOrRemoveIdToDelete, isSelected } = useListEditMenuFns();
-  const { titleChangeMode, showToDoMemo } = useEditMenuValues();
-  const { setTitleChangeMode, toggleShowToDoMemo } = useEditMenuFns();
+  const { textChangeMode, showToDoMemo } = useEditMenuValues();
+  const { setTextChangeMode, toggleShowToDoMemo } = useEditMenuFns();
   const { setToDoList } = useToDoListFns();
   const handleClick = () => {
     if (!edit && !isEditMode) {
@@ -53,7 +53,7 @@ const ToDoContainer = ({ data, edit }) => {
     const _data = { title: titleRef.current.value };
     if (edit) {
       setToDoList(patch(data._id, _data));
-      setTitleChangeMode(false);
+      setTextChangeMode(false);
     } else {
       axios({
         url: `/me/toDo/patch/${data._id}`,
@@ -64,7 +64,7 @@ const ToDoContainer = ({ data, edit }) => {
           setToDoList(patch(data._id, res.data));
         })
         .finally(() => {
-          setTitleChangeMode(false);
+          setTextChangeMode(false);
         });
     }
   };
@@ -77,8 +77,8 @@ const ToDoContainer = ({ data, edit }) => {
       handleClick={handleClick}
       deleteToDo={deleteToDo}
       patchToDo={patchToDo}
-      titleChangeMode={titleChangeMode}
-      setTitleChangeMode={setTitleChangeMode}
+      textChangeMode={textChangeMode}
+      setTextChangeMode={setTextChangeMode}
       showToDoMemo={showToDoMemo}
       toggleShowToDoMemo={toggleShowToDoMemo}
     />

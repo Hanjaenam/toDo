@@ -6,14 +6,15 @@ import Search from './Search';
 
 const SearchContainer = ({ location: { search }, history }) => {
   const { expandSearch } = useProjectListValues();
-  const { setExpandSearch } = useProjectListFns();
+  const { setExpandSearch, setQuery } = useProjectListFns();
   const searchProject = e => {
     const {
       target: { value },
     } = e;
     const parsed = queryString.parse(search);
     parsed.q = value;
-    history.push(`/me/project?${queryString.stringify(parsed)}`);
+    setQuery(queryString.stringify(parsed));
+    // history.push(`/me/project?${queryString.stringify(parsed)}`);
   };
   const handleFocus = () => {
     setExpandSearch(true);
@@ -32,8 +33,3 @@ const SearchContainer = ({ location: { search }, history }) => {
 };
 
 export default withRouter(SearchContainer);
-
-// setSearchProject({
-//   regex: value,
-//   result: projectList.filter(project => regex.test(project.title)),
-// });

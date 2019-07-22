@@ -9,10 +9,13 @@ const Btn = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 1rem;
   ${props =>
-    props.disabled
-      ? null
-      : hover({ type: props.hoverType, ...props.hoverOpts })}
+    hover({
+      type: props.hoverType,
+      ...props.hoverOpts,
+      disabled: props.disabled,
+    })}
   ${props => props.styles};
 `;
 
@@ -60,7 +63,7 @@ Button.defaultProps = {
   hoverType: undefined,
   styles: undefined,
   hoverOpts: undefined,
-  onClick: () => console.log('not defined onClick'),
+  onClick: undefined,
   disabled: undefined,
 };
 export default Button;
