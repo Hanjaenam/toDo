@@ -1,9 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import Title from 'components/Common/Text';
 import Button from 'components/Common/Button';
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Star from 'components/Common/Star';
 import { HOVER_TYPE, hover } from 'styles/mixins';
 
@@ -13,42 +13,38 @@ const Container = styled.div`
   border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
   background-color: white;
   overflow: hidden;
+  ${props => props.styles}
 `;
 
 const ProjectContainer = styled.div`
   display: grid;
-  grid-template-columns: 0.7fr 1.6fr 0.7fr;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: 0.75fr 1.5fr 0.75fr;
+  padding: ${props => props.theme.GAP.SMALL} 0;
   > div {
     display: flex;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
   }
-  > div:first-child {
-    margin: 0;
-    padding: 0;
-    padding: ${props => props.theme.GAP.MEDIUM};
-  }
-
   border-bottom: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
 `;
-
-const PublicContainer = styled.div``;
+const LockBtnContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${props => props.theme.GAP.MEDIUM};
+  border-radius: ${props => props.theme.RADIUS};
+  ${props =>
+    hover({ type: HOVER_TYPE.BACKGROUND_COLOR, disabled: !props.isEditMode })}
+  p {
+    text-indent: ${props => props.theme.GAP.SMALL};
+  }
+`;
 
 const lockBtnStyles = css`
   font-size: 1.3rem;
-  border-radius: ${props => props.theme.RADIUS};
-  ${props =>
-    props.isEditMode
-      ? css`
-          ${hover({ type: HOVER_TYPE.BACKGROUND_COLOR })}
-          padding:${props.theme.GAP.SMALL};
-          border:1px solid ${props.theme.COLOR.NOT_FOCUSED.BORDER()};
-          &:hover {
-            color: white;
-          }
-        `
-      : null}
 `;
 
 const EditContainer = styled.div`
@@ -63,39 +59,80 @@ const buttonStyles = css`
   }
 `;
 
-const EditProject = ({ project, isEditMode, setEditMode, setProject }) => (
-  <Container>
+const starStyles = css`
+  font-size: 1.3rem;
+  padding: ${props => props.theme.GAP.MEDIUM};
+`;
+
+const EditProject = ({
+  project,
+  deleteProject,
+  patchData,
+  setPatchData,
+  patchProject,
+  setTitle,
+  styles,
+  init,
+}) => (
+  <Container styles={styles}>
     <ProjectContainer>
-      <PublicContainer
-        onClick={() => setProject(s => ({ ...s, isPublic: !project.isPublic }))}
+      <LockBtnContainer
+        lockIcon
+        isEditMode={patchData.isEditMode}
+        onClick={
+          patchData.isEditMode
+            ? () => setPatchData(s => ({ ...s, isPublic: !patchData.isPublic }))
+            : undefined
+        }
       >
         <Button
-          icon={project.isPublic ? faLockOpen : faLock}
-          isEditMode={isEditMode}
+          icon={patchData.isPublic ? faLockOpen : faLock}
           styles={lockBtnStyles}
         />
-      </PublicContainer>
-      <Title textChangeMode={isEditMode} hideIcon>
+        <p>{patchData.isPublic ? '공개' : '비공개'}</p>
+      </LockBtnContainer>
+      <Title textChangeMode={patchData.isEditMode} hideIcon setText={setTitle}>
         {project.title}
       </Title>
       <Star
-        importance={project.importance}
-        isEditMode={isEditMode}
-        onConfirm={importance => setProject(s => ({ ...s, importance }))}
+        isEditMode={patchData.isEditMode}
+        importance={patchData.importance}
+        styles={starStyles}
+        setImportance={importance => setPatchData(s => ({ ...s, importance }))}
       />
     </ProjectContainer>
     <EditContainer>
-      <Button hoverType={HOVER_TYPE.BACKGROUND_COLOR} styles={buttonStyles}>
-        {isEditMode ? '확인' : '삭제'}
+      <Button
+        hoverType={HOVER_TYPE.BACKGROUND_COLOR}
+        styles={buttonStyles}
+        onClick={patchData.isEditMode ? patchProject : deleteProject}
+        hoverOpts={{ noBorder: true }}
+      >
+        {patchData.isEditMode ? '확인' : '삭제'}
       </Button>
       <Button
         hoverType={HOVER_TYPE.BACKGROUND_COLOR}
         styles={buttonStyles}
-        onClick={() => (isEditMode ? setEditMode(false) : setEditMode(true))}
+        onClick={
+          patchData.isEditMode
+            ? init
+            : () => setPatchData(s => ({ ...s, isEditMode: true }))
+        }
+        hoverOpts={{ noBorder: true }}
       >
-        {isEditMode ? '취소' : '수정'}
+        {patchData.isEditMode ? '취소' : '수정'}
       </Button>
     </EditContainer>
   </Container>
 );
+
+EditProject.propTypes = {
+  project: PropTypes.shape({}).isRequired,
+  isEditMode: PropTypes.bool.isRequired,
+  setEditMode: PropTypes.func.isRequired,
+  deleteProject: PropTypes.func.isRequired,
+  patchData: PropTypes.shape({}).isRequired,
+  setPatchData: PropTypes.func.isRequired,
+  patchProject: PropTypes.func.isRequired,
+};
 export default EditProject;

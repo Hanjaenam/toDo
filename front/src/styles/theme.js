@@ -18,6 +18,7 @@ export default {
       `rgba(${253 + add - minus}, ${216 + add - minus}, ${53 +
         add -
         minus}, ${alpha})`,
+    PROJECT_DATE: 'rgba(47, 60, 61, 1);',
   },
   TRANSITION: '0.3s',
   RADIUS: '5px',
@@ -44,3 +45,5 @@ export default {
     LOGIN_TEMPLATE: '0 0 4px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23)',
   },
 };
+
+// 45

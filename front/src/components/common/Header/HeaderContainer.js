@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import CONFIG from 'config';
 import { useUser, useFns } from 'store/User';
 import { userAPI } from 'lib/API';
@@ -23,4 +24,4 @@ const HeaderContainer = ({ children, history }) => {
     </Header>
   );
 };
-export default HeaderContainer;
+export default withRouter(HeaderContainer);

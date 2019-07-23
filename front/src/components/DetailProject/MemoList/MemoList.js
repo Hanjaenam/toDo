@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { HOVER_TYPE } from 'styles/mixins';
+import { HOVER_TYPE, memoBackgroundColor } from 'styles/mixins';
 import Button from 'components/Common/Button';
 
 const Container = styled.div`
@@ -19,53 +19,7 @@ const Textarea = styled.textarea`
   padding: ${props => props.theme.GAP.SMALL};
   padding-right: 25px;
   word-break: break-all;
-  background: #ffffa5; /* Old browsers */
-  background: -moz-linear-gradient(
-    -45deg,
-    #ffffa5 81%,
-    #ffffa5 82%,
-    #ffffa5 82%,
-    #ffffc6 100%
-  ); /* FF3.6+ */
-  background: -webkit-gradient(
-    linear,
-    left top,
-    right bottom,
-    color-stop(81%, #ffffa5),
-    color-stop(82%, #ffffa5),
-    color-stop(82%, #ffffa5),
-    color-stop(100%, #ffffc6)
-  ); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(
-    -45deg,
-    #ffffa5 81%,
-    #ffffa5 82%,
-    #ffffa5 82%,
-    #ffffc6 100%
-  ); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(
-    -45deg,
-    #ffffa5 81%,
-    #ffffa5 82%,
-    #ffffa5 82%,
-    #ffffc6 100%
-  ); /* Opera 11.10+ */
-  background: -ms-linear-gradient(
-    -45deg,
-    #ffffa5 81%,
-    #ffffa5 82%,
-    #ffffa5 82%,
-    #ffffc6 100%
-  ); /* IE10+ */
-  background: linear-gradient(
-    135deg,
-    #ffffa5 81%,
-    #ffffa5 82%,
-    #ffffa5 82%,
-    #ffffc6 100%
-  ); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFA5', endColorstr='#ffffc6',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-  border: 1px solid #e8e8e8;
+  ${memoBackgroundColor}
 `;
 
 const buttonStyles = css`

@@ -13,8 +13,8 @@ const Btn = styled.button`
   ${props =>
     hover({
       type: props.hoverType,
-      ...props.hoverOpts,
       disabled: props.disabled,
+      ...props.hoverOpts,
     })}
   ${props => props.styles};
 `;
@@ -28,6 +28,10 @@ const Icon = styled(FontAwesomeIcon)`
       : null}
 `;
 
+const Text = styled.p`
+  color: ${props => (props.header ? 'white' : props.theme.COLOR.PRIMARY())};
+`;
+
 const Button = ({
   children,
   icon,
@@ -36,6 +40,7 @@ const Button = ({
   hoverOpts,
   onClick,
   disabled,
+  header,
   ...rest
 }) => (
   <Btn
@@ -46,7 +51,7 @@ const Button = ({
     onClick={disabled ? null : onClick}
     disabled={disabled}
   >
-    <p text={children}>{icon ? <Icon icon={icon} /> : children}</p>
+    <Text header={header}> {icon ? <Icon icon={icon} /> : children}</Text>
   </Btn>
 );
 

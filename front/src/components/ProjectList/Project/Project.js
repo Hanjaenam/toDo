@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import Title from 'components/Common/Text';
 import moment from 'moment';
-import Star from '../../Common/Star';
+import Star from 'components/Common/Star';
 
 const Container = styled.div`
   background-color: white;
-  padding: ${props => props.theme.GAP.MEDIUM};
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: 1fr auto;
+  padding: ${props => props.theme.GAP.MEDIUM} ${props => props.theme.GAP.LARGE};
+  display: flex;
   flex: 1;
   box-sizing: border-box;
   border-radius: ${props => props.theme.RADIUS};
@@ -28,20 +28,41 @@ const Container = styled.div`
   }
 `;
 
+const StarDataContainer = styled.div`
+  > div:first-child {
+    margin-bottom: ${props => props.theme.GAP.SMALL};
+  }
+  text-align: center;
+`;
+
 const Date = styled.p`
   font-style: italic;
   font-size: 0.8rem;
+  color: ${props => props.theme.COLOR.PRIMARY()};
 `;
 
 const titleStyles = css`
   grid-row: 1 / span 2;
 `;
 
+const PublicIconContainer = styled.p`
+  font-size: 1.2rem;
+`;
+
+const starStyles = css`
+  font-size: 1.2rem;
+`;
+
 const Project = ({ data, handleClick }) => (
   <Container onClick={handleClick}>
+    <PublicIconContainer>
+      <FontAwesomeIcon icon={data.isPublic ? faLockOpen : faLock} />
+    </PublicIconContainer>
     <Title styles={titleStyles}>{data.title}</Title>
-    <Star importance={data.importance} />
-    <Date>{moment(data.createdAt).format('YYYY-MM-DD')}</Date>
+    <StarDataContainer>
+      <Star importance={data.importance} styles={starStyles} />
+      <Date>{moment(data.createdAt).format('YYYY-MM-DD')}</Date>
+    </StarDataContainer>
   </Container>
 );
 

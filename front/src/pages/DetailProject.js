@@ -8,17 +8,6 @@ import DetailProjectProvider from 'store/DetailProject';
 import { useUser } from 'store/User';
 import PageTemplate from 'components/Common/PageTemplate';
 
-// const Title = styled.span`
-//   font-size: 1rem;
-//   font-weight: 500;
-//   user-select: none;
-//   color: white;
-//   padding: ${props => props.theme.GAP.MEDIUM};
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-// `;
-
 const DetailProjectPage = ({
   match: {
     params: { id },
@@ -27,15 +16,15 @@ const DetailProjectPage = ({
 }) => {
   const user = useUser();
   const userExisted = useOnlyPrivate({ user, history });
-  const [project, setProject] = useState();
-  const [detailProject, setDetailProject] = useState();
+  const [project, setProject] = useState(null);
+  const [toDoListByDate, setToDoListByDate] = useState(null);
   const {
     error,
     fns: { failure },
   } = useStatus();
   useEffect(() => {
     if (!userExisted) return;
-    if (!detailProject === undefined) return;
+    if (!toDoListByDate === null) return;
     axios({
       url: `/me/project/${id}?page=1`,
       method: 'get',
@@ -43,17 +32,17 @@ const DetailProjectPage = ({
       .then(res => {
         const { data } = res;
         setProject(data.project);
-        setDetailProject(data.toDoListByDate);
+        setToDoListByDate(data.toDoListByDate);
       })
       .catch(err => failure(err));
   }, [userExisted]);
-  return detailProject === undefined || error ? null : (
-    <PageTemplate title={project.title} header={<Header history={history} />}>
+  return toDoListByDate === null || error ? null : (
+    <PageTemplate title={project.title} header={<Header />}>
       <DetailProjectProvider
         value={{
-          detailProject,
+          toDoListByDate,
           project,
-          fns: { setDetailProject, setProject },
+          fns: { setToDoListByDate, setProject },
         }}
       >
         <DetailProject />

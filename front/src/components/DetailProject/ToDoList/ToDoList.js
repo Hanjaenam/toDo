@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import ToDoListTemplate from 'components/DetailProject/ToDoListTemplate';
 import { inputCss, HOVER_TYPE } from 'styles/mixins';
 import 'react-day-picker/lib/style.css';
-import ListEditMenu from 'components/Common/ListEditMenu';
+import ListEditMenu from 'components/DetailProject/ListEditMenu';
 import Button from 'components/Common/Button';
 import moment from 'moment';
 
@@ -21,11 +21,12 @@ const CreatedAt = styled.span`
   text-align: center;
   padding: ${props => props.theme.GAP.ONE};
   user-select: none;
+  color: ${props => props.theme.COLOR.PRIMARY()};
 `;
 
 const EditContainer = styled.div`
   flex: 1;
-  margin: ${props => props.theme.GAP.MEDIUM};
+  /* margin: ${props => props.theme.GAP.MEDIUM}; */
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: 1fr;
@@ -43,6 +44,9 @@ const deleteBtnStyles = css`
   border-radius: 0;
   border-right: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
   border-top-left-radius: ${props => props.theme.RADIUS};
+  border-bottom: 0;
+  border-left: 0;
+  border-top: 0;
 `;
 
 const createBtnStyles = css`
@@ -64,7 +68,6 @@ const ToDoList = ({
       calendar={
         <CalendarContainer>
           <Button
-            // icon={faTrashAlt}
             hoverType={HOVER_TYPE.BACKGROUND_COLOR}
             onClick={deleteToDoList}
             styles={deleteBtnStyles}
@@ -73,7 +76,7 @@ const ToDoList = ({
             삭제
           </Button>
           <CreatedAt>{moment(createdAt).format('YYYY-MM-DD')}</CreatedAt>
-          <ListEditMenu handleDeleteMany={deleteManyToDo} page="toDoList" />
+          <ListEditMenu handleDeleteMany={deleteManyToDo} />
         </CalendarContainer>
       }
       edit={

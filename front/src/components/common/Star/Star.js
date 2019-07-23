@@ -1,70 +1,87 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import Button from 'components/Common/Button';
-import { HOVER_TYPE } from 'styles/mixins';
 
 const Container = styled.div`
-  /* grid-column: 2; */
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: ${props => props.theme.RADIUS};
+  overflow: hidden;
+  ${props =>
+    props.isEditMode
+      ? css`
+          border: 1px solid ${props.theme.COLOR.NOT_FOCUSED.BORDER()};
+        `
+      : null}
 `;
 
 const btnStyles = css`
-  color: ${props => props.theme.COLOR.STAR()};
-  padding: ${props => props.theme.GAP.TINY};
-  & + & {
-    margin-left: ${props => props.theme.GAP.TINY};
+  > p {
+    color: ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
   }
-  font-size: 1.4rem;
-  transition: ${props => props.theme.TRANSITION};
-  border-radius: ${props => props.theme.RADIUS};
-  &.edit {
-    border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
-    cursor: pointer;
-    &:active {
+  &.yellow {
+    > p {
+      color: ${props => props.theme.COLOR.STAR()} !important;
     }
-    ${props => {
-      if (props.editYellow) {
-        return css`
-          color: ${props.theme.COLOR.STAR()};
-          border-color: ${props.theme.COLOR.PRIMARY()};
-        `;
-      }
-      return css`
-        color: ${props.theme.COLOR.NOT_FOCUSED.BORDER()};
-      `;
-    }}
+  }
+  &.edit {
+    cursor: pointer;
   }
 `;
 const Star = ({
   importance,
+  hoverImportance,
   isEditMode,
-  styles = [],
+  styles,
   handleMouseEnter,
   handleMouseLeave,
-  changeImportance,
-  onConfirm,
+  setImportance,
 }) => {
+  const getYellow = idx => {
+    if (isEditMode) {
+      return hoverImportance > idx ? 'yellow' : '';
+    }
+    return importance > idx ? 'yellow' : '';
+  };
   return (
-    <Container>
+    <Container isEditMode={isEditMode}>
       {new Array(isEditMode ? 3 : importance).fill('').map((_, idx) => (
         <Button
           key={`star${idx}`}
-          hoverType={HOVER_TYPE.COLOR}
-          className={isEditMode ? 'edit' : ''}
+          className={`${isEditMode ? 'edit' : ''} ${getYellow(idx)}`}
           icon={faStar}
-          editYellow={changeImportance > idx}
+          styles={[...btnStyles, ...styles]}
           onMouseEnter={() => handleMouseEnter(idx)}
           onMouseLeave={handleMouseLeave}
-          onClick={() => {
-            onConfirm(idx + 1);
-          }}
-          styles={[...btnStyles, ...styles]}
+          onClick={
+            isEditMode
+              ? () => {
+                  setImportance(idx + 1);
+                }
+              : undefined
+          }
         />
       ))}
     </Container>
   );
+};
+
+Star.propTypes = {
+  importance: PropTypes.number.isRequired,
+  styles: PropTypes.array,
+  hoverImportance: PropTypes.number.isRequired,
+  isEditMode: PropTypes.bool,
+  handleMouseEnter: PropTypes.func.isRequired,
+  handleMouseLeave: PropTypes.func.isRequired,
+  setImportance: PropTypes.func,
+};
+
+Star.defaultProps = {
+  styles: [],
+  isEditMode: undefined,
+  setImportance: undefined,
 };
 export default Star;

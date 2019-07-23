@@ -1,37 +1,35 @@
-import React from 'react';
-// import { unshift } from 'lib/manuArrData';
-import axios from 'axios';
-import { useProjectData } from 'lib/hooks';
+import React, { useState } from 'react';
+import { projectAPI } from 'lib/API';
 import CreateProject from './CreateProject';
 
 const CreateProjectContainer = ({ history }) => {
-  const { data, setData } = useProjectData();
+  const [project, setProject] = useState({
+    title: '',
+    isPublic: true,
+    importance: 1,
+  });
   const createProject = () => {
-    if (!data.title) return;
-    axios({
-      url: '/me/project/create',
-      method: 'post',
-      data,
-    }).then(res => {
+    if (!project.title) return;
+    projectAPI.create({ data: project }).then(res => {
       history.replace(`/me/project/${res.data._id}`);
     });
+  };
+  const cancelCreate = () => {
+    history.goBack();
   };
   const handleKeyUp = e => {
     const {
       target: { value: title },
     } = e;
-    setData(s => ({ ...s, title }));
+    setProject(s => ({ ...s, title }));
     if (e.keyCode === 13) {
       createProject();
     }
   };
-  const cancelCreate = () => {
-    history.goBack();
-  };
   return (
     <CreateProject
-      data={data}
-      setData={setData}
+      project={project}
+      setProject={setProject}
       handleKeyUp={handleKeyUp}
       createProject={createProject}
       cancelCreate={cancelCreate}

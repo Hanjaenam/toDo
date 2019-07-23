@@ -51,10 +51,12 @@ const Header = ({ children, goHome, user, logOut }) => (
         hoverType={HOVER_TYPE.COLOR}
         styles={LogoIconStyles}
         onClick={goHome}
+        header
       />
       <ChildrenContainer>{children}</ChildrenContainer>
       {user ? (
         <Button
+          header
           hoverType={HOVER_TYPE.BACKGROUND_COLOR}
           styles={logoutBtnStyles}
           onClick={logOut}

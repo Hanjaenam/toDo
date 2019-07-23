@@ -11,7 +11,6 @@ const Container = styled.div`
   ${props => props.styles}
 `;
 const Input = styled.input`
-  all: unset;
   box-sizing: border-box;
   padding: ${props => props.theme.GAP.MEDIUM};
   cursor: auto;
@@ -28,8 +27,9 @@ const Data = styled.p`
   box-sizing: border-box;
   border: 2px solid transparent;
   padding: ${props => props.theme.GAP.MEDIUM};
-  /* padding-left: ${props => props.theme.GAP.SMALL}; */
+  padding-left: ${props => props.theme.GAP.SMALL};
   word-break: break-all;
+  color: ${props => props.theme.COLOR.PRIMARY()};
 `;
 const buttonStyles = css`
   position: absolute;
@@ -45,10 +45,12 @@ const Text = ({
   children,
   textChangeMode,
   handlePatch,
+  handleKeyUp,
   inputAs,
   isValid,
   hideIcon,
   styles,
+  handleChange,
 }) => {
   const textRef = useRef();
   return (
@@ -60,12 +62,17 @@ const Text = ({
             defaultValue={children}
             autoFocus
             ref={textRef}
-            onKeyUp={e => {
-              if (!isValid(textRef)) return;
-              if (e.keyCode === 13) {
-                handlePatch(textRef);
-              }
-            }}
+            onKeyUp={
+              handlePatch
+                ? e => {
+                    if (!isValid(textRef)) return;
+                    if (e.keyCode === 13) {
+                      handlePatch(textRef);
+                    }
+                  }
+                : handleKeyUp
+            }
+            onChange={handleChange}
           />
           {hideIcon ? null : (
             <Button
@@ -88,12 +95,16 @@ const Text = ({
 Text.propTypes = {
   textChangeMode: PropTypes.bool,
   handlePatch: PropTypes.func,
+  handleKeyUp: PropTypes.func,
   isValid: PropTypes.func.isRequired,
   inputAs: PropTypes.string,
+  hideIcon: PropTypes.bool,
 };
 Text.defaultProps = {
   textChangeMode: undefined,
   handlePatch: undefined,
+  handleKeyUp: undefined,
   inputAs: undefined,
+  hideIcon: undefined,
 };
 export default Text;

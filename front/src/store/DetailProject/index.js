@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 
 export const DetailProjectContext = createContext();
+
 export const useDetailProjectValues = () => {
   const { fns, ...values } = useContext(DetailProjectContext);
   return values;

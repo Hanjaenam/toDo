@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -9,10 +9,15 @@ import {
 import { unshift, deleteMany } from 'lib/manuArrData';
 import ToDo from 'components/DetailProject/ToDo';
 import moment from 'moment';
-import { useListEditMenuValues } from 'store/Common/ListEditMenu';
-import EditMenuProvider from 'store/Common/EditMenu';
-import ToDoListProvider from 'store/ToDoList';
+import {
+  useListEditMenuValues,
+  useListEditMenuFns,
+} from 'store/DetailProject/ListEditMenu';
+import EditMenuProvider from 'store/DetailProject/EditMenu';
+import ToDoListProvider from 'store/DetailProject/ToDoList';
 import { useSelectedDay } from 'lib/hooks';
+import { generateId } from 'lib/etc';
+import ToDoProvider from 'store/DetailProject/ToDo';
 import EditToDoList from './EditToDoList';
 
 const ToDoListContainer = ({
@@ -21,24 +26,35 @@ const ToDoListContainer = ({
   },
 }) => {
   const [toDoList, setToDoList] = useState([]);
-  const { setDetailProject } = useDetailProjectFns();
-  const { detailProject } = useDetailProjectValues();
-  const { idsToDelete } = useListEditMenuValues();
-  const { selectedDay, setSelectedDay } = useSelectedDay({
-    detailProject,
+  const [toDoData, setToDoData] = useState({
+    _id: generateId(),
+    title: '',
+    importance: 1,
+    order: undefined,
   });
-  const generateId = () =>
-    Math.random()
-      .toString(36)
-      .substr(2, 9);
-  const createToDo = titleRef => {
-    if (!titleRef.current || !titleRef.current.value) return;
-    const data = {
-      title: titleRef.current.value,
-    };
-    data._id = generateId();
-    setToDoList(unshift(data));
-    titleRef.current.value = '';
+  const { setToDoListByDate } = useDetailProjectFns();
+  const { toDoListByDate } = useDetailProjectValues();
+  const { idsToDelete, isEditMode } = useListEditMenuValues();
+  const { initMode } = useListEditMenuFns();
+  const { selectedDay, setSelectedDay } = useSelectedDay({
+    toDoListByDate,
+  });
+  useEffect(() => {
+    if (toDoList.length === 0 && isEditMode) {
+      initMode();
+    }
+  }, [toDoList.length]);
+  const initToDo = () =>
+    setToDoData({
+      id: generateId(),
+      title: '',
+      importance: 1,
+      order: undefined,
+    });
+  const createToDo = () => {
+    if (toDoData.title === '') return;
+    setToDoList(unshift(toDoData));
+    initToDo();
   };
   const deleteManyToDo = () => {
     if (idsToDelete.length === 0) return;
@@ -69,18 +85,30 @@ const ToDoListContainer = ({
           _id: moment(res.data[0].createdAt).format('YYYY-MM-DD'),
           toDoList: res.data,
         };
-        setDetailProject(unshift(data));
+        setToDoListByDate(unshift(data));
       })
       .finally(() => {
         setToDoList([]);
       });
   };
-
+  const handleKeyUp = e => {
+    if (e.keyCode === 13) {
+      createToDo(toDoData);
+    }
+  };
+  const handleChange = e => {
+    const {
+      target: { value },
+    } = e;
+    setToDoData(s => ({ ...s, title: value }));
+  };
   const mapToComponent = () =>
     toDoList.map(toDo => (
-      <EditMenuProvider key={toDo._id}>
-        <ToDo data={toDo} edit />
-      </EditMenuProvider>
+      <ToDoProvider data={toDo} key={toDo._id}>
+        <EditMenuProvider>
+          <ToDo edit />
+        </EditMenuProvider>
+      </ToDoProvider>
     ));
   return (
     <ToDoListProvider value={{ toDoList, fns: { setToDoList } }}>
@@ -90,6 +118,12 @@ const ToDoListContainer = ({
         createToDo={createToDo}
         deleteManyToDo={deleteManyToDo}
         createToDoList={createToDoList}
+        isCreateMode={toDoData.title === ''}
+        toDoListEmpty={toDoList.length === 0}
+        handleKeyUp={handleKeyUp}
+        title={toDoData.title}
+        handleChange={handleChange}
+        toDo={toDoData}
       >
         {mapToComponent()}
       </EditToDoList>

@@ -20,6 +20,14 @@ export const ToDoSchema = mongoose.Schema({
     type: Date,
     default: moment.now(),
   },
+  order: {
+    type: Number,
+  },
+  importance: {
+    type: Number,
+    max: 3,
+    default: 1,
+  },
   memo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Memo' }],
   project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

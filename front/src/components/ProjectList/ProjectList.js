@@ -1,7 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
-import EditMenuProvider from 'store/Common/EditMenu';
 import EditProject from 'components/ProjectList/EditProject';
 import queryString from 'query-string';
 import PaginationComponent from 'components/ProjectList/Pagination';
@@ -29,9 +28,7 @@ const DataContainer = styled.div`
 const ProjectList = ({ children, location: { search } }) => {
   return (
     <>
-      <EditMenuProvider>
-        <EditProject />
-      </EditMenuProvider>
+      <EditProject />
       {search && queryString.parse(search).q !== '' ? (
         <SearchContainer>
           <Text>

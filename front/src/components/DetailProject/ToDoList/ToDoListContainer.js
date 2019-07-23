@@ -6,9 +6,10 @@ import { unshift, deleteMany, deleteOne } from 'lib/manuArrData';
 import { useDetailProjectFns } from 'store/DetailProject';
 import ToDo from 'components/DetailProject/ToDo';
 import moment from 'moment';
-import { useListEditMenuValues } from 'store/Common/ListEditMenu';
-import EditMenuProvider from 'store/Common/EditMenu';
-import ToDoListProvider from 'store/ToDoList';
+import { useListEditMenuValues } from 'store/DetailProject/ListEditMenu';
+import EditMenuProvider from 'store/DetailProject/EditMenu';
+import ToDoListProvider from 'store/DetailProject/ToDoList';
+import ToDoProvider from 'store/DetailProject/ToDo';
 import ToDoList from './ToDoList';
 
 const ToDoListContainer = ({
@@ -19,7 +20,7 @@ const ToDoListContainer = ({
   data = [],
 }) => {
   const [toDoList, setToDoList] = useState(data);
-  const { setDetailProject } = useDetailProjectFns();
+  const { setToDoListByDate } = useDetailProjectFns();
   const { idsToDelete } = useListEditMenuValues();
   const isPreviousToDo = () => {
     const now = Number(moment().format('YYYYMMDD'));
@@ -58,15 +59,18 @@ const ToDoListContainer = ({
       method: 'delete',
       data: data.map(_data => _data._id),
     }).then(() => {
-      setDetailProject(deleteOne(createdAt));
+      setToDoListByDate(deleteOne(createdAt));
     });
   };
   const mapToComponent = () =>
     toDoList.map(toDo => (
-      <EditMenuProvider key={toDo._id}>
-        <ToDo data={toDo} />
-      </EditMenuProvider>
+      <ToDoProvider data={toDo} key={toDo._id}>
+        <EditMenuProvider>
+          <ToDo data={toDo} />
+        </EditMenuProvider>
+      </ToDoProvider>
     ));
+
   return (
     <ToDoListProvider value={{ toDoList, fns: { setToDoList } }}>
       <ToDoList

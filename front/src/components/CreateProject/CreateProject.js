@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import Button from 'components/Common/Button';
 import { HOVER_TYPE, inputCss, hover } from 'styles/mixins';
-import { faStar, faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Star from 'components/Common/Star';
 
@@ -74,10 +74,8 @@ const buttonStyles = css`
 `;
 
 const starStyles = css`
+  font-size: 1.3rem;
   padding: ${props => props.theme.GAP.MEDIUM};
-  & + & {
-    margin-left: ${props => props.theme.GAP.ONE};
-  }
 `;
 
 const Text = styled.p`
@@ -89,8 +87,8 @@ const Icon = styled(FontAwesomeIcon)`
 `;
 
 const CreateProject = ({
-  data,
-  setData,
+  project,
+  setProject,
   handleKeyUp,
   createProject,
   cancelCreate,
@@ -101,20 +99,11 @@ const CreateProject = ({
     </Column>
     <Column center>
       <Text>중요도 :</Text>
-      {/* {new Array(3).fill('').map((_, idx) => (
-        <Button
-          key={`star_${idx + 1}`}
-          className={data.importance >= idx + 1 ? 'selected' : ''}
-          icon={faStar}
-          hoverType={HOVER_TYPE.COLOR}
-          styles={starStyles}
-          onClick={() => setData(s => ({ ...s, importance: idx + 1 }))}
-        />
-      ))} */}
       <Star
         isEditMode
-        onConfirm={idx => setData(s => ({ ...s, importance: idx }))}
+        importance={project.importance}
         styles={starStyles}
+        setImportance={importance => setProject(s => ({ ...s, importance }))}
       />
     </Column>
     <Row>
@@ -122,8 +111,8 @@ const CreateProject = ({
         center
         hover
         public
-        isPublic={data.isPublic}
-        onClick={() => setData(s => ({ ...s, isPublic: true }))}
+        isPublic={project.isPublic}
+        onClick={() => setProject(s => ({ ...s, isPublic: true }))}
       >
         <Icon icon={faLockOpen} />
         <Text>이 프로젝트를 공개합니다.</Text>
@@ -132,8 +121,8 @@ const CreateProject = ({
         center
         hover
         private
-        isPublic={data.isPublic}
-        onClick={() => setData(s => ({ ...s, isPublic: false }))}
+        isPublic={project.isPublic}
+        onClick={() => setProject(s => ({ ...s, isPublic: false }))}
       >
         <Icon icon={faLock} />
         <Text>이 프로젝트를 공개하지 않습니다.</Text>
@@ -144,7 +133,7 @@ const CreateProject = ({
         hoverType={HOVER_TYPE.BACKGROUND_COLOR}
         styles={buttonStyles}
         onClick={createProject}
-        disabled={data.title === ''}
+        disabled={project.title === ''}
       >
         추가
       </Button>
@@ -160,8 +149,8 @@ const CreateProject = ({
 );
 
 CreateProject.propTypes = {
-  data: PropTypes.shape({}).isRequired,
-  setData: PropTypes.func.isRequired,
+  project: PropTypes.shape({}).isRequired,
+  setProject: PropTypes.func.isRequired,
   handleKeyUp: PropTypes.func.isRequired,
   createProject: PropTypes.func.isRequired,
   cancelCreate: PropTypes.func.isRequired,

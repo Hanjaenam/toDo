@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { useTextChangeMode, useToDoMemo } from 'lib/hooks';
-import { useListEditMenuValues } from 'store/Common/ListEditMenu';
+import { useListEditMenuValues } from './ListEditMenu';
 
 export const EditMenuContext = createContext();
 
@@ -13,7 +13,8 @@ const EditMenuProvider = ({ children }) => {
   const { showToDoMemo, setShowToDoMemo } = useToDoMemo({
     isEditMode,
   });
-  const toggleShowToDoMemo = () => {
+  const toggleShowToDoMemo = e => {
+    e.stopPropagation();
     setShowToDoMemo(!showToDoMemo);
   };
   return (

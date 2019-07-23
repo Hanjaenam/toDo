@@ -8,6 +8,13 @@ export const projectAPI = {
       method: 'GET',
     });
   },
+  create: ({ data }) => {
+    return axios({
+      url: '/me/project/create',
+      method: 'post',
+      data,
+    });
+  },
   delete: ({ id }) => {
     return axios({
       url: `/me/project/delete/${id}`,
@@ -21,6 +28,16 @@ export const projectAPI = {
     return axios({
       url: `/me/project/search?term=${term}`,
       method: 'GET',
+    });
+  },
+};
+
+export const toDoAPI = {
+  patch: ({ id, data }) => {
+    return axios({
+      url: `/me/toDo/patch/${id}`,
+      method: 'patch',
+      data,
     });
   },
 };

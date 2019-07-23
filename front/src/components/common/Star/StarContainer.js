@@ -1,46 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Star from './Star';
 
-const StarContainer = ({
-  importance = 1,
-  isEditMode = false,
-  styles,
-  onConfirm,
-}) => {
-  const [editImportance, setEditImportance] = useState({
-    NO_CHANGE_IMPORTANCE: importance,
-    changeImportance: importance,
-  });
-  const setChangeImportance = changeImportance =>
-    setEditImportance(s => ({ ...s, changeImportance }));
+const StarContainer = ({ importance, isEditMode, styles, setImportance }) => {
+  const [hoverImportance, setHoverImportance] = useState();
+  useEffect(() => {
+    if (!isEditMode) setHoverImportance(importance);
+  }, [isEditMode]);
   const handleMouseEnter = idx => {
-    setChangeImportance(idx + 1);
+    if (!isEditMode) return;
+    setHoverImportance(idx + 1);
   };
   const handleMouseLeave = () => {
-    setChangeImportance(importance);
+    if (!isEditMode) return;
+    setHoverImportance(importance);
   };
-  const init = () => {
-    setEditImportance({
-      NO_CHANGE_IMPORTANCE: editImportance.NO_CHANGE_IMPORTANCE,
-      changeImportance: editImportance.NO_CHANGE_IMPORTANCE,
-    });
-    onConfirm && onConfirm(editImportance.NO_CHANGE_IMPORTANCE);
-  };
-  useEffect(() => {
-    if (!isEditMode) {
-      init();
-    }
-  }, [isEditMode]);
   return (
     <Star
       importance={importance}
+      hoverImportance={hoverImportance}
       isEditMode={isEditMode}
       styles={styles}
+      setImportance={setImportance}
       handleMouseEnter={handleMouseEnter}
       handleMouseLeave={handleMouseLeave}
-      changeImportance={editImportance.changeImportance}
-      onConfirm={onConfirm}
     />
   );
+};
+
+StarContainer.propTypes = {
+  importance: PropTypes.number,
+  isEditMode: PropTypes.bool,
+  setImportance: PropTypes.func,
+};
+
+StarContainer.defaultProps = {
+  importance: 1,
+  isEditMode: undefined,
+  setImportance: undefined,
 };
 export default StarContainer;

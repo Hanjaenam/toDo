@@ -3,7 +3,7 @@ import { useMouseEnterEdit } from 'lib/hooks';
 import axios from 'axios';
 import { useMemoListFns } from 'components/DetailProject/MemoList/MemoListContainer';
 import { deleteOne, patch } from 'lib/manuArrData';
-import { useToDoListFns } from 'store/ToDoList';
+import { useToDoListFns } from 'store/DetailProject/ToDoList';
 import Memo from './Memo';
 
 const MemoContainer = ({ data, toDoId }) => {

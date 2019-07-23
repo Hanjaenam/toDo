@@ -2,7 +2,7 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import axios from 'axios';
 import { unshift } from 'lib/manuArrData';
 import Memo from 'components/DetailProject/Memo';
-import { useToDoListFns } from 'store/ToDoList';
+import { useToDoListFns } from 'store/DetailProject/ToDoList';
 import MemoList from './MemoList';
 
 const MemoContext = createContext();

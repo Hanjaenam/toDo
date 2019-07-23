@@ -17,7 +17,7 @@ const ButtonContainer = styled.div`
 
 const buttonStyles = css`
   /* border-radius: 0; */
-  padding: ${props => props.theme.GAP.LARGE};
+  padding: ${props => props.theme.GAP.MEDIUM};
   box-sizing: border-box;
 `;
 
@@ -25,7 +25,7 @@ const iconStyles = css`
   box-sizing: border-box;
   ${buttonStyles};
   p {
-    transform: scale(1.5);
+    font-size: 1.5rem;
   }
 `;
 
@@ -33,7 +33,7 @@ const iconTopRightRadiusStyles = css`
   box-sizing: border-box;
   ${buttonStyles};
   p {
-    transform: scale(1.5);
+    font-size: 1.5rem;
   }
   border-top-right-radius: ${props => props.theme.RADIUS};
 `;
@@ -45,6 +45,9 @@ const topRightRadiusStyles = css`
   border-radius: 0;
   border-top-right-radius: ${props => props.theme.RADIUS};
   border-left: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
 `;
 
 const ListEditMenu = ({
@@ -54,6 +57,7 @@ const ListEditMenu = ({
   toggleMultiMode,
   initMode,
   handleDeleteMany,
+  disabled,
 }) => {
   return isEditMode ? (
     <ButtonContainer>
@@ -84,6 +88,7 @@ const ListEditMenu = ({
       hoverType={HOVER_TYPE.BACKGROUND_COLOR}
       onClick={() => setEditMode(true)}
       styles={topRightRadiusStyles}
+      disabled={disabled}
     >
       수정
     </Button>
@@ -97,8 +102,10 @@ ListEditMenu.propTypes = {
   toggleMultiMode: PropTypes.func.isRequired,
   initMode: PropTypes.func.isRequired,
   handleDeleteMany: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 ListEditMenu.defaultProps = {
   handleDeleteMany: undefined,
+  disabled: undefined,
 };
 export default ListEditMenu;

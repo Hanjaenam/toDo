@@ -11,7 +11,7 @@ import CONFIG from 'config';
 const ProjectListPage = ({ history, location }) => {
   const user = useUser();
   const userExisted = useOnlyPrivate({ user, history });
-  const [projectList, setProjectList] = useState();
+  const [projectList, setProjectList] = useState(null);
   const [expandSearch, setExpandSearch] = useState(false);
   const { page, setPage, init } = usePage();
   const [query, setQuery] = useState(CONFIG.HOME_INIT_QUERY);
@@ -19,7 +19,10 @@ const ProjectListPage = ({ history, location }) => {
     error,
     fns: { failure },
   } = useStatus();
-
+  useEffect(() => {
+    if (query === CONFIG.HOME_INIT_QUERY) return;
+    history.push(`/me/project?${query}`);
+  }, [query]);
   useEffect(() => {
     if (!userExisted) return;
     projectAPI
@@ -34,12 +37,8 @@ const ProjectListPage = ({ history, location }) => {
       })
       .catch(err => failure(err));
   }, [userExisted, location.search]);
-  useEffect(() => {
-    if (query === CONFIG.HOME_INIT_QUERY) return;
-    history.push(`/me/project?${query}`);
-  }, [query]);
-  return (
-    <PageTemplate title="할 일 묵록" header={<Header history={history} />}>
+  return projectList === null || error ? null : (
+    <PageTemplate title="할 일 묵록" header={<Header />}>
       <ProjectListProvider
         value={{
           projectList,
@@ -54,7 +53,7 @@ const ProjectListPage = ({ history, location }) => {
           },
         }}
       >
-        {projectList === undefined || error || <ProjectListComponent />}
+        <ProjectListComponent />
       </ProjectListProvider>
     </PageTemplate>
   );

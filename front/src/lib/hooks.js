@@ -96,10 +96,10 @@ export const usePage = () => {
   return { page, setPage, init };
 };
 
-export const useSelectedDay = ({ detailProject }) => {
+export const useSelectedDay = ({ toDoListByDate }) => {
   const [selectedDay, setSelectedDay] = useState();
   const isExistedDate = () =>
-    detailProject
+    toDoListByDate
       .filter(
         ({ _id }) =>
           Number(moment().format('YYYYMMDD')) <= Number(_id.replace(/-/g, '')),
@@ -121,19 +121,16 @@ export const useSelectedDay = ({ detailProject }) => {
   };
   useEffect(() => {
     initDay();
-  }, [detailProject]);
+  }, [toDoListByDate]);
   return { selectedDay, setSelectedDay, isExistedDate };
 };
 
-export const useProjectData = ({
-  title = '',
-  isPublic = true,
-  importance = 1,
-} = {}) => {
-  const [data, setData] = useState({
+export const usePatchData = ({ title, isPublic, importance, ...rest }) => {
+  const [patchData, setPatchData] = useState({
     title,
     isPublic,
     importance,
+    ...rest,
   });
-  return { data, setData };
+  return { patchData, setPatchData };
 };

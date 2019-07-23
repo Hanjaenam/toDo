@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import ListEditMenuProvider from 'store/Common/ListEditMenu';
+import ListEditMenuProvider from 'store/DetailProject/ListEditMenu';
 import EditToDoList from 'components/DetailProject/EditToDoList';
 import EditProject from 'components/DetailProject/EditProject';
 

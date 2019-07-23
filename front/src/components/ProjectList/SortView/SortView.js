@@ -47,6 +47,10 @@ const Summary = styled.summary`
   height: 100%;
   border-radius: ${props => props.theme.RADIUS};
   border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
+  p,
+  span {
+    color: ${props => props.theme.COLOR.PRIMARY()};
+  }
   &::-webkit-details-marker {
     display: none;
   }
