@@ -5,6 +5,7 @@ const strategyLogInCB = async (req, email, password, done) => {
   try {
     const user = await User.findByEmail(email);
     if (!user) {
+      console.log('user');
       return done(null, false, req.flash('message', '등록된 계정이 없습니다.'));
     }
     if (!user.authenticate(password)) {
@@ -22,23 +23,19 @@ const strategyLogInCB = async (req, email, password, done) => {
 
 const strategyRegisterCB = async (req, email, password, done) => {
   const {
-    body: { confirmPassword },
+    body: { nick },
   } = req;
   try {
-    if (!confirmPassword) {
-      return done(
-        null,
-        false,
-        req.flash('message', '확인 비밀번호까지 입력해주세요.'),
-      );
+    if (!nick) {
+      return done(null, false, req.flash('message', '닉네임까지 입력해주세요'));
     }
-    if (password !== confirmPassword) {
-      return done(
-        null,
-        false,
-        req.flash('message', '두 비밀빈호가 일치하지 않습니다.'),
-      );
-    }
+    // if (password !== confirmPassword) {
+    //   return done(
+    //     null,
+    //     false,
+    //     req.flash('message', '두 비밀빈호가 일치하지 않습니다.'),
+    //   );
+    // }
     const user = await User.findByEmail(email);
     if (user) {
       return done(null, false, req.flash('message', '이미 등록된 계정입니다.'));

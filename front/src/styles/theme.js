@@ -1,4 +1,15 @@
 export default {
+  BREAKPOINTS: {
+    SMALL: '576px',
+    MEDIUM: '768px',
+    LARGE: '992px',
+    WIDE: '1200px',
+    HEADER: '1300px',
+  },
+  BOX_SHADOW: {
+    TO_DO_LIST: '0 0 5px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);',
+    LOGIN_TEMPLATE: '0 0 4px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23)',
+  },
   COLOR: {
     PRIMARY: ({ alpha = 1, add = 0, minus = 0 } = {}) =>
       `rgba(${45 + add - minus}, ${52 + add - minus}, ${54 +
@@ -20,8 +31,6 @@ export default {
         minus}, ${alpha})`,
     PROJECT_DATE: 'rgba(47, 60, 61, 1);',
   },
-  TRANSITION: '0.3s',
-  RADIUS: '5px',
   GAP: {
     TINY: '0.1rem',
     SMALL: '0.3rem',
@@ -30,19 +39,10 @@ export default {
     WIDE: '0.9rem',
     ONE: '1rem',
   },
-  BREAKPOINTS: {
-    SMALL: '576px',
-    MEDIUM: '768px',
-    LARGE: '992px',
-    WIDE: '1200px',
-    HEADER: '1300px',
-  },
+  RADIUS: '3px',
+  TRANSITION: '0.3s',
   WIDTH: {
     TO_DO_LIST: '450px',
-  },
-  BOX_SHADOW: {
-    TO_DO_LIST: '0 0 5px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);',
-    LOGIN_TEMPLATE: '0 0 4px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23)',
   },
 };
 
