@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Helmet from 'react-helmet';
-import HeaderContainer from 'containers/common/HeaderContainer';
+import HeaderContainer from 'containers/Common/HeaderContainer';
 
 const ChildrenContainer = styled.div`
   display: grid;
@@ -32,8 +32,16 @@ const PageTemplate = ({ children, sign, title }) => (
 );
 
 PageTemplate.propTypes = {
-  sign: PropTypes.bool.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
+  sign: PropTypes.bool,
   title: PropTypes.string.isRequired,
+};
+
+PageTemplate.defaultProps = {
+  sign: undefined,
 };
 
 export default PageTemplate;

@@ -17,12 +17,9 @@ export default {
         minus},${alpha})`,
     SUCCESS: (alpha = 1) => `rgba(46,204,113,${alpha})`,
     DANGER: '#e74e3c',
-    BACKGROUND: ({ alpha = 0.2, add = 0, minus = 0 } = {}) =>
-      `rgba(${218 + add - minus},${230 + add - minus},${235 +
-        add -
-        minus}, ${alpha})`,
+    BACKGROUND: 'rgba(233, 240, 243, 1)',
     NOT_FOCUSED: {
-      BACKGROUND: 'rgb(238, 238, 238)',
+      BACKGROUND: 'rgb(243, 243, 243)',
       BORDER: ({ alpha = 0.2 } = {}) => `rgba(0,0,0,${alpha})`,
     },
     STAR: ({ alpha = 1, add = 0, minus = 0 } = {}) =>

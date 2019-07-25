@@ -5,18 +5,18 @@ import { useOnlyPublic } from 'lib/hooks';
 import PageTemplate from 'components/Common/PageTemplate';
 import SignTemplate from 'containers/Common/SignTemplateContainer';
 
-const RegisterPage = ({ history, signIn }) => {
+const SignPage = ({ history, signIn }) => {
   const startRender = useOnlyPublic({ history, signIn });
   return startRender ? (
-    <PageTemplate sign title="회원가입">
-      <SignTemplate register history={history} />
+    <PageTemplate sign title="로그인">
+      <SignTemplate history={history} />
     </PageTemplate>
   ) : null;
 };
 
-RegisterPage.propTypes = {
+SignPage.propTypes = {
   history: PropTypes.shape({}).isRequired,
-  signIn: PropTypes.shape({}).isRequired,
+  signIn: PropTypes.bool.isRequired,
 };
 
 export default connect(
@@ -24,4 +24,4 @@ export default connect(
     signIn: state.user.get('signIn'),
   }),
   null,
-)(RegisterPage);
+)(SignPage);

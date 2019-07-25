@@ -1,44 +1,51 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavLink } from 'react-router-dom';
+import { activeStyles, hover, HOVER_TYPE } from 'styles/mixins';
 
 const Btn = styled.button`
-  text-transform: capitalize;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: ${props => props.theme.GAP.MEDIUM};
-  border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
-  border-radius: ${props => props.theme.RADIUS};
-  ${props =>
-    props.disabled
-      ? css`
-          background-color: ${props =>
-            props.theme.COLOR.NOT_FOCUSED.BACKGROUND};
-          p,
-          svg {
-            color: ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
-          }
-        `
-      : css`
-          cursor: pointer;
-          &:hover {
-            background-color: ${props =>
-              props.theme.COLOR.PRIMARY({
-                add: props.hoverbgcolor ? props.hoverbgcolor.add : 0,
-                minus: props.hoverbgcolor ? props.hoverbgcolor.minus : 0,
-              })};
-            p,
-            svg {
-              color: white;
-            }
-          }
-        `}
+  ${({ active, ...rest }) =>
+    active === 'true'
+      ? activeStyles({
+          type: rest.hovertype ? rest.hovertype : HOVER_TYPE.BACKGROUND_COLOR,
+          ...rest.hoveropts,
+        })
+      : null};
+  ${({ disabled, ...rest }) =>
+    hover({
+      disabled,
+      type: rest.hovertype ? rest.hovertype : HOVER_TYPE.BACKGROUND_COLOR,
+      ...rest.hoveropts,
+    })}
   ${props => props.styles}
 `;
+
+const Icon = styled(FontAwesomeIcon)`
+  & + p {
+    margin-left: ${props => props.theme.GAP.SMALL};
+  }
+`;
+
 const Text = styled.p``;
-const Icon = styled(FontAwesomeIcon)``;
-const Button = ({ children, onClick, disabled, icon, styles, to, ...rest }) => (
+
+const Button = ({
+  active,
+  children,
+  disabled,
+  icon,
+  onClick,
+  styles,
+  to,
+  ...rest
+}) => (
   <Btn
+    active={active.toString()}
     as={to && !disabled ? NavLink : 'button'}
     disabled={disabled}
     onClick={disabled ? () => null : onClick}
@@ -46,7 +53,31 @@ const Button = ({ children, onClick, disabled, icon, styles, to, ...rest }) => (
     to={to}
     {...rest}
   >
-    {icon ? <Icon icon={icon} /> : <Text>{children}</Text>}
+    {icon ? <Icon icon={icon} /> : null}
+    {children ? <Text>{children}</Text> : null}
   </Btn>
 );
+
+Button.propTypes = {
+  active: PropTypes.bool,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]),
+  disabled: PropTypes.bool,
+  icon: PropTypes.shape({}),
+  onClick: PropTypes.func,
+  styles: PropTypes.array,
+  to: PropTypes.string,
+};
+
+Button.defaultProps = {
+  active: false,
+  children: undefined,
+  disabled: false,
+  icon: undefined,
+  onClick: undefined,
+  styles: undefined,
+  to: undefined,
+};
 export default Button;

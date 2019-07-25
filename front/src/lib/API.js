@@ -2,12 +2,6 @@ import axios from 'axios';
 
 // eslint-disable-next-line import/prefer-default-export
 export const authAPI = {
-  getInfo: () => {
-    return axios({
-      url: '/me',
-      method: 'GET',
-    });
-  },
   logIn: ({ email, password }) => {
     return axios({
       url: '/auth/logIn',
@@ -21,6 +15,12 @@ export const authAPI = {
   logOut: () => {
     return axios({
       url: `/me/logOut`,
+      method: 'GET',
+    });
+  },
+  getInfo: () => {
+    return axios({
+      url: '/me',
       method: 'GET',
     });
   },
@@ -38,17 +38,15 @@ export const authAPI = {
 };
 
 export const projectAPI = {
-  readAll: ({ query }) => {
-    return axios({
-      url: `/me/project${query}`,
-      method: 'GET',
-    });
-  },
-  create: ({ data }) => {
+  create: ({ isPublic, importance, title }) => {
     return axios({
       url: '/me/project/create',
       method: 'post',
-      data,
+      data: {
+        isPublic,
+        importance,
+        title,
+      },
     });
   },
   delete: ({ id }) => {
@@ -59,6 +57,15 @@ export const projectAPI = {
   },
   patch: ({ id, data }) => {
     return axios({ url: `/me/project/patch/${id}`, method: 'PATCH', data });
+  },
+  readOne: ({ title }) => {
+    return axios({ url: `/me/project/${title}?page=1`, method: 'get' });
+  },
+  readAll: ({ query }) => {
+    return axios({
+      url: `/me/project${query}`,
+      method: 'GET',
+    });
   },
   search: ({ term }) => {
     return axios({

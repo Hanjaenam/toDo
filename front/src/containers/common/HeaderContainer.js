@@ -1,11 +1,9 @@
 import { connect } from 'react-redux';
-import Header from 'components/common/Header';
 import { logOut } from 'store/modules/user';
+import Header from 'components/Common/Header';
 
 export default connect(
-  state => ({
-    user: state.user,
-  }),
+  null,
   dispatch => ({
     logOut: () => dispatch(logOut()),
   }),

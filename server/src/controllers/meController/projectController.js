@@ -28,17 +28,20 @@ export const readAll = async (req, res) => {
 
 export const readOne = async (req, res) => {
   const {
-    params: { id: projectId },
+    params: { title: projectTitle },
     query: { page },
   } = req;
   try {
-    const project = await Project.findById(mongoose.Types.ObjectId(projectId));
+    const project = await Project.findOne({
+      creator: req.user._id,
+      title: projectTitle,
+    });
     // No need to lean pipeline output . Aggregate output is already lean
-    const toDoListByDate = await ToDo.aggregate([
+    const toDoListGroupByDate = await ToDo.aggregate([
       {
         $match: {
           creator: req.user._id,
-          project: mongoose.Types.ObjectId(projectId),
+          project: mongoose.Types.ObjectId(projectTitle),
         },
       },
       {
@@ -75,7 +78,7 @@ export const readOne = async (req, res) => {
         },
       },
     ]);
-    return res.json({ project, toDoListByDate });
+    return res.json({ project, toDoListGroupByDate });
   } catch (err) {
     console.log(err);
     return res.status(500).end();

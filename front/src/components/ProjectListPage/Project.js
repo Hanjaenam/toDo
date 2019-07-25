@@ -1,5 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faLockOpen, faStar } from '@fortawesome/free-solid-svg-icons';
 import { hover, HOVER_TYPE } from 'styles/mixins';
@@ -13,11 +15,13 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  grid-gap: ${props => props.theme.GAP.SMALL};
+  grid-gap: ${props => props.theme.GAP.MEDIUM};
   ${hover({ type: HOVER_TYPE.BACKGROUND_COLOR })};
 `;
 
-const IsPublicIcon = styled(FontAwesomeIcon)``;
+const LockIcon = styled(FontAwesomeIcon)`
+  font-size: 1.3rem;
+`;
 
 const Title = styled.p`
   flex: 1;
@@ -35,9 +39,9 @@ const CreatedAt = styled.p`
   font-size: 0.7rem;
 `;
 
-const Project = ({ data = {} }) => (
-  <Container>
-    <IsPublicIcon icon={data.isPublic ? faLockOpen : faLock} />
+const Project = ({ data, history }) => (
+  <Container onClick={() => history.push(`/me/project/${data.title}`)}>
+    <LockIcon icon={data.isPublic ? faLockOpen : faLock} />
     <Title>{data.title}</Title>
     <EtcContainer>
       {new Array(data.importance).fill('').map((_, idx) => (
@@ -47,4 +51,13 @@ const Project = ({ data = {} }) => (
     </EtcContainer>
   </Container>
 );
-export default Project;
+
+Project.propTypes = {
+  data: PropTypes.shape({}),
+  history: PropTypes.shape({}).isRequired,
+};
+
+Project.defaultProps = {
+  data: {},
+};
+export default withRouter(Project);

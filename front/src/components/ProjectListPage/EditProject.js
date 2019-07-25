@@ -1,8 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { inputCss } from 'styles/mixins';
-import Button from 'components/common/Button';
-import SortViewContainer from 'containers/projectList/SortViewContainer';
+import Button from 'components/Common/Button';
+import SortViewContainer from 'containers/ProjectListPage/SortViewContainer';
+import LANG, { htmlLang } from 'lib/htmlLanguage';
 
 const Container = styled.div`
   display: grid;
@@ -20,7 +22,7 @@ const Input = styled.input`
 const EditProject = ({ setSearch }) => (
   <Container>
     <Input
-      placeholder="프로젝트 검색"
+      placeholder={LANG.SEARCH_PROJECT[htmlLang]}
       onKeyUp={e => {
         const {
           target: { value },
@@ -31,7 +33,12 @@ const EditProject = ({ setSearch }) => (
       }}
     />
     <SortViewContainer />
-    <Button>새 프로젝트</Button>
+    <Button to="/me/project/new">{LANG.NEW_PROJECT[htmlLang]}</Button>
   </Container>
 );
+
+EditProject.propTypes = {
+  setSearch: PropTypes.func.isRequired,
+};
+
 export default EditProject;

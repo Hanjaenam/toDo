@@ -1,9 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import styled, { css } from 'styled-components';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { hover, HOVER_TYPE } from 'styles/mixins';
-import { SORT } from 'store/modules/projectList';
+import LANG, { htmlLang } from 'lib/htmlLanguage';
 
 const Details = styled.details`
   position: relative;
@@ -13,6 +14,7 @@ const Summary = styled.summary`
   &::-webkit-details-marker {
     display: none;
   }
+  outline: none;
   border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
   border-radius: ${props => props.theme.RADIUS};
   padding: ${props => props.theme.GAP.MEDIUM};
@@ -39,30 +41,45 @@ const MenuContainer = styled.div`
   align-items: center;
   grid-gap: ${props => props.theme.GAP.SMALL};
   padding: ${props => props.theme.GAP.MEDIUM};
-  ${hover({ type: HOVER_TYPE.BACKGROUND_COLOR })};
+  ${hover({ type: HOVER_TYPE.BACKGROUND_COLOR, noborder: true })};
 `;
 
 const MenuText = styled.p``;
 
-const CheckIcon = styled(FontAwesomeIcon)``;
+const CheckIcon = styled(FontAwesomeIcon)`
+  ${props =>
+    props.show === 'true'
+      ? css`
+          opacity: 1;
+        `
+      : css`
+          opacity: 0;
+        `}
+`;
 
 const SortView = ({ sort, setSort }) => (
   <Details className="details">
     <Summary>
       <p>
-        정렬: <span>{sort}</span>
+        {LANG.SORT[htmlLang]}: <span>{sort}</span>
       </p>
     </Summary>
     <DetailsMenu role="menu">
-      <MenuContainer role="menuitem" onClick={() => setSort(SORT.LATEST)}>
-        <CheckIcon icon={faCheck} />
-        <MenuText>최신순</MenuText>
+      <MenuContainer role="menuitem" onClick={() => setSort('latest')}>
+        <CheckIcon icon={faCheck} show={(sort === 'latest').toString()} />
+        <MenuText>{LANG.SORT.LATEST[htmlLang]}</MenuText>
       </MenuContainer>
-      <MenuContainer role="menuitem" onClick={() => setSort(SORT.IMPORTANCE)}>
-        <CheckIcon icon={faCheck} />
-        <MenuText>중요도</MenuText>
+      <MenuContainer role="menuitem" onClick={() => setSort('importance')}>
+        <CheckIcon icon={faCheck} show={(sort === 'importance').toString()} />
+        <MenuText>{LANG.SORT.IMPORTANCE[htmlLang]}</MenuText>
       </MenuContainer>
     </DetailsMenu>
   </Details>
 );
+
+SortView.propTypes = {
+  sort: PropTypes.string.isRequired,
+  setSort: PropTypes.func.isRequired,
+};
+
 export default SortView;

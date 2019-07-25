@@ -3,11 +3,6 @@ import { handleActions, createAction } from 'redux-actions';
 import { projectAPI } from 'lib/API';
 import { applyPenders } from 'redux-pender';
 
-export const SORT = {
-  LATEST: 'latest',
-  IMPORTANCE: 'importance',
-};
-
 const READ_ALL_PROJECT = 'projectList/READ_ALL_PROJECT';
 const SET_PAGE = 'projectList/SET_PAGE';
 const SET_SERACH = 'projectList/SET_SERACH';
@@ -25,7 +20,7 @@ const initialState = Map({
   query: Map({
     page: 1,
     q: '',
-    sort: SORT.LATEST,
+    sort: 'latest',
   }),
   data: List([]),
 });

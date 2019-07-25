@@ -6,7 +6,9 @@ import ToDo from './ToDo';
 const ProjectSchema = mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    index: {
+      unique: false,
+    },
   },
   isCompleted: {
     type: Boolean,

@@ -2,20 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import SignTemplate from 'components/common/SignTemplate';
+import SignTemplate from 'components/Common/SignTemplate';
 import * as signActions from 'store/modules/sign';
 import * as userActions from 'store/modules/user';
+import LANG, { htmlLang } from 'lib/htmlLanguage';
 
 const SignTemplateContainer = ({
   history,
   errorMessage,
-  props,
+  userData,
   register,
+  SignActions: { initUserData, setUserData },
   UserActions: { initErrorMessage, logIn, setErrorMessage },
-  SignActions: { initProps, setProps },
 }) => {
   const handleConfirm = () => {
-    const { email, nick, password } = props;
+    const { email, nick, password } = userData;
     if (email === '') {
       setErrorMessage('이메일 입력해주세요');
       return;
@@ -40,11 +41,11 @@ const SignTemplateContainer = ({
     const {
       target: { value },
     } = e;
-    setProps({ type, value });
+    setUserData({ type, value });
   };
 
   const handleHistory = () => {
-    initProps();
+    initUserData();
     initErrorMessage();
     if (register) history.push('/');
     else history.push('/register');
@@ -52,8 +53,8 @@ const SignTemplateContainer = ({
 
   const getErrorMessage = () => {
     if (errorMessage === '') {
-      if (register) return '회원가입';
-      return '로그인';
+      if (register) return LANG.REGISTER[htmlLang];
+      return LANG.SIGN_IN[htmlLang];
     }
     return errorMessage;
   };
@@ -64,23 +65,24 @@ const SignTemplateContainer = ({
       handleConfirm={handleConfirm}
       handleChange={handleChange}
       handleHistory={handleHistory}
-      props={props}
+      userData={userData}
       register={register}
     />
   );
 };
 
 SignTemplateContainer.propTypes = {
+  history: PropTypes.shape({}).isRequired,
   errorMessage: PropTypes.string.isRequired,
-  props: PropTypes.shape({
+  userData: PropTypes.shape({
     email: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
     nick: PropTypes.string.isRequired,
   }).isRequired,
   register: PropTypes.bool,
   SignActions: PropTypes.shape({
-    initProps: PropTypes.func.isRequired,
-    setProps: PropTypes.func.isRequired,
+    initUserData: PropTypes.func.isRequired,
+    setUserData: PropTypes.func.isRequired,
   }).isRequired,
   UserActions: PropTypes.shape({
     logIn: PropTypes.func.isRequired,
@@ -94,12 +96,10 @@ SignTemplateContainer.defaultProps = {
 
 export default connect(
   state => ({
-    props: state.sign.toJS(),
+    userData: state.sign.toJS(),
     errorMessage: state.user.get('error'),
   }),
   dispatch => ({
-    // setErroressage: message => dispatch(userActions.setErrorMessage(message)),
-    // logIn: data => dispatch(userActions.logIn(data)),
     UserActions: bindActionCreators(userActions, dispatch),
     SignActions: bindActionCreators(signActions, dispatch),
   }),

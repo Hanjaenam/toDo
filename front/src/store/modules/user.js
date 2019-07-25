@@ -17,6 +17,7 @@ export const setErrorMessage = createAction(SET_ERROR_MESSAGE);
 
 const initialState = Map({
   error: '',
+  signIn: false,
   data: undefined,
 });
 
@@ -39,7 +40,7 @@ export default applyPenders(reducer, [
       const {
         payload: { data },
       } = action;
-      return state.set('data', fromJS(data));
+      return state.set('data', fromJS(data)).set('signIn', true);
     },
     onFailure: (state, action) => {
       const {
@@ -54,8 +55,8 @@ export default applyPenders(reducer, [
   },
   {
     type: LOG_OUT,
-    onSuccess: (state, action) => {
-      return state.set('data', undefined);
+    onSuccess: (state, _) => {
+      return state.set('data', undefined).set('signIn', false);
     },
     onFailure: (state, action) => {
       const {
@@ -74,7 +75,7 @@ export default applyPenders(reducer, [
       const {
         payload: { data },
       } = action;
-      return state.set('data', fromJS(data));
+      return state.set('data', fromJS(data)).set('signIn', true);
     },
   },
 ]);

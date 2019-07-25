@@ -1,1 +1,1 @@
-export default { HOME_INIT_QUERY: '?page=1&sort=latest&q=' };
+export default { ME_PROJECT_HOME: '/me/project?page=1&sort=latest&q=' };

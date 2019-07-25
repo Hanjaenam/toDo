@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
-import Button from 'components/common/Button';
-import Message from 'components/common/Message';
+import Button from 'components/Common/Button';
+import Message from 'components/Common/Message';
+import LANG, { htmlLang } from 'lib/htmlLanguage';
 
 const Container = styled.div`
   width: 100vw;
@@ -40,7 +41,6 @@ const Form = styled.div`
 `;
 
 const Label = styled.label`
-  text-transform: capitalize;
   text-indent: ${props => props.theme.GAP.MEDIUM};
 `;
 
@@ -48,9 +48,6 @@ const Input = styled.input`
   padding: ${props => props.theme.GAP.ONE};
   border-radius: ${props => props.theme.RADIUS};
   border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
-  &::placeholder {
-    text-transform: capitalize;
-  }
 `;
 
 const BtnContainer = styled.div`
@@ -91,7 +88,7 @@ const SignTemplate = ({
   handleConfirm,
   handleChange,
   handleHistory,
-  props: { email, nick, password },
+  userData: { email, nick, password },
   register,
 }) => (
   <Container>
@@ -101,7 +98,7 @@ const SignTemplate = ({
         <Form>
           {register ? (
             <>
-              <Label htmlFor="nick">닉네임</Label>
+              <Label htmlFor="nick">{LANG.NICK[htmlLang]}</Label>
               <Input
                 id="nick"
                 type="text"
@@ -109,13 +106,13 @@ const SignTemplate = ({
               />
             </>
           ) : null}
-          <Label htmlFor="email">이메일</Label>
+          <Label htmlFor="email">{LANG.EMAIL[htmlLang]}</Label>
           <Input
             id="email"
             type="email"
             onChange={handleChange({ type: 'email' })}
           />
-          <Label htmlFor="password">비밀번호</Label>
+          <Label htmlFor="password">{LANG.PASSWORD[htmlLang]}</Label>
           <Input
             id="password"
             type="password"
@@ -131,10 +128,10 @@ const SignTemplate = ({
               disabled={email === '' && nick === '' && password === ''}
               onClick={handleConfirm}
             >
-              {register ? '확인' : '로그인'}
+              {register ? LANG.CONFIRM[htmlLang] : LANG.SIGN_IN[htmlLang]}
             </Button>
             <Button onClick={handleHistory}>
-              {register ? '취소' : '회원가입'}
+              {register ? LANG.CANCEL[htmlLang] : LANG.REGISTER[htmlLang]}
             </Button>
           </BtnContainer>
         </Form>
@@ -149,15 +146,15 @@ const SignTemplate = ({
 );
 
 SignTemplate.propTypes = {
-  getErrorMessage: PropTypes.func.isRequired,
   handleConfirm: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleHistory: PropTypes.func.isRequired,
-  props: PropTypes.shape({
+  userData: PropTypes.shape({
     email: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
     nick: PropTypes.string.isRequired,
   }).isRequired,
+  getErrorMessage: PropTypes.func.isRequired,
   register: PropTypes.bool.isRequired,
 };
 export default SignTemplate;

@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
-import Button from 'components/common/Button';
+import Button from 'components/Common/Button';
+import LANG, { htmlLang } from 'lib/htmlLanguage';
+import CONFIG from 'lib/config';
 
 const Container = styled.div`
   background-color: ${props => props.theme.COLOR.PRIMARY()};
@@ -21,7 +23,7 @@ const Center = styled.div`
   justify-content: space-between;
 `;
 
-const logoutBtnStyles = css`
+const BtnStyles = css`
   background: transparent;
   p,
   svg {
@@ -30,31 +32,23 @@ const logoutBtnStyles = css`
   border: 0;
 `;
 
-const Header = ({ user, logOut }) => {
-  return (
-    <Container>
-      <Center>
-        <Button
-          hoverbgcolor={{ minus: 20 }}
-          icon={faHome}
-          styles={logoutBtnStyles}
-          to="/me/project"
-        />
-        {user ? (
-          <Button
-            hoverbgcolor={{ minus: 20 }}
-            styles={logoutBtnStyles}
-            onClick={logOut}
-          >
-            로그아웃
-          </Button>
-        ) : null}
-      </Center>
-    </Container>
-  );
-};
+const Header = ({ logOut }) => (
+  <Container>
+    <Center>
+      <Button
+        hoveropts={{ minus: 20 }}
+        icon={faHome}
+        styles={BtnStyles}
+        to={CONFIG.ME_PROJECT_HOME}
+      />
+      <Button hoveropts={{ minus: 20 }} styles={BtnStyles} onClick={logOut}>
+        {LANG.SIGN_OUT[htmlLang]}
+      </Button>
+    </Center>
+  </Container>
+);
 
 Header.propTypes = {
-  user: PropTypes.shape({}).isRequired,
+  logOut: PropTypes.func.isRequired,
 };
 export default Header;

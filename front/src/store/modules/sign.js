@@ -1,11 +1,11 @@
 import { Map } from 'immutable';
 import { handleActions, createAction } from 'redux-actions';
 
-const SET_PROPS = 'sign/SET_PROPS';
-const INIT_PROPS = 'sign/INIT_PROPS';
+const INIT_USER_DATA = 'sign/INIT_USER_DATA';
+const SET_USER_DATA = 'sign/SET_USER_DATA';
 
-export const setProps = createAction(SET_PROPS);
-export const initProps = createAction(INIT_PROPS);
+export const initUserData = createAction(INIT_USER_DATA);
+export const setUserData = createAction(SET_USER_DATA);
 
 const initialState = Map({
   email: '',
@@ -15,7 +15,10 @@ const initialState = Map({
 
 export default handleActions(
   {
-    [SET_PROPS]: (state, action) => {
+    [INIT_USER_DATA]: (stete, action) => {
+      return initialState;
+    },
+    [SET_USER_DATA]: (state, action) => {
       const { type, value } = action.payload;
       switch (type) {
         case 'email':
@@ -27,9 +30,6 @@ export default handleActions(
         default:
           return state;
       }
-    },
-    [INIT_PROPS]: (stete, action) => {
-      return initialState;
     },
   },
   initialState,
