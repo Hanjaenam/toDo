@@ -3,35 +3,52 @@ import { handleActions, createAction } from 'redux-actions';
 import { applyPenders } from 'redux-pender';
 import { projectAPI } from 'lib/API';
 
-const CREATE_PROJECT = 'project/CREATE_PROJECT';
-const INIT_PROJECT_DATA = 'project/INIT_PROJECT_DATA';
-const GET_PROJECT = 'project/GET_PROJECT';
-const SET_PROJECT_DATA = 'project/SET_PROJECT_DATA';
+const CREATE_PROJECT = 'detailProject/CREATE_PROJECT';
+const INIT_PROJECT_DATA_TEMPLATE = 'detailProject/INIT_PROJECT_DATA_TEMPLATE';
+const SET_PROJECT_DATA_TEMPLATE = 'detailProject/SET_PROJECT_DATA_TEMPLATE';
+const GET_PROJECT_DATA = 'detailProject/GET_PROJECT_DATA';
 
 export const createProject = createAction(CREATE_PROJECT, projectAPI.create);
-export const initProjectData = createAction(INIT_PROJECT_DATA);
-export const getProject = createAction(GET_PROJECT, projectAPI.readOne);
-export const setProjectData = createAction(SET_PROJECT_DATA);
+export const initProjectDataTemplate = createAction(INIT_PROJECT_DATA_TEMPLATE);
+export const setProjectDataTemplate = createAction(SET_PROJECT_DATA_TEMPLATE);
+export const getProjectData = createAction(
+  GET_PROJECT_DATA,
+  projectAPI.readOne,
+);
 
 const initialState = Map({
-  data: Map({ title: '', isPublic: true, importance: 1 }),
+  dataTemplate: Map({ isPublic: true, importance: 1, title: '' }),
+  data: Map({}),
   toDoListGroupByDate: List([]),
 });
 
 const reducer = handleActions(
   {
-    [INIT_PROJECT_DATA]: (_, __) => {
-      return initialState;
+    [INIT_PROJECT_DATA_TEMPLATE]: (state, _) => {
+      return state.set(
+        'dataTemplate',
+        Map({ title: '', isPublic: true, importance: 1 }),
+      );
     },
-    [SET_PROJECT_DATA]: (state, action) => {
-      const { type, value } = action.payload;
+    [SET_PROJECT_DATA_TEMPLATE]: (state, action) => {
+      const { type, value, isPublic, importance, title } = action.payload;
       switch (type) {
         case 'isPublic':
-          return state.setIn(['data', 'isPublic'], value);
+          return state.setIn(['dataTemplate', 'isPublic'], value);
         case 'importance':
-          return state.setIn(['data', 'importance'], value);
+          return state.setIn(['dataTemplate', 'importance'], value);
         case 'title':
-          return state.setIn(['data', 'title'], value);
+          return state.setIn(['dataTemplate', 'title'], value);
+        case 'all': {
+          return state.set(
+            'dataTemplate',
+            Map({
+              isPublic,
+              importance,
+              title,
+            }),
+          );
+        }
         default:
           return state;
       }
@@ -51,7 +68,7 @@ export default applyPenders(reducer, [
     },
   },
   {
-    type: GET_PROJECT,
+    type: GET_PROJECT_DATA,
     onSuccess: (state, action) => {
       const {
         payload: {

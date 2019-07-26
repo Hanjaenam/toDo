@@ -15,7 +15,7 @@ const ChildrenContainer = styled.div`
   }
 `;
 
-const PageTemplate = ({ children, sign, title }) => (
+const PageTemplate = ({ children, sign, title, entire }) => (
   <>
     <Helmet>
       <title>{title}</title>

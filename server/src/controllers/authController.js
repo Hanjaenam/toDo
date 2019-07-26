@@ -1,14 +1,14 @@
 import passport from 'passport';
 
 export const logIn = passport.authenticate('localLogIn', {
-  successRedirect: '/me',
+  successRedirect: '/api/me',
   failureRedirect: '/auth/failure',
   failureFlash: true,
   successFlash: true,
 });
 
 export const register = passport.authenticate('localRegister', {
-  successRedirect: '/me',
+  successRedirect: '/api/me',
   failureRedirect: '/auth/failure',
   failureFlash: true,
   successFlash: true,

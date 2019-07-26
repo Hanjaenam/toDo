@@ -6,6 +6,7 @@ import SignTemplate from 'components/Common/SignTemplate';
 import * as signActions from 'store/modules/sign';
 import * as userActions from 'store/modules/user';
 import LANG, { htmlLang } from 'lib/htmlLanguage';
+import CONFIG from 'lib/config';
 
 const SignTemplateContainer = ({
   history,
@@ -31,9 +32,13 @@ const SignTemplateContainer = ({
     }
 
     if (register) {
-      logIn({ email, nick, password });
+      logIn({ email, nick, password }).then(() =>
+        history.replace(CONFIG.ME_PROJECT_HOME),
+      );
     } else {
-      logIn({ email, password });
+      logIn({ email, password }).then(() =>
+        history.replace(CONFIG.ME_PROJECT_HOME),
+      );
     }
   };
 

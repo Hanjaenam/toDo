@@ -23,21 +23,26 @@ const buttonStyles = css`
 `;
 
 const StarButton = ({
-  containerRef,
+  edit,
+  handleMouseLeave,
   hoverImportance,
-  setProjectData,
-  setHoverImportace,
+  importance,
+  setProjectDataTemplate,
+  setHoverImportance,
 }) => (
-  <Container ref={containerRef}>
-    {new Array(3).fill('').map((_, idx) => (
+  <Container onMouseLeave={handleMouseLeave}>
+    {new Array(edit ? 3 : importance).fill('').map((_, idx) => (
       <Button
-        active={idx + 1 <= hoverImportance}
+        active={edit ? idx + 1 <= hoverImportance : true}
+        disabled={!edit}
         hovertype={HOVER_TYPE.COLOR}
         hoveropts={{ hovercolor: theme.COLOR.STAR() }}
         icon={faStar}
         key={`star${idx}`}
-        onClick={() => setProjectData({ type: 'importance', value: idx + 1 })}
-        onMouseEnter={() => setHoverImportace(idx + 1)}
+        onClick={() =>
+          setProjectDataTemplate({ type: 'importance', value: idx + 1 })
+        }
+        onMouseEnter={edit ? () => setHoverImportance(idx + 1) : null}
         styles={buttonStyles}
       />
     ))}
@@ -45,10 +50,11 @@ const StarButton = ({
 );
 
 StarButton.propTypes = {
-  containerRef: PropTypes.shape({}).isRequired,
+  edit: PropTypes.bool.isRequired,
+  handleMouseLeave: PropTypes.func.isRequired,
   hoverImportance: PropTypes.number.isRequired,
-  setProjectData: PropTypes.func.isRequired,
-  setHoverImportace: PropTypes.func.isRequired,
+  setProjectDataTemplate: PropTypes.func.isRequired,
+  setHoverImportance: PropTypes.func.isRequired,
 };
 
 export default StarButton;

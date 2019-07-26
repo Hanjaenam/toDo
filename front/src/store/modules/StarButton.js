@@ -1,14 +1,14 @@
 import { handleActions, createAction } from 'redux-actions';
 
-const SET_HOVER_IMPORTACE = 'starButton/SET_HOVERIMPORTANCE';
+const SET_HOVER_IMPORTANCE = 'starButton/SET_HOVERIMPORTANCE';
 
-export const setHoverImportace = createAction(SET_HOVER_IMPORTACE);
+export const setHoverImportance = createAction(SET_HOVER_IMPORTANCE);
 
 const initialState = 1;
 
 export default handleActions(
   {
-    [SET_HOVER_IMPORTACE]: (stete, action) => {
+    [SET_HOVER_IMPORTANCE]: (stete, action) => {
       return action.payload;
     },
   },

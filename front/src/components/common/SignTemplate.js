@@ -100,6 +100,7 @@ const SignTemplate = ({
             <>
               <Label htmlFor="nick">{LANG.NICK[htmlLang]}</Label>
               <Input
+                autoFocus={register}
                 id="nick"
                 type="text"
                 onChange={handleChange({ type: 'nick' })}
@@ -108,6 +109,7 @@ const SignTemplate = ({
           ) : null}
           <Label htmlFor="email">{LANG.EMAIL[htmlLang]}</Label>
           <Input
+            autoFocus={!register}
             id="email"
             type="email"
             onChange={handleChange({ type: 'email' })}

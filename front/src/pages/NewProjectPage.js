@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { useOnlyPrivate } from 'lib/hooks';
 import LANG, { htmlLang } from 'lib/htmlLanguage';
 import NewProjectContainer from 'containers/NewProjectPage/NewProjectContainer';
 import PageTemplate from 'components/Common/PageTemplate';
-import { useOnlyPrivate } from 'lib/hooks';
 
 const NewProjectPage = ({ history, signIn }) => {
   const startRednder = useOnlyPrivate({ history, signIn });

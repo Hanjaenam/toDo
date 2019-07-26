@@ -41,7 +41,7 @@ export const readOne = async (req, res) => {
       {
         $match: {
           creator: req.user._id,
-          project: mongoose.Types.ObjectId(projectTitle),
+          project: project._id,
         },
       },
       {

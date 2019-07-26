@@ -55,11 +55,11 @@ const LockButtonExplaion = styled.p`
   font-size: 0.8rem;
 `;
 
-const LockButtonComponent = ({ isPublic, setProjectData }) => (
+const LockButtonComponent = ({ isPublic, setProjectDataTemplate }) => (
   <LockButtonContainer>
     <LockOpenButton
       active={isPublic}
-      onClick={() => setProjectData({ type: 'isPublic', value: true })}
+      onClick={() => setProjectDataTemplate({ type: 'isPublic', value: true })}
     >
       <LockIcon icon={faLockOpen} />
       <LockButtonTextContainer>
@@ -73,7 +73,7 @@ const LockButtonComponent = ({ isPublic, setProjectData }) => (
     </LockOpenButton>
     <LockButton
       active={!isPublic}
-      onClick={() => setProjectData({ type: 'isPublic', value: false })}
+      onClick={() => setProjectDataTemplate({ type: 'isPublic', value: false })}
     >
       <LockIcon icon={faLock} />
       <LockButtonTextContainer>
@@ -88,7 +88,7 @@ const LockButtonComponent = ({ isPublic, setProjectData }) => (
 
 LockButtonComponent.propTypes = {
   isPublic: PropTypes.bool.isRequired,
-  setProjectData: PropTypes.func.isRequired,
+  setProjectDataTemplate: PropTypes.func.isRequired,
 };
 
 export default LockButtonComponent;

@@ -1,10 +1,13 @@
 import axios from 'axios';
 
-// eslint-disable-next-line import/prefer-default-export
+const authAxios = axios.create({
+  baseURL: '/api/auth',
+});
+
 export const authAPI = {
   logIn: ({ email, password }) => {
-    return axios({
-      url: '/auth/logIn',
+    return authAxios({
+      url: '/logIn',
       method: 'POST',
       data: {
         email,
@@ -13,20 +16,20 @@ export const authAPI = {
     });
   },
   logOut: () => {
-    return axios({
-      url: `/me/logOut`,
+    return authAxios({
+      url: `/logOut`,
       method: 'GET',
     });
   },
   getInfo: () => {
     return axios({
-      url: '/me',
+      url: '/api/me',
       method: 'GET',
     });
   },
   register: ({ email, nick, password }) => {
-    return axios({
-      url: '/auth/register',
+    return authAxios({
+      url: '/register',
       method: 'POST',
       data: {
         email,
@@ -37,10 +40,14 @@ export const authAPI = {
   },
 };
 
+const projectAxios = axios.create({
+  baseURL: '/api/me/project',
+});
+
 export const projectAPI = {
   create: ({ isPublic, importance, title }) => {
-    return axios({
-      url: '/me/project/create',
+    return projectAxios({
+      url: '/create',
       method: 'post',
       data: {
         isPublic,
@@ -50,26 +57,26 @@ export const projectAPI = {
     });
   },
   delete: ({ id }) => {
-    return axios({
-      url: `/me/project/delete/${id}`,
+    return projectAxios({
+      url: `/delete/${id}`,
       method: 'delete',
     });
   },
   patch: ({ id, data }) => {
-    return axios({ url: `/me/project/patch/${id}`, method: 'PATCH', data });
+    return projectAxios({ url: `/patch/${id}`, method: 'PATCH', data });
   },
   readOne: ({ title }) => {
-    return axios({ url: `/me/project/${title}?page=1`, method: 'get' });
+    return projectAxios({ url: `/${title}?page=1`, method: 'get' });
   },
   readAll: ({ query }) => {
-    return axios({
-      url: `/me/project${query}`,
+    return projectAxios({
+      url: `${query}`,
       method: 'GET',
     });
   },
   search: ({ term }) => {
-    return axios({
-      url: `/me/project/search?term=${term}`,
+    return projectAxios({
+      url: `/search?term=${term}`,
       method: 'GET',
     });
   },

@@ -21,12 +21,12 @@
  */
 const HOME = '/';
 
-const AUTH = '/auth';
+const AUTH = '/api/auth';
 const FAILURE = '/failure';
 const LOGIN = '/logIn';
 const REGISTER = '/register';
 
-const ME = '/me';
+const ME = '/api/me';
 const LOG_OUT = '/logOut';
 const USER = '/user';
 const PROJECT = '/project';

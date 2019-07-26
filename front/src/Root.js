@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import App from 'components/App';
 import configure from 'store/configure';
@@ -10,9 +10,9 @@ const store = configure();
 const Root = () => (
   <Provider store={store}>
     <GlobalStyles />
-    <HashRouter>
+    <BrowserRouter>
       <App />
-    </HashRouter>
+    </BrowserRouter>
   </Provider>
 );
 

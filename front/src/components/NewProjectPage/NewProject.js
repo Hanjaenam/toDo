@@ -6,7 +6,7 @@ import { inputCss } from 'styles/mixins';
 import LANG, { htmlLang } from 'lib/htmlLanguage';
 import Button from 'components/Common/Button';
 import LockButtonContainer from 'containers/NewProjectPage/LockButtonContainer';
-import StarButtonContainer from 'containers/NewProjectPage/StarButtonContainer';
+import StarButtonContainer from 'containers/Common/StarButtonContainer';
 
 const Text = styled.p`
   text-align: center;
@@ -69,8 +69,8 @@ const StarTitle = styled.p``;
 
 const NewProject = ({
   history,
-  projectData,
-  ProjectActions: { createProject, initProjectData, setProjectData },
+  projectDataTemplate,
+  ProjectActions: { createProject, setProjectDataTemplate },
 }) => (
   <Container>
     <Text>{LANG.NEW_PROJECT[htmlLang]}</Text>
@@ -83,7 +83,7 @@ const NewProject = ({
           const {
             target: { value },
           } = e;
-          setProjectData({ type: 'title', value });
+          setProjectDataTemplate({ type: 'title', value });
         }}
       />
     </InputContainer>
@@ -92,36 +92,41 @@ const NewProject = ({
     <Line />
     <StarContainer>
       <StarTitle>{LANG.NEW_PROJECT.IMPORTANCE[htmlLang]}</StarTitle>
-      <StarButtonContainer />
+      <StarButtonContainer edit />
     </StarContainer>
     <Line />
     <ButtonContainer>
       <Button
-        disabled={projectData.title === ''}
-        onClick={() => {
-          createProject(projectData).then(({ data }) =>
+        disabled={projectDataTemplate.title === ''}
+        onClick={() =>
+          createProject(projectDataTemplate).then(({ data }) =>
             history.push(`/me/project/${data.title}`),
-          );
-        }}
+          )
+        }
       >
         {LANG.CONFIRM[htmlLang]}
       </Button>
-      <Button onClick={initProjectData}>{LANG.CANCEL[htmlLang]}</Button>
+      <Button
+        onClick={() => {
+          history.goBack();
+        }}
+      >
+        {LANG.CANCEL[htmlLang]}
+      </Button>
     </ButtonContainer>
   </Container>
 );
 
 NewProject.propTypes = {
   history: PropTypes.shape({}).isRequired,
-  projectData: PropTypes.shape({
+  projectDataTemplate: PropTypes.shape({
     isPublic: PropTypes.bool.isRequired,
     importance: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
   }).isRequired,
   ProjectActions: PropTypes.shape({
     createProject: PropTypes.func.isRequired,
-    initProjectData: PropTypes.func.isRequired,
-    setProjectData: PropTypes.func.isRequired,
+    setProjectDataTemplate: PropTypes.func.isRequired,
   }).isRequired,
 };
 

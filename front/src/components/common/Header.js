@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
@@ -32,7 +33,7 @@ const BtnStyles = css`
   border: 0;
 `;
 
-const Header = ({ logOut }) => (
+const Header = ({ history, logOut }) => (
   <Container>
     <Center>
       <Button
@@ -41,7 +42,11 @@ const Header = ({ logOut }) => (
         styles={BtnStyles}
         to={CONFIG.ME_PROJECT_HOME}
       />
-      <Button hoveropts={{ minus: 20 }} styles={BtnStyles} onClick={logOut}>
+      <Button
+        hoveropts={{ minus: 20 }}
+        styles={BtnStyles}
+        onClick={() => logOut().then(() => history.replace('/'))}
+      >
         {LANG.SIGN_OUT[htmlLang]}
       </Button>
     </Center>
@@ -51,4 +56,4 @@ const Header = ({ logOut }) => (
 Header.propTypes = {
   logOut: PropTypes.func.isRequired,
 };
-export default Header;
+export default withRouter(Header);
