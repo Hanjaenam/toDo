@@ -1,44 +1,61 @@
-import { Map, List, fromJS } from 'immutable';
+import { Map, fromJS, List } from 'immutable';
 import { handleActions, createAction } from 'redux-actions';
 import { applyPenders } from 'redux-pender';
-import { projectAPI } from 'lib/API';
+import { projectAPI, toDoAPI } from 'lib/API';
 
-const CREATE_PROJECT = 'detailProject/CREATE_PROJECT';
-const INIT_PROJECT_DATA_TEMPLATE = 'detailProject/INIT_PROJECT_DATA_TEMPLATE';
-const SET_PROJECT_DATA_TEMPLATE = 'detailProject/SET_PROJECT_DATA_TEMPLATE';
+const CREATE_TO_DO = 'detailProject/CREATE_TO_DO';
+const INIT_TO_DO_DATA_TEMPLATE = 'detailProject/INIT_TO_DO_DATA_TEMPLATE';
 const GET_PROJECT_DATA = 'detailProject/GET_PROJECT_DATA';
+const SET_TO_DO_DATA_TEMPLATE = 'detailProject/SET_TO_DO_DATA_TEMPLATE';
+const SET_IS_NEW_TO_DO = 'detailProject/SET_IS_NEW_TO_DO';
 
-export const createProject = createAction(CREATE_PROJECT, projectAPI.create);
-export const initProjectDataTemplate = createAction(INIT_PROJECT_DATA_TEMPLATE);
-export const setProjectDataTemplate = createAction(SET_PROJECT_DATA_TEMPLATE);
+export const createToDo = createAction(CREATE_TO_DO, toDoAPI.create);
+export const initToDoDataTemplate = createAction(INIT_TO_DO_DATA_TEMPLATE);
 export const getProjectData = createAction(
   GET_PROJECT_DATA,
   projectAPI.readOne,
 );
+export const setIsNewToDo = createAction(SET_IS_NEW_TO_DO);
+export const setToDoDataTemplate = createAction(SET_TO_DO_DATA_TEMPLATE);
 
 const initialState = Map({
-  dataTemplate: Map({ isPublic: true, importance: 1, title: '' }),
-  data: Map({}),
-  toDoListGroupByDate: List([]),
+  dataTemplate: Map({ importance: 1, memo: '', order: undefined, title: '' }),
+  isNewToDo: false,
+  projectData: Map({}),
+  query: Map({
+    page: 1,
+    q: '',
+    sort: 'latest',
+  }),
+  toDoData: List([]),
 });
 
 const reducer = handleActions(
   {
-    [INIT_PROJECT_DATA_TEMPLATE]: (state, _) => {
+    [INIT_TO_DO_DATA_TEMPLATE]: (state, _) => {
       return state.set(
         'dataTemplate',
-        Map({ title: '', isPublic: true, importance: 1 }),
+        Map({ title: '', memo: '', importance: 1 }),
       );
     },
-    [SET_PROJECT_DATA_TEMPLATE]: (state, action) => {
-      const { type, value, isPublic, importance, title } = action.payload;
+    [SET_TO_DO_DATA_TEMPLATE]: (state, action) => {
+      const {
+        type,
+        value,
+        isPublic,
+        importance,
+        title,
+        order,
+      } = action.payload;
       switch (type) {
-        case 'isPublic':
-          return state.setIn(['dataTemplate', 'isPublic'], value);
+        case 'memo':
+          return state.setIn(['dataTemplate', 'memo'], value);
         case 'importance':
           return state.setIn(['dataTemplate', 'importance'], value);
         case 'title':
           return state.setIn(['dataTemplate', 'title'], value);
+        case 'order':
+          return state.setIn(['dataTemplate', 'order'], value);
         case 'all': {
           return state.set(
             'dataTemplate',
@@ -46,6 +63,7 @@ const reducer = handleActions(
               isPublic,
               importance,
               title,
+              order,
             }),
           );
         }
@@ -53,18 +71,23 @@ const reducer = handleActions(
           return state;
       }
     },
+    [SET_IS_NEW_TO_DO]: (state, action) => {
+      return state.set('isNewToDo', action.payload);
+    },
   },
   initialState,
 );
 
 export default applyPenders(reducer, [
   {
-    type: CREATE_PROJECT,
+    type: CREATE_TO_DO,
     onSuccess: (state, action) => {
       const {
         payload: { data },
       } = action;
-      return state.set('data', fromJS(data));
+      return state
+        .update('toDoData', item => item.unshift(data))
+        .set('isNewToDo', false);
     },
   },
   {
@@ -72,12 +95,12 @@ export default applyPenders(reducer, [
     onSuccess: (state, action) => {
       const {
         payload: {
-          data: { project, toDoListGroupByDate },
+          data: { toDo, ...rest },
         },
       } = action;
       return state
-        .set('data', fromJS(project))
-        .set('toDoListGroupByDate', fromJS(toDoListGroupByDate));
+        .set('projectData', fromJS(rest))
+        .set('toDoData', fromJS(toDo));
     },
   },
 ]);

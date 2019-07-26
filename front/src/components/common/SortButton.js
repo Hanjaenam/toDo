@@ -6,23 +6,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { hover, HOVER_TYPE } from 'styles/mixins';
 import LANG, { htmlLang } from 'lib/htmlLanguage';
 
-const Details = styled.details`
-  position: relative;
-`;
-
 const Summary = styled.summary`
   &::-webkit-details-marker {
     display: none;
   }
   outline: none;
-  border: 1px solid ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
-  border-radius: ${props => props.theme.RADIUS};
   padding: ${props => props.theme.GAP.MEDIUM};
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
   ${hover({ type: HOVER_TYPE.BACKGROUND_COLOR })};
+  &:hover {
+    span {
+      color: white;
+    }
+  }
+`;
+
+const Details = styled.details`
+  position: relative;
+  border-radius: ${props => props.theme.RADIUS};
+  &[open] {
+    ${Summary} {
+      background-color: ${props => props.theme.COLOR.PRIMARY()};
+      span,
+      p {
+        color: white;
+      }
+    }
+  }
 `;
 
 const DetailsMenu = styled.div`
@@ -57,11 +70,12 @@ const CheckIcon = styled(FontAwesomeIcon)`
         `}
 `;
 
-const SortView = ({ sort, setSort }) => (
+const SortButton = ({ sort, setSort }) => (
   <Details className="details">
     <Summary>
       <p>
-        {LANG.SORT[htmlLang]}: <span>{sort}</span>
+        {LANG.SORT[htmlLang]}:{' '}
+        <span>{LANG.SORT[sort.toUpperCase()][htmlLang]}</span>
       </p>
     </Summary>
     <DetailsMenu role="menu">
@@ -77,9 +91,13 @@ const SortView = ({ sort, setSort }) => (
   </Details>
 );
 
-SortView.propTypes = {
+SortButton.propTypes = {
   sort: PropTypes.string.isRequired,
-  setSort: PropTypes.func.isRequired,
+  setSort: PropTypes.func,
 };
 
-export default SortView;
+SortButton.defaultProps = {
+  setSort: undefined,
+};
+
+export default SortButton;

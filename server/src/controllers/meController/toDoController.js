@@ -1,5 +1,6 @@
 import Project from 'models/Project';
 import ToDo from 'models/ToDo';
+import Memo from 'models/Memo';
 import config from 'config';
 
 export const readOne = async (req, res) => {
@@ -35,7 +36,7 @@ export const create = async (req, res) => {
   const {
     params: { id: projectId },
     // title, memo, createdAt
-    body,
+    body: { memo: content, ...rest },
   } = req;
   try {
     const project = await Project.findOne({
@@ -46,19 +47,33 @@ export const create = async (req, res) => {
     if (!project) {
       return res.status(400).end();
     }
-    const toDo = await ToDo.create(
-      Array.isArray(body)
-        ? body.map(data => ({
-            ...data,
-            creator: req.user._id,
-            project: projectId,
-          }))
-        : {
-            ...body,
-            creator: req.user._id,
-            project: projectId,
-          },
-    );
+    const toDo = await ToDo.create({
+      ...rest,
+      creator: req.user._id,
+      project: projectId,
+    });
+    if (content) {
+      const memo = await Memo.create({
+        content,
+        creator: req.user._id,
+        toDo: toDo._id,
+      });
+      toDo.memo.push(memo._id);
+      toDo.save();
+    }
+    // const toDo = await ToDo.create(
+    //   Array.isArray(body)
+    //     ? body.map(data => ({
+    //         ...data,
+    //         creator: req.user._id,
+    //         project: projectId,
+    //       }))
+    //     : {
+    //         ...body,
+    //         creator: req.user._id,
+    //         project: projectId,
+    //       },
+    // );
     return res.json(toDo);
   } catch (err) {
     console.log(err);

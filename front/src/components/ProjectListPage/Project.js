@@ -5,7 +5,10 @@ import { withRouter } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faLockOpen, faStar } from '@fortawesome/free-solid-svg-icons';
 import { hover, HOVER_TYPE } from 'styles/mixins';
-import moment from 'moment';
+
+const CreatedAt = styled.p`
+  font-size: 0.7rem;
+`;
 
 const Container = styled.div`
   border: 1px solid black;
@@ -17,6 +20,11 @@ const Container = styled.div`
   align-items: center;
   grid-gap: ${props => props.theme.GAP.MEDIUM};
   ${hover({ type: HOVER_TYPE.BACKGROUND_COLOR })};
+  &:hover {
+    ${CreatedAt} {
+      color: white;
+    }
+  }
 `;
 
 const LockIcon = styled(FontAwesomeIcon)`
@@ -28,18 +36,14 @@ const Title = styled.p`
 `;
 
 const EtcContainer = styled.div`
-  text-align: center;
+  text-align: right;
 `;
 
 const StarIcon = styled(FontAwesomeIcon)`
   color: ${props => props.theme.COLOR.STAR()} !important;
 `;
 
-const CreatedAt = styled.p`
-  font-size: 0.7rem;
-`;
-
-const Project = ({ data, history }) => (
+const Project = ({ data, history, getCreatedAt }) => (
   <Container onClick={() => history.push(`/me/project/${data.title}`)}>
     <LockIcon icon={data.isPublic ? faLockOpen : faLock} />
     <Title>{data.title}</Title>
@@ -47,7 +51,7 @@ const Project = ({ data, history }) => (
       {new Array(data.importance).fill('').map((_, idx) => (
         <StarIcon icon={faStar} key={`star_${idx}`} />
       ))}
-      <CreatedAt>{moment(data.createdAt).format('YYYY-MM-DD')}</CreatedAt>
+      <CreatedAt>{getCreatedAt()}</CreatedAt>
     </EtcContainer>
   </Container>
 );
@@ -55,6 +59,7 @@ const Project = ({ data, history }) => (
 Project.propTypes = {
   data: PropTypes.shape({}),
   history: PropTypes.shape({}).isRequired,
+  getCreatedAt: PropTypes.func.isRequired,
 };
 
 Project.defaultProps = {

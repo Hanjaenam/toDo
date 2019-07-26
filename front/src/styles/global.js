@@ -13,7 +13,7 @@ export default createGlobalStyle`
   p, span,svg{
     color: ${props => props.theme.COLOR.PRIMARY()}
   }
-  p, span, label{
+  p, span, label,a{
     text-transform: capitalize;
   }
   *{

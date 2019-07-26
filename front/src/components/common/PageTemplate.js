@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Helmet from 'react-helmet';
 import HeaderContainer from 'containers/Common/HeaderContainer';
 
-const ChildrenContainer = styled.div`
+const MainContainer = styled.main`
   display: grid;
   grid-auto-flow: row;
   grid-gap: ${props => props.theme.GAP.ONE};
@@ -15,7 +15,7 @@ const ChildrenContainer = styled.div`
   }
 `;
 
-const PageTemplate = ({ children, sign, title, entire }) => (
+const PageTemplate = ({ children, sign, title }) => (
   <>
     <Helmet>
       <title>{title}</title>
@@ -25,7 +25,7 @@ const PageTemplate = ({ children, sign, title, entire }) => (
     ) : (
       <>
         <HeaderContainer />
-        <ChildrenContainer>{children}</ChildrenContainer>
+        <MainContainer>{children}</MainContainer>
       </>
     )}
   </>

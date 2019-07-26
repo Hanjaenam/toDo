@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import SignTemplate from 'components/Common/SignTemplate';
+import { getProjectListQuery } from 'lib/etc';
 import * as signActions from 'store/modules/sign';
 import * as userActions from 'store/modules/user';
+import SignTemplate from 'components/Common/SignTemplate';
 import LANG, { htmlLang } from 'lib/htmlLanguage';
-import CONFIG from 'lib/config';
 
 const SignTemplateContainer = ({
   history,
@@ -33,11 +33,11 @@ const SignTemplateContainer = ({
 
     if (register) {
       logIn({ email, nick, password }).then(() =>
-        history.replace(CONFIG.ME_PROJECT_HOME),
+        history.replace(getProjectListQuery()),
       );
     } else {
       logIn({ email, password }).then(() =>
-        history.replace(CONFIG.ME_PROJECT_HOME),
+        history.replace(getProjectListQuery()),
       );
     }
   };

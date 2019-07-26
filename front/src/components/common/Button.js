@@ -3,24 +3,25 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavLink } from 'react-router-dom';
-import { activeStyles, hover, HOVER_TYPE } from 'styles/mixins';
+import { activeStyles, hover, ACTIVE_STYLES, HOVER_TYPE } from 'styles/mixins';
 
 const Btn = styled.button`
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
   padding: ${props => props.theme.GAP.MEDIUM};
   ${({ active, ...rest }) =>
     active === 'true'
       ? activeStyles({
-          type: rest.hovertype ? rest.hovertype : HOVER_TYPE.BACKGROUND_COLOR,
-          ...rest.hoveropts,
+          type: rest.activetype,
+          ...rest.activeopts,
         })
       : null};
   ${({ disabled, ...rest }) =>
     hover({
       disabled,
-      type: rest.hovertype ? rest.hovertype : HOVER_TYPE.BACKGROUND_COLOR,
+      type: rest.hovertype,
       ...rest.hoveropts,
     })}
   ${props => props.styles}
@@ -32,12 +33,16 @@ const Icon = styled(FontAwesomeIcon)`
   }
 `;
 
-const Text = styled.p``;
+const Text = styled.span``;
 
 const Button = ({
   active,
+  activetype,
+  activeopts,
   children,
   disabled,
+  hovertype,
+  hoveropts,
   icon,
   onClick,
   styles,
@@ -51,6 +56,10 @@ const Button = ({
     onClick={disabled ? () => null : onClick}
     styles={styles}
     to={to}
+    hovertype={hovertype}
+    hovertops={hoveropts}
+    activetype={activetype}
+    activeopts={activeopts}
     {...rest}
   >
     {icon ? <Icon icon={icon} /> : null}
@@ -60,11 +69,15 @@ const Button = ({
 
 Button.propTypes = {
   active: PropTypes.bool,
+  activetype: PropTypes.string,
+  activeopts: PropTypes.shape({}),
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
   disabled: PropTypes.bool,
+  hovertype: PropTypes.string,
+  hoveropts: PropTypes.shape({}),
   icon: PropTypes.shape({}),
   onClick: PropTypes.func,
   styles: PropTypes.array,
@@ -73,8 +86,12 @@ Button.propTypes = {
 
 Button.defaultProps = {
   active: false,
+  activetype: ACTIVE_STYLES.BACKGROUND_COLOR,
+  activeopts: undefined,
   children: undefined,
   disabled: false,
+  hovertype: HOVER_TYPE.BACKGROUND_COLOR,
+  hoveropts: undefined,
   icon: undefined,
   onClick: undefined,
   styles: undefined,

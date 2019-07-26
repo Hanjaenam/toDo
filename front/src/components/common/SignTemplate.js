@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import Button from 'components/Common/Button';
-import Message from 'components/Common/Message';
 import LANG, { htmlLang } from 'lib/htmlLanguage';
+import Message from 'components/Common/Message';
 
 const Container = styled.div`
   width: 100vw;

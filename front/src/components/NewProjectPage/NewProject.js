@@ -1,11 +1,11 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
+import { withRouter } from 'react-router-dom';
 import { inputCss } from 'styles/mixins';
-import LANG, { htmlLang } from 'lib/htmlLanguage';
 import Button from 'components/Common/Button';
-import LockButtonContainer from 'containers/NewProjectPage/LockButtonContainer';
+import LANG, { htmlLang } from 'lib/htmlLanguage';
+import LockButton from 'components/NewProjectPage/LockButton';
 import StarButtonContainer from 'containers/Common/StarButtonContainer';
 
 const Text = styled.p`
@@ -68,9 +68,10 @@ const StarContainer = styled.div`
 const StarTitle = styled.p``;
 
 const NewProject = ({
+  createProject,
   history,
   projectDataTemplate,
-  ProjectActions: { createProject, setProjectDataTemplate },
+  setProjectDataTemplate,
 }) => (
   <Container>
     <Text>{LANG.NEW_PROJECT[htmlLang]}</Text>
@@ -88,11 +89,20 @@ const NewProject = ({
       />
     </InputContainer>
     <Line />
-    <LockButtonContainer />
+    <LockButton
+      isPublic={projectDataTemplate.isPublic}
+      setIsPublic={value => setProjectDataTemplate({ type: 'isPublic', value })}
+    />
     <Line />
     <StarContainer>
-      <StarTitle>{LANG.NEW_PROJECT.IMPORTANCE[htmlLang]}</StarTitle>
-      <StarButtonContainer edit />
+      <StarTitle>{LANG.IMPORTANCE[htmlLang]}</StarTitle>
+      <StarButtonContainer
+        edit
+        importance={projectDataTemplate.importance}
+        setImportance={value =>
+          setProjectDataTemplate({ type: 'importance', value })
+        }
+      />
     </StarContainer>
     <Line />
     <ButtonContainer>
@@ -118,16 +128,14 @@ const NewProject = ({
 );
 
 NewProject.propTypes = {
+  createProject: PropTypes.func.isRequired,
   history: PropTypes.shape({}).isRequired,
   projectDataTemplate: PropTypes.shape({
     isPublic: PropTypes.bool.isRequired,
     importance: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
   }).isRequired,
-  ProjectActions: PropTypes.shape({
-    createProject: PropTypes.func.isRequired,
-    setProjectDataTemplate: PropTypes.func.isRequired,
-  }).isRequired,
+  setProjectDataTemplate: PropTypes.func.isRequired,
 };
 
 export default withRouter(NewProject);

@@ -53,34 +53,25 @@ const LockButtonTitle = styled.p`
 const LockButtonExplaion = styled.p`
   word-break: break-all;
   font-size: 0.8rem;
+  margin-top: ${props => props.theme.GAP.SMALL};
 `;
 
-const LockButtonComponent = ({ isPublic, setProjectDataTemplate }) => (
+const LockButtonComponent = ({ isPublic, setIsPublic }) => (
   <LockButtonContainer>
-    <LockOpenButton
-      active={isPublic}
-      onClick={() => setProjectDataTemplate({ type: 'isPublic', value: true })}
-    >
+    <LockOpenButton active={isPublic} onClick={() => setIsPublic(true)}>
       <LockIcon icon={faLockOpen} />
       <LockButtonTextContainer>
-        <LockButtonTitle>
-          {LANG.NEW_PROJECT.LOCK_OPEN[htmlLang]}
-        </LockButtonTitle>
+        <LockButtonTitle>{LANG.LOCK_OPEN[htmlLang]}</LockButtonTitle>
         <LockButtonExplaion>
-          {LANG.NEW_PROJECT.LOCK_OPEN.EXPLAIN[htmlLang]}
+          {LANG.LOCK_OPEN.EXPLAIN[htmlLang]}
         </LockButtonExplaion>
       </LockButtonTextContainer>
     </LockOpenButton>
-    <LockButton
-      active={!isPublic}
-      onClick={() => setProjectDataTemplate({ type: 'isPublic', value: false })}
-    >
+    <LockButton active={!isPublic} onClick={() => setIsPublic(false)}>
       <LockIcon icon={faLock} />
       <LockButtonTextContainer>
-        <LockButtonTitle>{LANG.NEW_PROJECT.LOCK[htmlLang]}</LockButtonTitle>
-        <LockButtonExplaion>
-          {LANG.NEW_PROJECT.LOCK.EXPLAIN[htmlLang]}
-        </LockButtonExplaion>
+        <LockButtonTitle>{LANG.LOCK[htmlLang]}</LockButtonTitle>
+        <LockButtonExplaion>{LANG.LOCK.EXPLAIN[htmlLang]}</LockButtonExplaion>
       </LockButtonTextContainer>
     </LockButton>
   </LockButtonContainer>
@@ -88,7 +79,7 @@ const LockButtonComponent = ({ isPublic, setProjectDataTemplate }) => (
 
 LockButtonComponent.propTypes = {
   isPublic: PropTypes.bool.isRequired,
-  setProjectDataTemplate: PropTypes.func.isRequired,
+  setIsPublic: PropTypes.func.isRequired,
 };
 
 export default LockButtonComponent;

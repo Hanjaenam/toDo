@@ -81,3 +81,22 @@ export const projectAPI = {
     });
   },
 };
+
+const toDoAxios = axios.create({
+  baseURL: `/api/me/toDo`,
+});
+
+export const toDoAPI = {
+  create: ({ projectId, title, memo, importance, order }) => {
+    return toDoAxios({
+      url: `/create/${projectId}`,
+      method: 'POST',
+      data: {
+        title,
+        memo,
+        importance,
+        order,
+      },
+    });
+  },
+};

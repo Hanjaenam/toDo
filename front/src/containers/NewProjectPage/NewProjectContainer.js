@@ -1,40 +1,51 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as projectActions from 'store/modules/detailProject';
+import {
+  createProject as cp,
+  initProjectDataTemplate as ipdt,
+  setProjectDataTemplate as spdt,
+} from 'store/modules/projectList';
 import NewProject from 'components/NewProjectPage/NewProject';
 
-const NewProjectContainer = ({ projectDataTemplate, ProjectActions }) => {
+const NewProjectContainer = ({
+  createProject,
+  initProjectDataTemplate,
+  projectDataTemplate,
+  setProjectDataTemplate,
+}) => {
   useEffect(() => {
-    ProjectActions.initProjectDataTemplate();
+    initProjectDataTemplate();
   }, []);
   return (
     <NewProject
+      createProject={createProject}
       projectDataTemplate={projectDataTemplate}
-      ProjectActions={ProjectActions}
+      setProjectDataTemplate={setProjectDataTemplate}
     />
   );
 };
 
-NewProject.propTypes = {
+NewProjectContainer.propTypes = {
+  createProject: PropTypes.func.isRequired,
+  initProjectDataTemplate: PropTypes.func.isRequired,
   projectDataTemplate: PropTypes.shape({
     isPublic: PropTypes.bool.isRequired,
     importance: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
   }).isRequired,
-  ProjectActions: PropTypes.shape({
-    createProject: PropTypes.func.isRequired,
-    setProjectDataTemplate: PropTypes.func.isRequired,
-    initProjectDataTemplate: PropTypes.func.isRequired,
-  }).isRequired,
+  setProjectDataTemplate: PropTypes.func.isRequired,
 };
 
 export default connect(
   state => ({
-    projectDataTemplate: state.detailProject.get('dataTemplate').toJS(),
+    projectDataTemplate: state.projectList.get('dataTemplate').toJS(),
   }),
   dispatch => ({
-    ProjectActions: bindActionCreators(projectActions, dispatch),
+    createProject: ({ title, isPublic, importance }) =>
+      dispatch(cp({ title, isPublic, importance })),
+    initProjectDataTemplate: () => dispatch(ipdt()),
+    setProjectDataTemplate: ({ type, value }) =>
+      dispatch(spdt({ type, value })),
   }),
 )(NewProjectContainer);

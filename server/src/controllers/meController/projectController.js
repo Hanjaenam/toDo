@@ -1,6 +1,5 @@
 import Project from 'models/Project';
 import ToDo from 'models/ToDo';
-import mongoose from 'mongoose';
 import config from 'config';
 // /read
 // check
@@ -35,50 +34,57 @@ export const readOne = async (req, res) => {
     const project = await Project.findOne({
       creator: req.user._id,
       title: projectTitle,
+    }).populate({
+      path: 'toDo',
+      options: {
+        skip: (page - 1) * config.PAGE.LIMIT,
+        limit: config.PAGE.LIMIT,
+        sort: { createdAt: -1 },
+      },
     });
     // No need to lean pipeline output . Aggregate output is already lean
-    const toDoListGroupByDate = await ToDo.aggregate([
-      {
-        $match: {
-          creator: req.user._id,
-          project: project._id,
-        },
-      },
-      {
-        $group: {
-          _id: {
-            $dateToString: {
-              format: '%Y-%m-%d',
-              date: '$createdAt',
-              timezone: 'Asia/Seoul',
-            },
-          },
-          toDoList: {
-            $push: {
-              _id: '$_id',
-              title: '$title',
-              memo: '$memo',
-              isCompleted: '$isCompleted',
-              createdAt: '$createdAt',
-              creator: '$creator',
-            },
-          },
-        },
-      },
-      { $skip: (page - 1) * config.PAGE.LIMIT },
-      { $limit: config.PAGE.LIMIT },
-      {
-        $sort: {
-          _id: -1,
-        },
-      },
-      {
-        $project: {
-          toDoList: { $reverseArray: '$toDoList' },
-        },
-      },
-    ]);
-    return res.json({ project, toDoListGroupByDate });
+    // const toDoListGroupByDate = await ToDo.aggregate([
+    //   {
+    //     $match: {
+    //       creator: req.user._id,
+    //       project: project._id,
+    //     },
+    //   },
+    //   {
+    //     $group: {
+    //       _id: {
+    //         $dateToString: {
+    //           format: '%Y-%m-%d',
+    //           date: '$createdAt',
+    //           timezone: 'Asia/Seoul',
+    //         },
+    //       },
+    //       toDoList: {
+    //         $push: {
+    //           _id: '$_id',
+    //           title: '$title',
+    //           memo: '$memo',
+    //           isCompleted: '$isCompleted',
+    //           createdAt: '$createdAt',
+    //           creator: '$creator',
+    //         },
+    //       },
+    //     },
+    //   },
+    //   { $skip: (page - 1) * config.PAGE.LIMIT },
+    //   { $limit: config.PAGE.LIMIT },
+    //   {
+    //     $sort: {
+    //       _id: -1,
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       toDoList: { $reverseArray: '$toDoList' },
+    //     },
+    //   },
+    // ]);
+    return res.json(project);
   } catch (err) {
     console.log(err);
     return res.status(500).end();

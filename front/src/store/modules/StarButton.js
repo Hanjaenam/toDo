@@ -8,7 +8,7 @@ const initialState = 1;
 
 export default handleActions(
   {
-    [SET_HOVER_IMPORTANCE]: (stete, action) => {
+    [SET_HOVER_IMPORTANCE]: (_, action) => {
       return action.payload;
     },
   },

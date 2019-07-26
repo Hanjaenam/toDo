@@ -7,6 +7,7 @@ import SignTemplate from 'containers/Common/SignTemplateContainer';
 
 const RegisterPage = ({ history, signIn }) => {
   const startRender = useOnlyPublic({ history, signIn });
+
   return startRender ? (
     <PageTemplate sign title="회원가입">
       <SignTemplate register history={history} />
@@ -16,7 +17,7 @@ const RegisterPage = ({ history, signIn }) => {
 
 RegisterPage.propTypes = {
   history: PropTypes.shape({}).isRequired,
-  signIn: PropTypes.shape({}).isRequired,
+  signIn: PropTypes.bool.isRequired,
 };
 
 export default connect(

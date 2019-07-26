@@ -41,6 +41,14 @@ export default {
   WIDTH: {
     TO_DO_LIST: '450px',
   },
+  FONT_SIZE: {
+    CREATED_AT: '0.8rem',
+  },
+  Z_INDEX: {
+    NEW_TO_DO: {
+      BLACK: 9,
+    },
+  },
 };
 
 // 45

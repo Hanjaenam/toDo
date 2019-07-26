@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { setProjectDataTemplate } from 'store/modules/detailProject';
+import { setProjectDataTemplate } from 'store/modules/projectList';
 import LockButton from 'components/NewProjectPage/LockButton';
 
 export default connect(

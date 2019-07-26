@@ -6,7 +6,17 @@ export const HOVER_TYPE = {
   GITHUB: 'github',
 };
 
-export const hover = ({ disabled, type, ...opts }) => {
+export const ACTIVE_STYLES = {
+  BACKGROUND_COLOR: 'backgroundColor',
+  COLOR: 'color',
+  NEW_TO_DO: 'newToDo',
+};
+
+export const hover = ({
+  disabled,
+  type = HOVER_TYPE.BACKGROUND_COLOR,
+  ...opts
+} = {}) => {
   if (type === HOVER_TYPE.BACKGROUND_COLOR) {
     return css`
       ${opts.noborder
@@ -21,8 +31,9 @@ export const hover = ({ disabled, type, ...opts }) => {
         ? css`
             background-color: ${props =>
               props.theme.COLOR.NOT_FOCUSED.BACKGROUND};
-            p,
-            svg {
+            > p,
+            > svg,
+            > span {
               color: ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
             }
           `
@@ -34,9 +45,9 @@ export const hover = ({ disabled, type, ...opts }) => {
                   add: opts.add,
                   minus: opts.minus,
                 })};
-              p,
-              svg,
-              span {
+              > p,
+              > svg,
+              > span {
                 color: white;
               }
             }
@@ -50,18 +61,19 @@ export const hover = ({ disabled, type, ...opts }) => {
         ? css`
             background-color: ${props =>
               props.theme.COLOR.NOT_FOCUSED.BACKGROUND};
-            p,
-            svg {
+            > p,
+            > svg,
+            > span {
               color: ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
             }
           `
         : css`
             cursor: pointer;
             &:hover {
-              p,
-              svg,
-              span {
-                color: ${opts.hovercolor};
+              > p,
+              > svg,
+              > span {
+                color: ${opts.color};
               }
             }
           `}
@@ -82,8 +94,9 @@ export const hover = ({ disabled, type, ...opts }) => {
         ? css`
             background-color: ${props =>
               props.theme.COLOR.NOT_FOCUSED.BACKGROUND};
-            p,
-            svg {
+            > p,
+            > svg,
+            > span {
               color: ${props => props.theme.COLOR.NOT_FOCUSED.BORDER()};
             }
           `
@@ -105,27 +118,31 @@ export const hover = ({ disabled, type, ...opts }) => {
   }
 };
 
-export const activeStyles = ({ type, ...opts }) => {
-  if (type === HOVER_TYPE.BACKGROUND_COLOR) {
+export const activeStyles = ({
+  type = ACTIVE_STYLES.BACKGROUND_COLOR,
+  ...opts
+} = {}) => {
+  if (type === ACTIVE_STYLES.BACKGROUND_COLOR) {
     return css`
+    ${opts}
       background-color: ${props =>
         props.theme.COLOR.PRIMARY({
           add: opts.add,
           minus: opts.minus,
         })};
-      p,
-      svg,
-      span {
+      >p,
+      >svg,
+      >span {
         color: white;
       }
     `;
   }
-  if (type === HOVER_TYPE.COLOR) {
+  if (type === ACTIVE_STYLES.COLOR) {
     return css`
-      p,
-      svg,
-      span {
-        color: ${opts.hovercolor};
+      > p,
+      > svg,
+      > span {
+        color: ${opts.color};
       }
     `;
   }

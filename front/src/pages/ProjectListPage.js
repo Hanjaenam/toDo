@@ -2,14 +2,18 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getProjectListQuery } from 'lib/etc';
-import EditProjectContainer from 'containers/ProjectListPage/EditProjectContainer';
+import { bindActionCreators } from 'redux';
+import * as projectListActions from 'store/modules/projectList';
+import LANG, { htmlLang } from 'lib/htmlLanguage';
 import PageTemplate from 'components/Common/PageTemplate';
 import ProjectListContainer from 'containers/ProjectListPage/ProjectListContainer';
+import SearchSortView from 'components/Common/SearchSortNew';
 
 const ProjectList = ({
   history,
   location: { search },
   page,
+  ProjectListActions: { setSearch, setSort },
   q,
   sort,
   signIn,
@@ -27,7 +31,12 @@ const ProjectList = ({
 
   return isMount ? (
     <PageTemplate title="할 일들">
-      <EditProjectContainer />
+      <SearchSortView
+        setSearch={setSearch}
+        setSort={setSort}
+        newButtonText={LANG.NEW_PROJECT[htmlLang]}
+        to="/me/project/new"
+      />
       <ProjectListContainer search={search} />
     </PageTemplate>
   ) : null;
@@ -39,6 +48,10 @@ ProjectList.propTypes = {
     search: PropTypes.string.isRequired,
   }).isRequired,
   page: PropTypes.number.isRequired,
+  ProjectListActions: PropTypes.shape({
+    setSearch: PropTypes.func.isRequired,
+    setSort: PropTypes.func.isRequired,
+  }).isRequired,
   q: PropTypes.string.isRequired,
   sort: PropTypes.string.isRequired,
   signIn: PropTypes.bool.isRequired,
@@ -51,5 +64,7 @@ export default connect(
     sort: state.projectList.getIn(['query', 'sort']),
     signIn: state.user.get('signIn'),
   }),
-  null,
+  dispatch => ({
+    ProjectListActions: bindActionCreators(projectListActions, dispatch),
+  }),
 )(ProjectList);

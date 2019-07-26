@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { setSort } from 'store/modules/projectList';
-import SortView from 'components/ProjectListPage/SortView';
+import SortButton from 'components/Common/SortButton';
 
-const SortViewContainer = ({ sort, setSort }) => {
+const SortButtonContainer = ({ sort, setSort }) => {
   const hideDetail = e => {
     const {
       target: { offsetParent },
@@ -18,19 +17,21 @@ const SortViewContainer = ({ sort, setSort }) => {
     return () => document.removeEventListener('click', hideDetail);
   });
 
-  return <SortView sort={sort} setSort={setSort} />;
+  return <SortButton sort={sort} setSort={setSort} />;
 };
 
-SortViewContainer.propTypes = {
+SortButtonContainer.propTypes = {
   sort: PropTypes.string.isRequired,
-  setSort: PropTypes.func.isRequired,
+  setSort: PropTypes.func,
+};
+
+SortButtonContainer.defaultProps = {
+  setSort: undefined,
 };
 
 export default connect(
   state => ({
     sort: state.projectList.getIn(['query', 'sort']),
   }),
-  dispatch => ({
-    setSort: sort => dispatch(setSort(sort)),
-  }),
-)(SortViewContainer);
+  null,
+)(SortButtonContainer);

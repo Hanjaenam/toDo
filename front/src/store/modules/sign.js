@@ -15,7 +15,7 @@ const initialState = Map({
 
 export default handleActions(
   {
-    [INIT_USER_DATA]: (stete, action) => {
+    [INIT_USER_DATA]: (_, __) => {
       return initialState;
     },
     [SET_USER_DATA]: (state, action) => {

@@ -16,9 +16,9 @@ export const getInfo = createAction(GET_INFO, authAPI.getInfo);
 export const setErrorMessage = createAction(SET_ERROR_MESSAGE);
 
 const initialState = Map({
+  data: undefined,
   error: '',
   signIn: false,
-  data: undefined,
 });
 
 const reducer = handleActions(
